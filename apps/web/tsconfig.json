@@ -1,0 +1,23 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "dist",
+        "composite": true,
+        "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo.json",
+        "paths": {
+            "shared": ["../../packages/shared/dist/index.d.ts"],
+            "@web/*": ["./src/*"]
+        }
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"],
+    "exclude": ["node_modules", "dist"],
+    "references": [
+        {
+            "path": "../../packages/shared"
+        },
+        {
+            "path": "../api"
+        }
+    ]
+}

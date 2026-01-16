@@ -1,0 +1,51 @@
+{
+    "name": "honolulu",
+    "version": "0.5.1",
+    "description": "A monorepo template built with Bun, Hono, Vite, and React",
+    "author": "Steve Simkins",
+    "license": "MIT",
+    "homepage": "https://github.com/vins-anity/Honolulu",
+    "packageManager": "bun@1.2.4",
+    "workspaces": [
+        "./apps/*",
+        "./packages/*"
+    ],
+    "scripts": {
+        "dev": "turbo dev",
+        "dev:web": "turbo dev --filter=web",
+        "dev:api": "turbo dev --filter=api",
+        "build": "turbo build",
+        "build:web": "turbo build --filter=web",
+        "build:api": "turbo build --filter=api",
+        "lint": "biome check .",
+        "format": "biome check --write .",
+        "type-check": "turbo type-check",
+        "test": "vitest run",
+        "postinstall": "turbo build --filter=shared --filter=api",
+        "prepare": "husky"
+    },
+    "lint-staged": {
+        "*": [
+            "biome check --write --no-errors-on-unmatched"
+        ]
+    },
+    "keywords": [
+        "bun",
+        "hono",
+        "react",
+        "vite",
+        "monorepo",
+        "turbo"
+    ],
+    "devDependencies": {
+        "@biomejs/biome": "^2.3.11",
+        "@types/bun": "latest",
+        "husky": "^9.1.7",
+        "lint-staged": "^16.2.7",
+        "turbo": "^2.6.3",
+        "vitest": "^4.0.16"
+    },
+    "peerDependencies": {
+        "typescript": "^5.8.3"
+    }
+}

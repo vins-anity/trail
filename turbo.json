@@ -1,0 +1,44 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "ui": "tui",
+    "tasks": {
+        "build": {
+            "dependsOn": ["^build"],
+            "inputs": [
+                "src/**/*.ts",
+                "src/**/*.tsx",
+                "tsconfig.json",
+                "vite.config.ts",
+                "package.json"
+            ],
+            "outputs": ["dist/**", ".tsbuildinfo"],
+            "env": ["NODE_ENV"]
+        },
+        "dev": {
+            "cache": false,
+            "persistent": true
+        },
+        "lint": {
+            "inputs": ["src/**/*.ts", "src/**/*.tsx", "biome.json"],
+            "outputs": []
+        },
+        "type-check": {
+            "dependsOn": ["^build"],
+            "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig.json"],
+            "outputs": [".tsbuildinfo"]
+        },
+        "test": {
+            "dependsOn": ["^build"],
+            "inputs": [
+                "src/**/*.ts",
+                "src/**/*.tsx",
+                "**/*.test.ts",
+                "**/*.test.tsx",
+                "vitest.config.*"
+            ],
+            "outputs": ["coverage/**"]
+        }
+    },
+    "globalDependencies": [".env", ".env.local", "turbo.json", "bun.lock"],
+    "globalEnv": ["NODE_ENV", "CI", "TURBO_TOKEN", "TURBO_TEAM"]
+}

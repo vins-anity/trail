@@ -1,0 +1,39 @@
+{
+    "name": "web",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "bunx --bun vite",
+        "build": "tsc -b && bunx --bun vite build",
+        "lint": "biome check .",
+        "format": "biome check --write .",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "^5.90.16",
+        "@tanstack/react-query-devtools": "^5.90.16",
+        "api": "workspace:*",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.562.0",
+        "react": "^19.2.3",
+        "react-dom": "^19.2.3",
+        "react-router-dom": "^7.12.0",
+        "shared": "workspace:*",
+        "tailwind-merge": "^3.4.0",
+        "zustand": "^5.0.10"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.3.11",
+        "@tailwindcss/vite": "^4.1.18",
+        "@types/node": "^22.19.2",
+        "@types/react": "^19.2.7",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react-swc": "^3.7.0",
+        "autoprefixer": "^10.4.23",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.18",
+        "typescript": "~5.7.3",
+        "vite": "^6.4.1"
+    }
+}

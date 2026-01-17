@@ -1,6 +1,8 @@
 node_modules
 agent
 
+.turbo/
+
 # Build outputs
 dist/
 build/

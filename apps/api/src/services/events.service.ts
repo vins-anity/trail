@@ -1,0 +1,185 @@
+/**
+ * Events Service
+ *
+ * Database operations for hash-chained event logging.
+ * Uses Drizzle ORM for type-safe queries.
+ */
+
+import { and, desc, eq, sql } from "drizzle-orm";
+import type { EventType, TriggerSource } from "shared";
+import { db, schema } from "../db";
+import { createHashedEvent, verifyChainIntegrity } from "../lib/hash-chain";
+
+// ============================================
+// Types
+// ============================================
+
+export interface CreateEventInput {
+    eventType: EventType;
+    triggerSource?: TriggerSource;
+    payload: Record<string, unknown>;
+    workspaceId: string;
+    taskId?: string;
+    proofPacketId?: string;
+}
+
+export interface ListEventsOptions {
+    workspaceId?: string;
+    taskId?: string;
+    eventType?: string;
+    page?: number;
+    pageSize?: number;
+}
+
+// ============================================
+// Service Functions
+// ============================================
+
+/**
+ * List events with pagination and filtering
+ */
+export async function listEvents(options: ListEventsOptions) {
+    const { workspaceId, taskId, eventType, page = 1, pageSize = 20 } = options;
+    const offset = (page - 1) * pageSize;
+
+    // Build where conditions
+    const conditions = [];
+    if (workspaceId) conditions.push(eq(schema.events.workspaceId, workspaceId));
+    if (taskId) conditions.push(eq(schema.events.taskId, taskId));
+    if (eventType)
+        conditions.push(eq(schema.events.eventType, eventType as schema.Event["eventType"]));
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    // Query events
+    const events = await db
+        .select()
+        .from(schema.events)
+        .where(whereClause)
+        .orderBy(desc(schema.events.createdAt))
+        .limit(pageSize)
+        .offset(offset);
+
+    // Get total count
+    const countResult = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(schema.events)
+        .where(whereClause);
+
+    const total = countResult[0]?.count ?? 0;
+
+    return {
+        events: events.map(mapEventToResponse),
+        total,
+        page,
+        pageSize,
+        hasMore: offset + events.length < total,
+    };
+}
+
+/**
+ * Get a single event by ID
+ */
+export async function getEventById(id: string) {
+    const [event] = await db.select().from(schema.events).where(eq(schema.events.id, id)).limit(1);
+
+    return event ? mapEventToResponse(event) : null;
+}
+
+/**
+ * Get events for a specific task
+ */
+export async function getEventsByTask(taskId: string) {
+    const events = await db
+        .select()
+        .from(schema.events)
+        .where(eq(schema.events.taskId, taskId))
+        .orderBy(schema.events.createdAt);
+
+    // Build summary
+    const summary = {
+        handshakeAt: null as string | null,
+        closedAt: null as string | null,
+        prCount: 0,
+        approvalCount: 0,
+        ciPassed: false,
+    };
+
+    for (const event of events) {
+        if (event.eventType === "handshake") {
+            summary.handshakeAt = event.createdAt.toISOString();
+        }
+        if (event.eventType === "closure_approved") {
+            summary.closedAt = event.createdAt.toISOString();
+        }
+        if (event.eventType === "pr_opened" || event.eventType === "pr_merged") {
+            summary.prCount++;
+        }
+        if (event.eventType === "pr_approved") {
+            summary.approvalCount++;
+        }
+        if (event.eventType === "ci_passed") {
+            summary.ciPassed = true;
+        }
+    }
+
+    return {
+        taskId,
+        events: events.map(mapEventToResponse),
+        summary,
+    };
+}
+
+/**
+ * Create a new hash-chained event
+ */
+export async function createEvent(input: CreateEventInput) {
+    // Create hashed event data
+    const eventData = await createHashedEvent(
+        {
+            eventType: input.eventType,
+            triggerSource: input.triggerSource,
+            payload: input.payload,
+            workspaceId: input.workspaceId,
+            taskId: input.taskId,
+            proofPacketId: input.proofPacketId,
+        },
+        db,
+    );
+
+    // Insert into database
+    const [event] = await db.insert(schema.events).values(eventData).returning();
+
+    return mapEventToResponse(event);
+}
+
+/**
+ * Verify hash chain integrity for a workspace
+ */
+export async function verifyWorkspaceChain(workspaceId: string) {
+    const events = await db
+        .select()
+        .from(schema.events)
+        .where(eq(schema.events.workspaceId, workspaceId))
+        .orderBy(schema.events.createdAt);
+
+    return verifyChainIntegrity(events);
+}
+
+// ============================================
+// Helpers
+// ============================================
+
+function mapEventToResponse(event: schema.Event) {
+    return {
+        id: event.id,
+        eventType: event.eventType,
+        triggerSource: event.triggerSource,
+        prevHash: event.prevHash,
+        eventHash: event.eventHash,
+        payload: event.payload,
+        workspaceId: event.workspaceId,
+        taskId: event.taskId,
+        createdAt: event.createdAt.toISOString(),
+    };
+}

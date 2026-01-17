@@ -1,13 +1,13 @@
 /**
  * Authentication Service
- * 
+ *
  * Manages OAuth flows for Slack, GitHub, and Jira.
  * Handles token storage with encryption.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { decryptToken, encryptToken } from '../lib/token-encryption';
-import * as workspacesService from './workspaces.service';
+import { createClient } from "@supabase/supabase-js";
+import { decryptToken, encryptToken } from "../lib/token-encryption";
+import * as workspacesService from "./workspaces.service";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY!;
@@ -15,19 +15,19 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY!;
 // OAuth endpoints
 const OAUTH_CONFIG = {
     slack: {
-        authorizeUrl: 'https://slack.com/oauth/v2/authorize',
-        tokenUrl: 'https://slack.com/api/oauth.v2.access',
-        scopes: ['chat:write', 'users:read', 'users:read.email', 'app_mentions:read'],
+        authorizeUrl: "https://slack.com/oauth/v2/authorize",
+        tokenUrl: "https://slack.com/api/oauth.v2.access",
+        scopes: ["chat:write", "users:read", "users:read.email", "app_mentions:read"],
     },
     github: {
-        authorizeUrl: 'https://github.com/login/oauth/authorize',
-        tokenUrl: 'https://github.com/login/oauth/access_token',
-        scopes: ['read:user', 'repo', 'write:repo_hook'],
+        authorizeUrl: "https://github.com/login/oauth/authorize",
+        tokenUrl: "https://github.com/login/oauth/access_token",
+        scopes: ["read:user", "repo", "write:repo_hook"],
     },
     jira: {
-        authorizeUrl: 'https://auth.atlassian.com/authorize',
-        tokenUrl: 'https://auth.atlassian.com/oauth/token',
-        scopes: ['read:jira-work', 'write:jira-work', 'read:jira-user'],
+        authorizeUrl: "https://auth.atlassian.com/authorize",
+        tokenUrl: "https://auth.atlassian.com/oauth/token",
+        scopes: ["read:jira-work", "write:jira-work", "read:jira-user"],
     },
 };
 
@@ -39,7 +39,7 @@ export type OAuthProvider = keyof typeof OAUTH_CONFIG;
 export function getAuthorizationUrl(
     provider: OAuthProvider,
     state: string,
-    redirectUri: string
+    redirectUri: string,
 ): string {
     const config = OAUTH_CONFIG[provider];
     const clientId = process.env[`${provider.toUpperCase()}_CLIENT_ID`];
@@ -52,8 +52,8 @@ export function getAuthorizationUrl(
         client_id: clientId,
         redirect_uri: redirectUri,
         state,
-        scope: config.scopes.join(' '),
-        response_type: 'code',
+        scope: config.scopes.join(" "),
+        response_type: "code",
     });
 
     return `${config.authorizeUrl}?${params}`;
@@ -65,7 +65,7 @@ export function getAuthorizationUrl(
 export async function exchangeCodeForToken(
     provider: OAuthProvider,
     code: string,
-    redirectUri: string
+    redirectUri: string,
 ): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number }> {
     const config = OAUTH_CONFIG[provider];
     const clientId = process.env[`${provider.toUpperCase()}_CLIENT_ID`];
@@ -76,7 +76,7 @@ export async function exchangeCodeForToken(
     }
 
     const body = new URLSearchParams({
-        grant_type: 'authorization_code',
+        grant_type: "authorization_code",
         code,
         redirect_uri: redirectUri,
         client_id: clientId,
@@ -84,10 +84,10 @@ export async function exchangeCodeForToken(
     });
 
     const response = await fetch(config.tokenUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            Accept: 'application/json',
+            "Content-Type": "application/x-www-form-urlencoded",
+            Accept: "application/json",
         },
         body: body.toString(),
     });
@@ -113,22 +113,22 @@ export async function storeOAuthToken(
     workspaceId: string,
     provider: OAuthProvider,
     accessToken: string,
-    refreshToken?: string
+    refreshToken?: string,
 ): Promise<void> {
     const encryptedAccessToken = await encryptToken(accessToken);
-    const encryptedRefreshToken = refreshToken ? await encryptToken(refreshToken) : undefined;
+    const _encryptedRefreshToken = refreshToken ? await encryptToken(refreshToken) : undefined;
 
     const updates: Record<string, string | undefined> = {};
 
     switch (provider) {
-        case 'slack':
+        case "slack":
             updates.slackAccessToken = encryptedAccessToken;
             break;
-        case 'github':
+        case "github":
             // For GitHub Apps, we store installation token differently
             updates.githubInstallationId = encryptedAccessToken;
             break;
-        case 'jira':
+        case "jira":
             updates.jiraAccessToken = encryptedAccessToken;
             break;
     }
@@ -141,24 +141,24 @@ export async function storeOAuthToken(
  */
 export async function getOAuthToken(
     workspaceId: string,
-    provider: OAuthProvider
+    provider: OAuthProvider,
 ): Promise<string | null> {
     const workspace = await workspacesService.getWorkspaceById(workspaceId);
 
     if (!workspace) {
-        throw new Error('Workspace not found');
+        throw new Error("Workspace not found");
     }
 
     let encryptedToken: string | null = null;
 
     switch (provider) {
-        case 'slack':
+        case "slack":
             encryptedToken = workspace.slackAccessToken;
             break;
-        case 'github':
+        case "github":
             encryptedToken = workspace.githubInstallationId;
             break;
-        case 'jira':
+        case "jira":
             encryptedToken = workspace.jiraAccessToken;
             break;
     }
@@ -189,7 +189,7 @@ export async function verifySupabaseToken(token: string) {
     const { data, error } = await supabase.auth.getUser();
 
     if (error || !data.user) {
-        throw new Error('Invalid or expired token');
+        throw new Error("Invalid or expired token");
     }
 
     return data.user;

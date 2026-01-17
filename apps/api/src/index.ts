@@ -3,12 +3,12 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { openAPISpecs } from "hono-openapi";
+import auth from "./modules/auth/routes";
 import events from "./modules/events/routes";
 import policies from "./modules/policies/routes";
 import proofs from "./modules/proofs/routes";
 // Module imports
 import webhooks from "./modules/webhooks/routes";
-import auth from "./modules/auth/routes";
 
 const app = new Hono().use("*", logger()).use("*", cors());
 

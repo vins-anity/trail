@@ -1,21 +1,21 @@
 /**
  * Slack Notification Service
- * 
+ *
  * Implements notification flows from Trail AI thesis:
  * - PHASE 1: Passive Handshake notification to developer
  * - PHASE 3: Optimistic Closure proposal to team lead
- * 
+ *
  * @see docs/trail.md Section 5.3 "End-to-End Event Flow"
  */
 
-import * as slackClient from '../lib/slack-client';
+import * as slackClient from "../lib/slack-client";
 
 /**
  * PHASE 1: Send Passive Handshake notification to developer
- * 
+ *
  * Thesis requirement:
  * "Slack DM to Dev: 'Tracking started for [Task Name]. Click [Reject] if this is an error.'"
- * 
+ *
  * @param workspaceId - Workspace ID
  * @param taskId - Jira task ID (e.g., TRAIL-123)
  * @param taskTitle - Human-readable task title
@@ -25,7 +25,7 @@ export async function sendHandshakeNotification(
     workspaceId: string,
     taskId: string,
     taskTitle: string,
-    developerEmail: string
+    developerEmail: string,
 ): Promise<void> {
     try {
         const client = await slackClient.createSlackClient(workspaceId);
@@ -41,25 +41,25 @@ export async function sendHandshakeNotification(
         // Build interactive message with Reject button (Block Kit format)
         const blocks = [
             {
-                type: 'section',
+                type: "section",
                 text: {
-                    type: 'mrkdwn',
+                    type: "mrkdwn",
                     text: `*Tracking started for ${taskId}*\n${taskTitle}\n\nClick *Reject* if this assignment is an error.`,
                 },
             },
             {
-                type: 'actions',
+                type: "actions",
                 elements: [
                     {
-                        type: 'button',
+                        type: "button",
                         text: {
-                            type: 'plain_text',
-                            text: 'Reject',
+                            type: "plain_text",
+                            text: "Reject",
                             emoji: true,
                         },
-                        style: 'danger',
+                        style: "danger",
                         value: taskId,
-                        action_id: 'reject_handshake',
+                        action_id: "reject_handshake",
                     },
                 ],
             },
@@ -69,7 +69,7 @@ export async function sendHandshakeNotification(
             client,
             userId,
             blocks,
-            `Tracking started for ${taskId}: ${taskTitle}`
+            `Tracking started for ${taskId}: ${taskTitle}`,
         );
 
         console.log(`✅ Handshake notification sent to ${developerEmail} for ${taskId}`);
@@ -81,10 +81,10 @@ export async function sendHandshakeNotification(
 
 /**
  * PHASE 3: Send Optimistic Closure proposal to team lead
- * 
+ *
  * Thesis requirement:
  * "Slack message to Lead: 'Task Complete. Auto-closing in 24h. Click [Veto] to stop.'"
- * 
+ *
  * @param workspaceId - Workspace ID
  * @param taskId - Jira task ID
  * @param taskTitle - Human-readable task title
@@ -96,7 +96,7 @@ export async function sendClosureProposal(
     taskId: string,
     taskTitle: string,
     leadEmail: string,
-    autoCloseAt: Date
+    autoCloseAt: Date,
 ): Promise<void> {
     try {
         const client = await slackClient.createSlackClient(workspaceId);
@@ -115,25 +115,25 @@ export async function sendClosureProposal(
         // Build interactive message with Veto button
         const blocks = [
             {
-                type: 'section',
+                type: "section",
                 text: {
-                    type: 'mrkdwn',
+                    type: "mrkdwn",
                     text: `*Task Complete: ${taskId}*\n${taskTitle}\n\n✅ PR merged, approvals met, CI passed.\n⏰ Auto-closing in *${hoursUntilClose}h*.\n\nClick *Veto* to prevent auto-close.`,
                 },
             },
             {
-                type: 'actions',
+                type: "actions",
                 elements: [
                     {
-                        type: 'button',
+                        type: "button",
                         text: {
-                            type: 'plain_text',
-                            text: 'Veto',
+                            type: "plain_text",
+                            text: "Veto",
                             emoji: true,
                         },
-                        style: 'danger',
+                        style: "danger",
                         value: taskId,
-                        action_id: 'veto_closure',
+                        action_id: "veto_closure",
                     },
                 ],
             },
@@ -143,7 +143,7 @@ export async function sendClosureProposal(
             client,
             userId,
             blocks,
-            `Task ${taskId} complete. Auto-closing in ${hoursUntilClose}h.`
+            `Task ${taskId} complete. Auto-closing in ${hoursUntilClose}h.`,
         );
 
         console.log(`✅ Closure proposal sent to ${leadEmail} for ${taskId}`);

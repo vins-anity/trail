@@ -6,7 +6,7 @@ import * as authService from "../../services/auth.service";
 
 /**
  * Auth Module - OAuth Flows
- * 
+ *
  * Handles OAuth authorization and callbacks for Slack, GitHub, and Jira.
  */
 
@@ -36,7 +36,7 @@ const auth = new Hono()
             const authUrl = authService.getAuthorizationUrl("slack", state, redirectUri);
 
             return c.redirect(authUrl);
-        }
+        },
     )
     .get(
         "/slack/callback",
@@ -71,11 +71,11 @@ const auth = new Hono()
                 workspaceId,
                 "slack",
                 tokens.accessToken,
-                tokens.refreshToken
+                tokens.refreshToken,
             );
 
             return c.json({ success: true, message: "Slack connected successfully" });
-        }
+        },
     )
 
     // ----------------------------------------
@@ -103,7 +103,7 @@ const auth = new Hono()
             const authUrl = authService.getAuthorizationUrl("github", state, redirectUri);
 
             return c.redirect(authUrl);
-        }
+        },
     )
     .get(
         "/github/callback",
@@ -131,11 +131,11 @@ const auth = new Hono()
                 workspaceId,
                 "github",
                 tokens.accessToken,
-                tokens.refreshToken
+                tokens.refreshToken,
             );
 
             return c.json({ success: true, message: "GitHub connected successfully" });
-        }
+        },
     )
 
     // ----------------------------------------
@@ -163,7 +163,7 @@ const auth = new Hono()
             const authUrl = authService.getAuthorizationUrl("jira", state, redirectUri);
 
             return c.redirect(authUrl);
-        }
+        },
     )
     .get(
         "/jira/callback",
@@ -191,11 +191,11 @@ const auth = new Hono()
                 workspaceId,
                 "jira",
                 tokens.accessToken,
-                tokens.refreshToken
+                tokens.refreshToken,
             );
 
             return c.json({ success: true, message: "Jira connected successfully" });
-        }
+        },
     );
 
 export default auth;

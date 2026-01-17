@@ -3,14 +3,14 @@
  *
  * Database operations for multi-tenant workspace management.
  * Provides lookup by integration IDs (Slack, GitHub, Jira).
- * 
+ *
  * Security: OAuth tokens are encrypted at rest using AES-256-GCM.
  */
 
 import { eq, or } from "drizzle-orm";
 import type { PolicyTier } from "shared";
 import { db, schema } from "../db";
-import { encryptToken, decryptToken } from "../lib/token-encryption";
+import { decryptToken, encryptToken } from "../lib/token-encryption";
 
 // ============================================
 // Types

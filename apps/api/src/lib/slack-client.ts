@@ -1,18 +1,18 @@
 /**
  * Slack API Client
- * 
+ *
  * Wrapper around @slack/web-api for Trail AI.
  * Handles authentication and common operations.
  */
 
-import { WebClient } from '@slack/web-api';
-import * as authService from '../services/auth.service';
+import { WebClient } from "@slack/web-api";
+import * as authService from "../services/auth.service";
 
 /**
  * Create authenticated Slack client for workspace
  */
 export async function createSlackClient(workspaceId: string): Promise<WebClient> {
-    const token = await authService.getOAuthToken(workspaceId, 'slack');
+    const token = await authService.getOAuthToken(workspaceId, "slack");
 
     if (!token) {
         throw new Error(`Slack not connected for workspace ${workspaceId}`);
@@ -25,10 +25,7 @@ export async function createSlackClient(workspaceId: string): Promise<WebClient>
  * Find Slack user ID by email
  * Uses users.lookupByEmail API
  */
-export async function findUserByEmail(
-    client: WebClient,
-    email: string
-): Promise<string | null> {
+export async function findUserByEmail(client: WebClient, email: string): Promise<string | null> {
     try {
         const result = await client.users.lookupByEmail({ email });
 
@@ -51,7 +48,7 @@ export async function sendDirectMessage(
     client: WebClient,
     userId: string,
     blocks: any[],
-    text: string
+    text: string,
 ): Promise<void> {
     try {
         // Open DM channel
@@ -60,7 +57,7 @@ export async function sendDirectMessage(
         });
 
         if (!conversation.ok || !conversation.channel) {
-            throw new Error('Failed to open DM channel');
+            throw new Error("Failed to open DM channel");
         }
 
         // Send message

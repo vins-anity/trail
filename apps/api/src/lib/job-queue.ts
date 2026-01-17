@@ -76,7 +76,7 @@ export async function scheduleClosureCheck(taskId: string, workspaceId: string, 
  * Veto/Cancel a pending closure check
  * @param taskId The task ID (used as singleton key)
  */
-export async function cancelClosureCheck(taskId: string) {
+export async function cancelClosureCheck(_taskId: string) {
     if (!boss) throw new Error("Job queue not started");
 
     // pg-boss doesn't strictly support "cancel by singleton key" easily in v9 without fetching ID

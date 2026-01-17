@@ -3,6 +3,7 @@ import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
 import { type EventType, type JiraIssueEvent, WebhookResponseSchema } from "shared";
 import { scheduleClosureCheck } from "../../lib/job-queue";
+import { RateLimits, rateLimiter } from "../../middleware/rate-limiter";
 import {
     verifyGitHubSignature,
     verifyJiraSignature,
@@ -30,6 +31,7 @@ const webhooks = new Hono()
     // ----------------------------------------
     .post(
         "/slack/events",
+        rateLimiter(RateLimits.webhooks),
         verifySlackSignature,
         describeRoute({
             tags: ["Webhooks"],
@@ -66,6 +68,7 @@ const webhooks = new Hono()
     // ----------------------------------------
     .post(
         "/slack/interactive",
+        rateLimiter(RateLimits.webhooks),
         verifySlackSignature,
         describeRoute({
             tags: ["Webhooks"],
@@ -131,6 +134,7 @@ const webhooks = new Hono()
     // ----------------------------------------
     .post(
         "/github",
+        rateLimiter(RateLimits.webhooks),
         verifyGitHubSignature,
         describeRoute({
             tags: ["Webhooks"],
@@ -260,9 +264,10 @@ const webhooks = new Hono()
                                 await slackService.sendClosureProposal(
                                     workspace.id,
                                     taskId,
-                                    payload.pull_request?.title || `PR #${payload.pull_request?.number}`,
+                                    payload.pull_request?.title ||
+                                        `PR #${payload.pull_request?.number}`,
                                     prAuthorEmail,
-                                    new Date(checkResult.scheduledCloseAt)
+                                    new Date(checkResult.scheduledCloseAt),
                                 );
                             }
                         }
@@ -279,6 +284,7 @@ const webhooks = new Hono()
     // ----------------------------------------
     .post(
         "/jira",
+        rateLimiter(RateLimits.webhooks),
         verifyJiraSignature,
         describeRoute({
             tags: ["Webhooks"],
@@ -349,7 +355,7 @@ const webhooks = new Hono()
                             workspace.id,
                             taskId,
                             taskTitle,
-                            assigneeEmail
+                            assigneeEmail,
                         );
                     }
                 } else {

@@ -4,7 +4,7 @@
  * TDD approach: Tests for the core API endpoints
  */
 
-import { beforeAll, describe, expect, it } from "bun:test";
+import { describe, expect, it } from "bun:test";
 import app from "../index";
 
 describe("Trail AI API", () => {

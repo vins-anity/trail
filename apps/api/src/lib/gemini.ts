@@ -122,7 +122,7 @@ Summary:`;
             summary,
             model: GEMINI_MODEL,
         };
-    } catch (error) {
+    } catch (_error) {
         // Fallback summary if AI fails
         const fallbackSummary = `${input.taskKey}: ${input.taskSummary}. This task has been reviewed and approved for delivery.`;
         return {

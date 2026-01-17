@@ -66,7 +66,7 @@ export function isValidUUID(str: string): boolean {
  */
 export async function withUUIDValidation<T>(
     id: string,
-    resourceName: string,
+    _resourceName: string,
     operation: () => Promise<T | null>,
 ): Promise<T | null> {
     if (!isValidUUID(id)) {

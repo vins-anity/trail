@@ -11,6 +11,7 @@ import {
     PolicyTierSchema,
 } from "shared";
 import * as v from "valibot";
+import { isValidUUID } from "../../lib/error";
 import * as policiesService from "../../services/policies.service";
 
 /**
@@ -257,7 +258,6 @@ const policies = new Hono()
             }
 
             // Validate UUID format before querying
-            const { isValidUUID } = await import("../../lib/error");
             if (!isValidUUID(id)) {
                 return c.json({ error: "Policy not found" }, 404);
             }

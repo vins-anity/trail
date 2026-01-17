@@ -3,6 +3,7 @@ import { describeRoute } from "hono-openapi";
 import { resolver, validator as vValidator } from "hono-openapi/valibot";
 import { ChainVerificationSchema, EventListSchema, EventQuerySchema, EventSchema } from "shared";
 import * as v from "valibot";
+import { isValidUUID } from "../../lib/error";
 import * as eventsService from "../../services/events.service";
 
 /**
@@ -83,7 +84,6 @@ const events = new Hono()
             const id = c.req.param("id");
 
             // Validate UUID format
-            const { isValidUUID } = await import("../../lib/error");
             if (!isValidUUID(id)) {
                 return c.json({ error: "Event not found" }, 404);
             }

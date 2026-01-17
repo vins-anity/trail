@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
-import { type JiraIssueEvent, WebhookResponseSchema } from "shared";
+import { type EventType, type JiraIssueEvent, WebhookResponseSchema } from "shared";
 import { scheduleClosureCheck } from "../../lib/job-queue";
 import {
     verifyGitHubSignature,
@@ -26,15 +26,15 @@ function extractTaskId(text: string | undefined): string | null {
 
 const webhooks = new Hono()
     // ----------------------------------------
-    // Slack Webhook
+    // Slack Events Webhook
     // ----------------------------------------
     .post(
-        "/slack",
+        "/slack/events",
         verifySlackSignature,
         describeRoute({
             tags: ["Webhooks"],
             summary: "Receive Slack webhook events",
-            description: "Endpoint for Slack events.",
+            description: "Endpoint for Slack Events API (url_verification, messages, etc.).",
             responses: {
                 200: {
                     content: { "application/json": { schema: resolver(WebhookResponseSchema) } },
@@ -46,11 +46,83 @@ const webhooks = new Hono()
             const rawBody = c.get("rawBody") || (await c.req.text());
             const payload = JSON.parse(rawBody);
 
+            // Slack URL verification challenge
             if (payload.type === "url_verification") {
                 return c.json({ challenge: payload.challenge });
             }
 
-            return c.json({ success: true, message: "Slack webhook acknowledged" });
+            // Handle actual events (e.g., messages, app mentions)
+            if (payload.event) {
+                console.log(`[Slack Event] ${payload.event.type}:`, payload.event);
+                // Future: Handle specific event types (app_mention, message, etc.)
+            }
+
+            return c.json({ success: true, message: "Slack event received" });
+        },
+    )
+
+    // ----------------------------------------
+    // Slack Interactive Components (Buttons, Modals)
+    // ----------------------------------------
+    .post(
+        "/slack/interactive",
+        verifySlackSignature,
+        describeRoute({
+            tags: ["Webhooks"],
+            summary: "Receive Slack interactive components",
+            description: "Handles button clicks (Reject, Veto), modal submissions, etc.",
+            responses: {
+                200: {
+                    content: { "application/json": { schema: resolver(WebhookResponseSchema) } },
+                    description: "OK",
+                },
+            },
+        }),
+        async (c) => {
+            const rawBody = c.get("rawBody") || (await c.req.text());
+            // Slack sends interactive payloads as form-encoded with 'payload' field
+            const formData = new URLSearchParams(rawBody);
+            const payloadStr = formData.get("payload");
+
+            if (!payloadStr) {
+                return c.json({ success: false, message: "No payload found" }, 400);
+            }
+
+            const payload = JSON.parse(payloadStr);
+            console.log(`[Slack Interactive] Type: ${payload.type}, Action:`, payload.actions);
+
+            // Handle button actions
+            if (payload.type === "block_actions" && payload.actions) {
+                const action = payload.actions[0];
+                const actionId = action.action_id;
+                const taskId = action.value; // Assuming button value contains taskId
+
+                // Example: Handle "Reject" button from Passive Handshake
+                if (actionId === "reject_task") {
+                    console.log(`[Slack] Developer rejected task: ${taskId}`);
+                    // Log rejection event
+                    // TODO: Call eventsService.createEvent with 'handshake_rejected'
+
+                    return c.json({
+                        response_type: "ephemeral",
+                        text: `✅ Task ${taskId} has been rejected. Your PM will be notified.`,
+                    });
+                }
+
+                // Example: Handle "Veto" button from Optimistic Closure
+                if (actionId === "veto_closure") {
+                    console.log(`[Slack] Manager vetoed closure for task: ${taskId}`);
+                    // Log veto event and cancel scheduled job
+                    // TODO: Cancel pg-boss job, log 'closure_vetoed' event
+
+                    return c.json({
+                        response_type: "ephemeral",
+                        text: `🛑 Auto-closure vetoed for ${taskId}. Task remains open.`,
+                    });
+                }
+            }
+
+            return c.json({ success: true, message: "Interactive payload processed" });
         },
     )
 
@@ -94,7 +166,7 @@ const webhooks = new Hono()
             const taskId = extractTaskId(branchName) || extractTaskId(prTitle);
 
             // 3. Map Event
-            let _trailEventType: string | null = null;
+            let _trailEventType: EventType | null = null;
             const eventPayload: Record<string, unknown> = {
                 raw: payload,
                 repo: payload.repository?.full_name,
@@ -134,7 +206,7 @@ const webhooks = new Hono()
                 await eventsService.createEvent({
                     workspaceId: workspace.id,
                     taskId: taskId || undefined,
-                    eventType: _trailEventType as any,
+                    eventType: _trailEventType,
                     triggerSource: "github_webhook",
                     payload: eventPayload,
                 });

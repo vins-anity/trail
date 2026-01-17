@@ -26,6 +26,9 @@ export * from "./schemas/workspaces";
 // Webhooks - External integrations
 export * from "./schemas/webhooks";
 
+// Errors - Standardized error responses
+export * from "./schemas/errors";
+
 // ============================================
 // Common Schemas
 // ============================================

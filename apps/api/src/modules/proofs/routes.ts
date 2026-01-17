@@ -11,6 +11,7 @@ import {
     ShareResultSchema,
 } from "shared";
 import * as v from "valibot";
+import { isValidUUID } from "../../lib/error";
 import * as geminiService from "../../lib/gemini";
 import * as proofsService from "../../services/proofs.service";
 
@@ -93,7 +94,6 @@ const proofs = new Hono()
             const id = c.req.param("id");
 
             // Validate UUID format
-            const { isValidUUID } = await import("../../lib/error");
             if (!isValidUUID(id)) {
                 return c.json({ error: "Proof packet not found" }, 404);
             }

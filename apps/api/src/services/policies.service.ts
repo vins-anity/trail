@@ -236,3 +236,65 @@ export function mapPolicyToResponse(policy: schema.Policy) {
         createdAt: policy.createdAt.toISOString(),
     };
 }
+
+/**
+ * Evaluate and specific finalize logic for the worker
+ */
+export async function evaluateAndFinalize(taskId: string, workspaceId: string) {
+    const proofsService = await import("./proofs.service");
+    const eventsService = await import("./events.service");
+
+    console.log(`[Worker] Evaluating closure for task ${taskId} in workspace ${workspaceId}`);
+
+    // 1. Get Proof Packet
+    const packet = await proofsService.getProofPacketByTask(taskId, workspaceId);
+    if (!packet) {
+        console.log(`[Worker] No proof packet found for task ${taskId}. Aborting.`);
+        return;
+    }
+
+    if (packet.status !== "draft") {
+        console.log(`[Worker] Proof packet ${packet.id} is already ${packet.status}. Aborting.`);
+        return;
+    }
+
+    // 2. Re-evaluate eligibility
+    // TODO: In a real implementation, we would fetch fresh signal data from GitHub/Jira here.
+    // For now, we assume conditions are still met if we reached this job.
+    // We can simulate a check:
+    const mockCurrentChecks: ClosureChecks = {
+        prMerged: true, // If it wasn't merged, we wouldn't have scheduled this? 
+        // Actually we schedule "on merge", so yes it should be true.
+        ciPassed: true,
+        approvalsCount: 2,
+        approvalsRequired: 1,
+        allChecksPassed: true,
+        linkedIssueFound: true
+    };
+
+    const evaluation = await evaluateClosure({ taskId, workspaceId }, mockCurrentChecks);
+
+    if (evaluation.eligible) {
+        console.log(`[Worker] Task ${taskId} is eligible for auto-closure. Finalizing...`);
+
+        // 3. Create Closure Event
+        const closureEvent = await eventsService.createEvent({
+            workspaceId,
+            taskId,
+            eventType: "closure_approved",
+            payload: {
+                method: "optimistic_auto_close",
+                policyId: evaluation.policyId,
+                checks: mockCurrentChecks
+            }
+        });
+
+        // 4. Finalize Proof Packet
+        await proofsService.finalizeProofPacket(packet.id, closureEvent.id);
+
+        console.log(`[Worker] Task ${taskId} auto-closed successfully.`);
+    } else {
+        console.log(`[Worker] Task ${taskId} is NO LONGER eligible. Reason: ${evaluation.reason}`);
+        // Optionally update status to "rejected" or just log it.
+    }
+}

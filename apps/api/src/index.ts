@@ -8,6 +8,7 @@ import policies from "./modules/policies/routes";
 import proofs from "./modules/proofs/routes";
 // Module imports
 import webhooks from "./modules/webhooks/routes";
+import auth from "./modules/auth/routes";
 
 const app = new Hono().use("*", logger()).use("*", cors());
 
@@ -45,6 +46,7 @@ app.get("/", (c) => {
 // ============================================
 // Mount Modules (Vertical Slices)
 // ============================================
+app.route("/auth", auth);
 app.route("/webhooks", webhooks);
 app.route("/proofs", proofs);
 app.route("/policies", policies);

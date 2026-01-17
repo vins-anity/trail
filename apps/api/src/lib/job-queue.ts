@@ -48,53 +48,56 @@ export async function startJobQueue() {
         await policiesService.evaluateAndFinalize(taskId, workspaceId);
     });
 
-    console.log("Job Queue started and workers registered.");
+    console.log("Job Queue started successfully");
     return boss;
 }
 
 /**
- * Schedule a closure check
- * @param taskId Task ID to check
- * @param workspaceId Workspace ID
- * @param delayHours Delay in hours (default 24)
+ * Stop the job queue gracefully
  */
-export async function scheduleClosureCheck(taskId: string, workspaceId: string, delayHours = 24) {
-    if (!boss) {
-        throw new Error("Job queue not started");
+export async function stopJobQueue() {
+    if (boss) {
+        await boss.stop();
+        boss = null;
     }
+}
 
-    const jobId = await boss.send(
-        QUEUE_NAMES.CHECK_CLOSURE,
-        { taskId, workspaceId },
-        { startAfter: delayHours * 60 * 60, singletonKey: taskId }, // Singleton ensures only one check per task
+/**
+ * Get boss instance (for testing or advanced use)
+ */
+export async function getBoss() {
+    if (!boss) {
+        await startJobQueue();
+    }
+    return boss!;
+}
+
+/**
+ * Schedule a closure eligibility check job
+ */
+export async function scheduleClosureCheck(
+    workspaceId: string,
+    proofPacketId: string,
+    delayHours = 24,
+) {
+    const bossInstance = await getBoss();
+    const jobId = await bossInstance.send(
+        "check_closure_eligibility",
+        { workspaceId, proofPacketId },
+        { startAfter: `${delayHours} hours` },
     );
-
+    console.log(
+        `Scheduled closure check for proof=${proofPacketId} in ${delayHours}h, jobId=${jobId}`,
+    );
     return jobId;
 }
 
 /**
- * Veto/Cancel a pending closure check
- * @param taskId The task ID (used as singleton key)
+ * Cancel a scheduled closure job (for veto)
  */
-export async function cancelClosureCheck(_taskId: string) {
-    if (!boss) throw new Error("Job queue not started");
-
-    // pg-boss doesn't strictly support "cancel by singleton key" easily in v9 without fetching ID
-    // But we can cancel by jobId if we stored it, or use `cancel`.
-    // For now, simpler approach: we just let it run, and the logic inside evaluateAndFinalize
-    // should re-check if it's still eligible (e.g. if status is not "vetoed").
-
-    // However, we can try to cancel via key if supported, or just rely on state check.
-    // Documentation says: boss.cancel(jobId)
-    // We might need to store the jobId in the database if we want to cancel explicitly.
-    // For MVP, reliance on "State Check at Runtime" is safer and consistent with "Optimistic" approach.
-
-    // Additional thought: "Veto" might just update the Proof Packet status to "VETOED".
-    // When the job runs, it sees "VETOED" and aborts.
-
-    return true;
-}
-
-export function getBoss() {
-    return boss;
+export async function cancelClosureJob(jobId: string) {
+    const bossInstance = await getBoss();
+    const cancelled = await bossInstance.cancel(jobId);
+    console.log(`Cancelled closure job ${jobId}: ${cancelled ? "success" : "not found"}`);
+    return cancelled;
 }

@@ -174,6 +174,49 @@ export async function verifyWorkspaceChain(workspaceId: string) {
 // Helpers
 // ============================================
 
+/**
+ * Mark a handshake event as rejected
+ */
+export async function rejectHandshake(eventId: string, userId: string) {
+    const [updated] = await db
+        .update(schema.events)
+        .set({
+            rejectedBy: userId,
+            rejectedAt: new Date(),
+        })
+        .where(eq(schema.events.id, eventId))
+        .returning();
+
+    if (!updated) {
+        throw new Error(`Event ${eventId} not found`);
+    }
+
+    console.log(`Handshake rejected: event=${eventId}, user=${userId}`);
+    return mapEventToResponse(updated);
+}
+
+/**
+ * Mark an optimistic closure as vetoed
+ */
+export async function vetoOptimisticClosure(closureJobId: string, userId: string) {
+    // Update the closure event
+    const [updated] = await db
+        .update(schema.events)
+        .set({
+            vetoedBy: userId,
+            vetoedAt: new Date(),
+        })
+        .where(eq(schema.events.id, closureJobId))
+        .returning();
+
+    if (!updated) {
+        throw new Error(`Closure event ${closureJobId} not found`);
+    }
+
+    console.log(`Closure vetoed: event=${closureJobId}, user=${userId}`);
+    return mapEventToResponse(updated);
+}
+
 function mapEventToResponse(event: schema.Event) {
     return {
         id: event.id,
@@ -184,6 +227,10 @@ function mapEventToResponse(event: schema.Event) {
         payload: event.payload,
         workspaceId: event.workspaceId,
         taskId: event.taskId,
+        rejectedBy: event.rejectedBy,
+        rejectedAt: event.rejectedAt?.toISOString(),
+        vetoedBy: event.vetoedBy,
+        vetoedAt: event.vetoedAt?.toISOString(),
         createdAt: event.createdAt.toISOString(),
     };
 }

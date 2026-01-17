@@ -7,6 +7,7 @@ import auth from "./modules/auth/routes";
 import events from "./modules/events/routes";
 import policies from "./modules/policies/routes";
 import proofs from "./modules/proofs/routes";
+import slackInteractions from "./modules/slack/interactions";
 // Module imports
 import webhooks from "./modules/webhooks/routes";
 
@@ -48,6 +49,7 @@ app.get("/", (c) => {
 // ============================================
 app.route("/auth", auth);
 app.route("/webhooks", webhooks);
+app.route("/slack/interactions", slackInteractions);
 app.route("/proofs", proofs);
 app.route("/policies", policies);
 app.route("/events", events);

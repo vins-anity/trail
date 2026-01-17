@@ -113,6 +113,12 @@ export const events = pgTable("events", {
     // Event payload (flexible JSON)
     payload: jsonb("payload").notNull().$type<Record<string, unknown>>(),
 
+    // Interactive button tracking
+    rejectedBy: text("rejected_by"),
+    rejectedAt: timestamp("rejected_at", { withTimezone: true }),
+    vetoedBy: text("vetoed_by"),
+    vetoedAt: timestamp("vetoed_at", { withTimezone: true }),
+
     // References
     workspaceId: uuid("workspace_id")
         .notNull()

@@ -1,13 +1,19 @@
 /**
- * Job Queue (pg-boss)
+ * Job Queue (pg-boss) - Hybrid Architecture
  *
  * Handles scheduled tasks for the Optimistic Closure Engine.
+ * Jobs persist in database even when container sleeps.
+ * Triggered by Supabase pg_cron calling /jobs/process endpoint.
  */
 
 import { PgBoss } from "pg-boss";
 import { policiesService } from "../services";
 
-const connectionString = process.env.DATABASE_URL!;
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+    throw new Error("DATABASE_URL is required for job queue");
+}
 
 // Singleton instance
 let boss: PgBoss | null = null;
@@ -17,87 +23,129 @@ export const QUEUE_NAMES = {
 };
 
 /**
- * Initialize and start the job queue
+ * Initialize pg-boss (does not start worker loop)
  */
-export async function startJobQueue() {
+async function initializeBoss(): Promise<PgBoss> {
     if (boss) return boss;
 
-    if (!connectionString) {
-        throw new Error("DATABASE_URL is required for job queue");
-    }
+    console.log("Initializing pg-boss job queue...");
 
-    console.log("Initializing Job Queue (pg-boss)...");
-
-    // @ts-expect-error - PgBoss constructor issue
-    boss = new PgBoss(connectionString);
+    boss = new PgBoss({ connectionString });
 
     boss.on("error", (error: Error) => console.error("Job Queue Error:", error));
 
     await boss.start();
 
-    // Ensure Queue exists
-    await boss.createQueue(QUEUE_NAMES.CHECK_CLOSURE);
-
-    // Register Workers
-    // biome-ignore lint/suspicious/noExplicitAny: job data is loose
-    await boss.work(QUEUE_NAMES.CHECK_CLOSURE, async (job: any) => {
-        const { taskId, workspaceId } = job.data as { taskId: string; workspaceId: string };
-        console.log(`Processing closure check for task ${taskId}`);
-
-        // Use Policy Service to verify and finalize
-        await policiesService.evaluateAndFinalize(taskId, workspaceId);
-    });
-
-    console.log("Job Queue started successfully");
+    console.log("✅ pg-boss initialized (trigger mode)");
     return boss;
 }
 
 /**
- * Stop the job queue gracefully
+ * Get boss instance
  */
-export async function stopJobQueue() {
-    if (boss) {
-        await boss.stop();
-        boss = null;
-    }
-}
-
-/**
- * Get boss instance (for testing or advanced use)
- */
-export async function getBoss() {
+export async function getBoss(): Promise<PgBoss> {
     if (!boss) {
-        await startJobQueue();
+        await initializeBoss();
     }
     return boss!;
 }
 
 /**
  * Schedule a closure eligibility check job
+ * Job persists in database even when container sleeps
  */
 export async function scheduleClosureCheck(
     workspaceId: string,
     proofPacketId: string,
+    taskId: string,
     delayHours = 24,
-) {
+): Promise<string> {
     const bossInstance = await getBoss();
     const jobId = await bossInstance.send(
-        "check_closure_eligibility",
-        { workspaceId, proofPacketId },
+        QUEUE_NAMES.CHECK_CLOSURE,
+        { workspaceId, proofPacketId, taskId },
         { startAfter: `${delayHours} hours` },
     );
-    console.log(
-        `Scheduled closure check for proof=${proofPacketId} in ${delayHours}h, jobId=${jobId}`,
-    );
-    return jobId;
+
+    console.log(`✅ Scheduled closure check: job=${jobId}, task=${taskId}, delay=${delayHours}h`);
+    return jobId || "";
 }
 
 /**
  * Cancel a scheduled closure job (for veto)
  */
-export async function cancelClosureJob(jobId: string) {
+export async function cancelClosureJob(jobId: string): Promise<boolean> {
     const bossInstance = await getBoss();
     const cancelled = await bossInstance.cancel(jobId);
-    console.log(`Cancelled closure job ${jobId}: ${cancelled ? "success" : "not found"}`);
-    return cancelled;
+    console.log(
+        `${cancelled ? "✅" : "⚠️"} Cancelled closure job ${jobId}: ${cancelled ? "success" : "not found"}`,
+    );
+    return cancelled || false;
+}
+
+/**
+ * Process pending closure jobs
+ * Called by pg_cron via /jobs/process endpoint
+ */
+export async function processPendingJobs(): Promise<{
+    processed: number;
+    failed: number;
+}> {
+    const bossInstance = await getBoss();
+
+    console.log("🔍 Processing pending closure jobs...");
+
+    // Fetch all jobs that are ready to run
+    const jobs = await bossInstance.fetch(QUEUE_NAMES.CHECK_CLOSURE, 10);
+
+    if (!jobs || jobs.length === 0) {
+        console.log("✅ No pending jobs to process");
+        return { processed: 0, failed: 0 };
+    }
+
+    let processed = 0;
+    let failed = 0;
+
+    for (const job of jobs) {
+        try {
+            const { taskId, workspaceId } = job.data as {
+                taskId: string;
+                workspaceId: string;
+            };
+
+            console.log(`📋 Processing closure for task ${taskId}`);
+
+            // Evaluate and finalize the closure
+            await policiesService.evaluateAndFinalize(taskId, workspaceId);
+
+            // Mark job as complete
+            await bossInstance.complete(job.id);
+
+            processed++;
+            console.log(`✅ Completed closure for task ${taskId}`);
+        } catch (error) {
+            console.error(`❌ Failed to process job ${job.id}:`, error);
+
+            // Mark as failed (pg-boss will retry automatically)
+            await bossInstance.fail(
+                job.id,
+                error instanceof Error ? error : new Error(String(error)),
+            );
+
+            failed++;
+        }
+    }
+
+    console.log(`✅ Processed ${processed} jobs, ${failed} failed`);
+    return { processed, failed };
+}
+
+/**
+ * Stop the job queue gracefully
+ */
+export async function stopJobQueue(): Promise<void> {
+    if (boss) {
+        await boss.stop();
+        boss = null;
+    }
 }

@@ -11,8 +11,8 @@ import {
     ShareResultSchema,
 } from "shared";
 import * as v from "valibot";
+import { generateProofSummary } from "../../lib/ai";
 import { isValidUUID } from "../../lib/error";
-import * as geminiService from "../../lib/gemini";
 import * as proofsService from "../../services/proofs.service";
 
 /**
@@ -209,42 +209,31 @@ const proofs = new Hono()
                 return c.json({ error: "Proof packet not found" }, 404);
             }
 
-            // Generate AI summary if Gemini is configured
-            if (geminiService.isConfigured()) {
-                try {
-                    const result = await geminiService.generateProofSummary({
-                        taskKey: packet.taskId,
-                        taskSummary: "Task implementation",
-                        commits: [],
+            aiSummary: result.summary,
+                aiSummaryModel: result.model,
                     });
 
-                    // Update proof packet with summary
-                    await proofsService.updateProofPacket(id, {
-                        aiSummary: result.summary,
-                        aiSummaryModel: result.model,
-                    });
-
-                    return c.json({
-                        success: true,
-                        summary: result.summary,
-                        model: result.model,
-                    });
+return c.json({
+    success: true,
+    summary: result.summary,
+    model: result.model,
+});
                 } catch (_error) {
-                    // Fall through to mock response
-                }
+    // Fall through to mock response
+}
             }
 
-            // Mock response if Gemini not configured
-            const mockSummary =
-                "This update implements secure user authentication with email/password login, " +
-                "password reset functionality, and session management. The changes were reviewed " +
-                "and approved by the team, with all automated tests passing successfully.";
+// Mock response if Gemini not configured
+const mockSummary =
+    "This update implements secure user authentication with email/password login, " +
+    "password reset functionality, and session management. The changes were reviewed " +
+    "and approved by the team, with all automated tests passing successfully.";
 
-            return c.json({
-                success: true,
-                summary: mockSummary,
-                model: "mock",
-            });
+return c.json({
+    success: true,
+    summary: mockSummary,
+    model: "mock",
+});
         },
     )
 
@@ -252,40 +241,36 @@ const proofs = new Hono()
     // Export as PDF
     // ----------------------------------------
     .get(
-        "/:id/pdf",
-        describeRoute({
-            tags: ["Proofs"],
-            summary: "Export Proof Packet as PDF",
-            description: "Generates a downloadable PDF version of the proof packet",
-            responses: {
-                200: {
-                    description: "PDF generation initiated",
-                    content: {
-                        "application/json": {
-                            schema: resolver(ExportResultSchema),
-                        },
-                    },
-                },
-            },
-        }),
-        async (c) => {
-            const id = c.req.param("id");
+    "/:id/pdf",
+    describeRoute({
+        tags: ["Proofs"],
+        summary: "Export Proof Packet as PDF",
+        description: "Generates a downloadable PDF version of the proof packet",
+        responses: 
+            200: 
+                description: "PDF generation initiated",
+                content: 
+                    "application/json": 
+                        schema: resolver(ExportResultSchema),,,,,
+    }),
+    async (c) => {
+        const id = c.req.param("id");
 
-            // Verify packet exists
-            const packet = await proofsService.getProofPacketById(id);
-            if (!packet) {
-                return c.json({ error: "Proof packet not found" }, 404);
-            }
+        // Verify packet exists
+        const packet = await proofsService.getProofPacketById(id);
+        if (!packet) {
+            return c.json({ error: "Proof packet not found" }, 404);
+        }
 
-            // TODO: Generate PDF using a library like puppeteer or react-pdf
+        // TODO: Generate PDF using a library like puppeteer or react-pdf
 
-            return c.json({
-                success: true,
-                url: `/proofs/${id}/download.pdf`,
-                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-            });
-        },
-    )
+        return c.json({
+            success: true,
+            url: `/proofs/${id}/download.pdf`,
+            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        });
+    },
+)
 
     // ----------------------------------------
     // Export as JSON
@@ -297,16 +282,12 @@ const proofs = new Hono()
             summary: "Export Proof Packet as JSON",
             description:
                 "Returns the complete proof packet in the Appendix B JSON format for external integrations.",
-            responses: {
-                200: {
+            responses: 
+                200: 
                     description: "JSON export",
-                    content: {
-                        "application/json": {
-                            schema: resolver(ProofPacketSchema),
-                        },
-                    },
-                },
-            },
+                    content: 
+                        "application/json": 
+                            schema: resolver(ProofPacketSchema),,,,,
         }),
         async (c) => {
             const id = c.req.param("id");
@@ -338,16 +319,12 @@ const proofs = new Hono()
             summary: "Generate shareable link",
             description:
                 "Creates a public, time-limited URL for sharing the proof packet with clients.",
-            responses: {
-                200: {
+            responses: 
+                200: 
                     description: "Shareable link generated",
-                    content: {
-                        "application/json": {
-                            schema: resolver(ShareResultSchema),
-                        },
-                    },
-                },
-            },
+                    content: 
+                        "application/json": 
+                            schema: resolver(ShareResultSchema),,,,,
         }),
         async (c) => {
             const id = c.req.param("id");

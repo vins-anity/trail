@@ -5,6 +5,7 @@ import { logger } from "hono/logger";
 import { openAPISpecs } from "hono-openapi";
 import auth from "./modules/auth/routes";
 import events from "./modules/events/routes";
+import jobs from "./modules/jobs/routes";
 import policies from "./modules/policies/routes";
 import proofs from "./modules/proofs/routes";
 import slackInteractions from "./modules/slack/interactions";
@@ -50,6 +51,7 @@ app.get("/", (c) => {
 app.route("/auth", auth);
 app.route("/webhooks", webhooks);
 app.route("/slack/interactions", slackInteractions);
+app.route("/jobs", jobs);
 app.route("/proofs", proofs);
 app.route("/policies", policies);
 app.route("/events", events);

@@ -40,6 +40,8 @@ async function initializeBoss(): Promise<PgBoss> {
     return boss;
 }
 
+export const startJobQueue = initializeBoss;
+
 /**
  * Get boss instance
  */
@@ -56,15 +58,14 @@ export async function getBoss(): Promise<PgBoss> {
  */
 export async function scheduleClosureCheck(
     workspaceId: string,
-    proofPacketId: string,
     taskId: string,
     delayHours = 24,
 ): Promise<string> {
     const bossInstance = await getBoss();
     const jobId = await bossInstance.send(
         QUEUE_NAMES.CHECK_CLOSURE,
-        { workspaceId, proofPacketId, taskId },
-        { startAfter: `${delayHours} hours` },
+        { workspaceId, taskId },
+        { startAfter: delayHours * 3600, retentionSeconds: 60 * 60 * 24 * 7 }, // Keep details for 7 days
     );
 
     console.log(`✅ Scheduled closure check: job=${jobId}, task=${taskId}, delay=${delayHours}h`);
@@ -76,11 +77,13 @@ export async function scheduleClosureCheck(
  */
 export async function cancelClosureJob(jobId: string): Promise<boolean> {
     const bossInstance = await getBoss();
-    const cancelled = await bossInstance.cancel(jobId);
+    // pg-boss v9+ requires queue name for cancellation by ID
+    const cancelled = await bossInstance.cancel(QUEUE_NAMES.CHECK_CLOSURE, jobId);
     console.log(
         `${cancelled ? "✅" : "⚠️"} Cancelled closure job ${jobId}: ${cancelled ? "success" : "not found"}`,
     );
-    return cancelled || false;
+    // cancelled is usually void or specific response in newer versions, assuming explicit boolean return intended
+    return !!cancelled;
 }
 
 /**
@@ -96,7 +99,7 @@ export async function processPendingJobs(): Promise<{
     console.log("🔍 Processing pending closure jobs...");
 
     // Fetch all jobs that are ready to run
-    const jobs = await bossInstance.fetch(QUEUE_NAMES.CHECK_CLOSURE, 10);
+    const jobs = await bossInstance.fetch(QUEUE_NAMES.CHECK_CLOSURE, { batchSize: 10 });
 
     if (!jobs || jobs.length === 0) {
         console.log("✅ No pending jobs to process");
@@ -119,7 +122,7 @@ export async function processPendingJobs(): Promise<{
             await policiesService.evaluateAndFinalize(taskId, workspaceId);
 
             // Mark job as complete
-            await bossInstance.complete(job.id);
+            await bossInstance.complete(QUEUE_NAMES.CHECK_CLOSURE, job.id);
 
             processed++;
             console.log(`✅ Completed closure for task ${taskId}`);
@@ -128,6 +131,7 @@ export async function processPendingJobs(): Promise<{
 
             // Mark as failed (pg-boss will retry automatically)
             await bossInstance.fail(
+                QUEUE_NAMES.CHECK_CLOSURE,
                 job.id,
                 error instanceof Error ? error : new Error(String(error)),
             );

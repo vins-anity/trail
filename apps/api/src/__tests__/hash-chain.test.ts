@@ -108,6 +108,10 @@ describe("Hash Chain", () => {
                     taskId: null,
                     proofPacketId: null,
                     createdAt: new Date("2026-01-17T00:00:00Z"),
+                    rejectedBy: null,
+                    rejectedAt: null,
+                    vetoedBy: null,
+                    vetoedAt: null,
                 },
                 {
                     id: "event-2",
@@ -120,6 +124,10 @@ describe("Hash Chain", () => {
                     taskId: null,
                     proofPacketId: null,
                     createdAt: new Date("2026-01-17T01:00:00Z"),
+                    rejectedBy: null,
+                    rejectedAt: null,
+                    vetoedBy: null,
+                    vetoedAt: null,
                 },
             ];
 
@@ -143,6 +151,10 @@ describe("Hash Chain", () => {
                     taskId: null,
                     proofPacketId: null,
                     createdAt: new Date("2026-01-17T00:00:00Z"),
+                    rejectedBy: null,
+                    rejectedAt: null,
+                    vetoedBy: null,
+                    vetoedAt: null,
                 },
                 {
                     id: "event-2",
@@ -155,6 +167,10 @@ describe("Hash Chain", () => {
                     taskId: null,
                     proofPacketId: null,
                     createdAt: new Date("2026-01-17T01:00:00Z"),
+                    rejectedBy: null,
+                    rejectedAt: null,
+                    vetoedBy: null,
+                    vetoedAt: null,
                 },
             ];
 

@@ -5,13 +5,28 @@
         "outDir": "dist",
         "composite": true,
         "tsBuildInfoFile": "./node_modules/.cache/tsbuildinfo.json",
+        "baseUrl": ".",
         "paths": {
-            "shared": ["../../packages/shared/dist/index.d.ts"],
-            "@web/*": ["./src/*"]
+            "shared": [
+                "../../packages/shared/dist/index.d.ts"
+            ],
+            "@web/*": [
+                "./src/*"
+            ],
+            "@/*": [
+                "./src/*"
+            ]
         }
     },
-    "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"],
-    "exclude": ["node_modules", "dist"],
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "vite.config.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
     "references": [
         {
             "path": "../../packages/shared"

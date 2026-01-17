@@ -212,9 +212,10 @@ const proofs = new Hono()
             // Try to generate AI summary
             try {
                 const result = await generateProofSummary({
-                    taskId: packet.taskId,
-                    events: [],
-                    approvals: [],
+                    taskKey: packet.taskId,
+                    taskSummary: "Proof Packet Summary",
+                    commits: [],
+                    approvers: [],
                 });
 
                 // Update packet with AI summary

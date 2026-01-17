@@ -22,7 +22,7 @@ import { eventsService, policiesService, slackService, workspacesService } from 
 function extractTaskId(text: string | undefined): string | null {
     if (!text) return null;
     const match = text.match(/([A-Z]+-\d+)/);
-    return match ? match[1] : null;
+    return match ? match[1] ?? null : null;
 }
 
 const webhooks = new Hono()
@@ -206,7 +206,6 @@ const webhooks = new Hono()
 
             if (_trailEventType) {
                 // 4. Log Event
-                /* @ts-expect-error */
                 await eventsService.createEvent({
                     workspaceId: workspace.id,
                     taskId: taskId || undefined,
@@ -256,7 +255,9 @@ const webhooks = new Hono()
                                 new Date(checkResult.scheduledCloseAt).getTime() - Date.now();
                             const delayHours = Math.max(0, delayMs / (1000 * 60 * 60)); // ensure non-negative
 
-                            await scheduleClosureCheck(taskId, workspace.id, delayHours);
+                            // Schedule closure check (default 24h)
+                            // Parse timeout from string "24h" -> 24 if needed, assuming delayHours is number
+                            await scheduleClosureCheck(workspace.id, taskId, delayHours);
 
                             // PHASE 3: Send Slack closure proposal notification to manager (per thesis)
                             const prAuthorEmail = payload.pull_request?.user?.email || null;
@@ -265,7 +266,7 @@ const webhooks = new Hono()
                                     workspace.id,
                                     taskId,
                                     payload.pull_request?.title ||
-                                        `PR #${payload.pull_request?.number}`,
+                                    `PR #${payload.pull_request?.number}`,
                                     prAuthorEmail,
                                     new Date(checkResult.scheduledCloseAt),
                                 );
@@ -334,7 +335,8 @@ const webhooks = new Hono()
                     const taskId = payload.issue?.key || "UNKNOWN";
                     const taskTitle = payload.issue?.fields?.summary || "Untitled Task";
 
-                    /* @ts-expect-error */
+                    // Type assertion safe here
+
                     await eventsService.createEvent({
                         workspaceId: workspace.id,
                         taskId,
@@ -359,7 +361,8 @@ const webhooks = new Hono()
                         );
                     }
                 } else {
-                    /* @ts-expect-error */
+                    // Type assertion safe here
+
                     await eventsService.createEvent({
                         workspaceId: workspace.id,
                         taskId: payload.issue?.key || "UNKNOWN",

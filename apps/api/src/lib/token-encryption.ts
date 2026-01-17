@@ -22,7 +22,7 @@ async function getEncryptionKey(): Promise<CryptoKey> {
     }
 
     // Convert hex string to ArrayBuffer
-    const keyData = new Uint8Array(keyString.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)));
+    const keyData = new Uint8Array(keyString.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || []);
 
     return await crypto.subtle.importKey(
         "raw",
@@ -71,7 +71,7 @@ export async function decryptToken(encryptedHex: string): Promise<string> {
 
     // Convert hex string to Uint8Array
     const combined = new Uint8Array(
-        encryptedHex.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)),
+        encryptedHex.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || [],
     );
 
     // Extract IV (first 12 bytes) and encrypted data

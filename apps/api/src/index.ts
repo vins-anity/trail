@@ -12,14 +12,12 @@ import slackInteractions from "./modules/slack/interactions";
 // Module imports
 import webhooks from "./modules/webhooks/routes";
 
-const app = new Hono().use("*", logger()).use("*", cors());
-
-// Health check
-app.get("/health", (c) => c.json({ status: "ok" }));
-
-// Landing page
-app.get("/", (c) => {
-    return c.html(`
+const app = new Hono()
+    .use("*", logger())
+    .use("*", cors())
+    .get("/health", (c) => c.json({ status: "ok" }))
+    .get("/", (c) => {
+        return c.html(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,18 +41,14 @@ app.get("/", (c) => {
 </body>
 </html>
 `);
-});
-
-// ============================================
-// Mount Modules (Vertical Slices)
-// ============================================
-app.route("/auth", auth);
-app.route("/webhooks", webhooks);
-app.route("/slack/interactions", slackInteractions);
-app.route("/jobs", jobs);
-app.route("/proofs", proofs);
-app.route("/policies", policies);
-app.route("/events", events);
+    })
+    .route("/auth", auth)
+    .route("/webhooks", webhooks)
+    .route("/slack/interactions", slackInteractions)
+    .route("/jobs", jobs)
+    .route("/proofs", proofs)
+    .route("/policies", policies)
+    .route("/events", events);
 
 // ============================================
 // OpenAPI Documentation

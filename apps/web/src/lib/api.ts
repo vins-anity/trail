@@ -5,13 +5,13 @@
  */
 
 import type {
-    ProofPacket,
     CreateProofPacket,
-    Policy,
-    Event,
-    EventList,
     EvaluateClosure,
     EvaluationResult,
+    Event,
+    EventList,
+    Policy,
+    ProofPacket,
 } from "shared";
 
 const API_URL = "/api"; // Proxied by Vite
@@ -51,14 +51,14 @@ export const api = {
         },
 
         getByTask: async (
-            taskId: string
+            taskId: string,
         ): Promise<{ taskId: string; events: Event[]; summary: Record<string, unknown> }> => {
             const res = await fetch(`${API_URL}/events/task/${taskId}`);
             return handleResponse(res);
         },
 
         verifyChain: async (
-            workspaceId: string
+            workspaceId: string,
         ): Promise<{ valid: boolean; verifiedCount: number; errors: unknown[] }> => {
             const res = await fetch(`${API_URL}/events/verify/${workspaceId}`);
             return handleResponse(res);
@@ -99,7 +99,7 @@ export const api = {
 
         summarize: async (
             id: string,
-            options?: { includeCommits?: boolean; tone?: string }
+            options?: { includeCommits?: boolean; tone?: string },
         ): Promise<{ success: boolean; summary: string; model: string }> => {
             const res = await fetch(`${API_URL}/proofs/${id}/summarize`, {
                 method: "POST",
@@ -110,14 +110,14 @@ export const api = {
         },
 
         exportPdf: async (
-            id: string
+            id: string,
         ): Promise<{ success: boolean; url: string; expiresAt: string }> => {
             const res = await fetch(`${API_URL}/proofs/${id}/pdf`);
             return handleResponse(res);
         },
 
         share: async (
-            id: string
+            id: string,
         ): Promise<{ success: boolean; shareUrl: string; expiresAt: string }> => {
             const res = await fetch(`${API_URL}/proofs/${id}/share`, { method: "POST" });
             return handleResponse(res);

@@ -2,6 +2,9 @@
  * OpenRouter AI Tests
  *
  * Tests for AI-powered proof summary generation using OpenRouter's free-tier models.
+ * Note: The OpenRouter SDK (v0.3.14) has a compatibility issue with Bun's test environment
+ * where httpMeta.response can be undefined, causing errors during error construction.
+ * These tests are designed to be resilient to this SDK bug.
  */
 
 import { beforeAll, describe, expect, test } from "bun:test";
@@ -38,6 +41,8 @@ describe("OpenRouter AI Integration", () => {
             ciStatus: "passed",
         };
 
+        // SDK may throw due to Bun compatibility issues, but our function should
+        // always return a result (either from AI or fallback)
         const result = await generateProofSummary(input);
 
         expect(result).toBeDefined();
@@ -84,3 +89,4 @@ describe("OpenRouter AI Integration", () => {
         expect(result.summary).toBeTruthy();
     });
 });
+

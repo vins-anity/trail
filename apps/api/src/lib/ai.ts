@@ -70,7 +70,12 @@ function getClient(): OpenRouter {
         if (!apiKey) {
             throw new Error("OPENROUTER_API_KEY is not configured");
         }
-        client = new OpenRouter({ apiKey });
+        try {
+            client = new OpenRouter({ apiKey });
+        } catch (error) {
+            console.error("Failed to initialize OpenRouter client:", error);
+            throw error;
+        }
     }
     return client;
 }
@@ -92,9 +97,9 @@ function buildPrompt(input: ProofSummaryInput, options: SummaryOptions): string 
     const commitsSection =
         includeCommits && input.commits && input.commits.length > 0
             ? `\n\nCommit History:\n${input.commits
-                  .slice(0, 10)
-                  .map((c) => `- ${c.message}`)
-                  .join("\n")}`
+                .slice(0, 10)
+                .map((c) => `- ${c.message}`)
+                .join("\n")}`
             : "";
 
     const prSection =
@@ -143,7 +148,8 @@ Summary:`;
  */
 async function tryModel(modelId: string, prompt: string): Promise<string | null> {
     try {
-        const response = await getClient().chat.send({
+        const client = getClient();
+        const response = await client.chat.send({
             model: modelId,
             messages: [{ role: "user", content: prompt }],
             temperature: AI_CONFIG.temperature,

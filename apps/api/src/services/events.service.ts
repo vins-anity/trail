@@ -5,7 +5,7 @@
  * Uses Drizzle ORM for type-safe queries.
  */
 
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import type { EventType, TriggerSource } from "shared";
 import { db, schema } from "../db";
 import { createHashedEvent, verifyChainIntegrity } from "../lib/hash-chain";
@@ -168,6 +168,46 @@ export async function verifyWorkspaceChain(workspaceId: string) {
         .orderBy(schema.events.createdAt);
 
     return verifyChainIntegrity(events);
+}
+
+/**
+ * Get dashboard statistics
+ * @param workspaceId - Optional filter by workspace
+ * @returns Active tasks count (handshakes without corresponding closures)
+ */
+export async function getDashboardStats(workspaceId?: string) {
+    // Active tasks = tasks with handshake but no closure_approved
+    // Note: closure_approved indicates a task is finalized (not closure_vetoed which means rejected)
+
+    // Get all handshake task IDs
+    const handshakes = await db
+        .selectDistinct({ taskId: schema.events.taskId })
+        .from(schema.events)
+        .where(
+            workspaceId
+                ? and(eq(schema.events.workspaceId, workspaceId), eq(schema.events.eventType, "handshake"))
+                : eq(schema.events.eventType, "handshake")
+        );
+
+    // Get all closed task IDs (closure_approved means task is finalized)
+    const closures = await db
+        .selectDistinct({ taskId: schema.events.taskId })
+        .from(schema.events)
+        .where(
+            workspaceId
+                ? and(
+                    eq(schema.events.workspaceId, workspaceId),
+                    eq(schema.events.eventType, "closure_approved")
+                )
+                : eq(schema.events.eventType, "closure_approved")
+        );
+
+    const closedTaskIds = new Set(closures.map((c) => c.taskId).filter(Boolean));
+    const activeTasks = handshakes.filter((h) => h.taskId && !closedTaskIds.has(h.taskId)).length;
+
+    return {
+        activeTasks,
+    };
 }
 
 // ============================================

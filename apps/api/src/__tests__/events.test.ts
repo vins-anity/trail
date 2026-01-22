@@ -90,4 +90,36 @@ describe("Events API", () => {
             expect(json.summary).toBeDefined();
         });
     });
+
+    // ============================================
+    // Dashboard Stats
+    // ============================================
+    describe("GET /stats", () => {
+        it("should return dashboard statistics", async () => {
+            const res = await app.request("/stats");
+            expect(res.status).toBe(200);
+
+            const json = await res.json();
+            expect(json.activeTasks).toBeDefined();
+            expect(typeof json.activeTasks).toBe("number");
+        });
+
+        it("should return stats filtered by workspace", async () => {
+            const res = await app.request(`/stats?workspaceId=${TEST_WORKSPACE_ID}`);
+            expect(res.status).toBe(200);
+
+            const json = await res.json();
+            expect(json.activeTasks).toBeDefined();
+            expect(json.activeTasks).toBeGreaterThanOrEqual(0);
+        });
+
+        it("should return zero active tasks for empty workspace", async () => {
+            // New workspace with no events should have 0 active tasks
+            const res = await app.request(`/stats?workspaceId=${TEST_WORKSPACE_ID}`);
+            expect(res.status).toBe(200);
+
+            const json = await res.json();
+            expect(json.activeTasks).toBe(0);
+        });
+    });
 });

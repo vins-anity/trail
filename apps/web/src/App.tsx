@@ -5,6 +5,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { LoginPage } from "@/pages/auth/login";
 import { DashboardPage } from "@/pages/dashboard";
 import { ProofPacketsPage } from "@/pages/proofs";
+import { ProofDetailPage } from "@/pages/proofs/[id]";
 import { SettingsPage } from "@/pages/settings";
 import { AppProviders } from "./providers";
 
@@ -19,6 +20,7 @@ function App() {
                         <Route element={<DashboardLayout />}>
                             <Route path="/" element={<DashboardPage />} />
                             <Route path="/proofs" element={<ProofPacketsPage />} />
+                            <Route path="/proofs/:id" element={<ProofDetailPage />} />
                             <Route path="/settings" element={<SettingsPage />} />
                         </Route>
                     </Route>

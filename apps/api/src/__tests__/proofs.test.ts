@@ -4,7 +4,7 @@
  * TDD approach: Tests for Proof Packet generation and export
  */
 
-import { afterAll, beforeAll, describe, expect, it } from "bun:test";
+import { afterAll, beforeAll, describe, expect, it, mock } from "bun:test";
 import { eq } from "drizzle-orm";
 import { db, schema } from "../db";
 import app from "../index";
@@ -14,8 +14,37 @@ const TEST_TASK_ID = "10001";
 const TEST_TASK_KEY = "TRAIL-123";
 
 describe("Proofs API", () => {
-    // Setup: Create a test workspace
+    const originalFetch = global.fetch;
+
+    // Setup: Create a test workspace and mock AI
     beforeAll(async () => {
+        // Mock AI response
+        global.fetch = mock(() =>
+            Promise.resolve({
+                ok: true,
+                status: 200,
+                headers: new Headers({ "content-type": "application/json" }),
+                json: async () => ({
+                    choices: [
+                        {
+                            message: {
+                                content: "AI Generated Summary",
+                            },
+                        },
+                    ],
+                }),
+                text: async () => JSON.stringify({
+                    choices: [
+                        {
+                            message: {
+                                content: "AI Generated Summary",
+                            },
+                        },
+                    ],
+                }),
+            } as Response)
+        );
+
         await db.insert(schema.workspaces).values({
             id: TEST_WORKSPACE_ID,
             name: "Test Workspace",
@@ -24,6 +53,7 @@ describe("Proofs API", () => {
 
     // Cleanup: Delete test workspace (cascades to proof packets)
     afterAll(async () => {
+        global.fetch = originalFetch;
         await db.delete(schema.workspaces).where(eq(schema.workspaces.id, TEST_WORKSPACE_ID));
     });
 

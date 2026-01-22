@@ -176,6 +176,7 @@ export async function verifyWorkspaceChain(workspaceId: string) {
  * @returns Active tasks count (handshakes without corresponding closures)
  */
 export async function getDashboardStats(workspaceId?: string) {
+
     // Active tasks = tasks with handshake but no closure_approved
     // Note: closure_approved indicates a task is finalized (not closure_vetoed which means rejected)
 

@@ -1,4 +1,5 @@
-import { IconBrandGithub, IconBrandSlack, IconCheckbox } from "@tabler/icons-react";
+import { IconBrandGithub, IconBrandSlack, IconCheckbox, IconCircleCheckFilled } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Progress } from "../ui/progress";
@@ -42,20 +43,21 @@ export function OnboardingWidget() {
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
                     {/* Jira Card */}
-                    <div className={`p-4 rounded-lg border ${status.hasJira ? "bg-green-500/10 border-green-500/20" : "bg-card border-border"}`}>
+                    <div className={cn(
+                        "p-4 rounded-lg border transition-all duration-200",
+                        status.hasJira ? "bg-green-500/10 border-green-500/20" : "bg-card border-border hover:border-primary/50 hover:shadow-md"
+                    )}>
                         <div className="flex items-start justify-between mb-4">
                             <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
                                 <IconCheckbox className="h-6 w-6 text-blue-500" />
                             </div>
                             {status.hasJira && (
-                                <span className="flex items-center text-xs font-medium text-green-500 bg-green-500/10 px-2 py-1 rounded">
-                                    Connected
-                                </span>
+                                <IconCircleCheckFilled className="h-5 w-5 text-green-500" />
                             )}
                         </div>
                         <h3 className="font-semibold">1. Track Work</h3>
                         <p className="text-sm text-muted-foreground mb-4 h-10">
-                            Connect Jira to automatically log when work starts.
+                            Connect Jira to log work start.
                         </p>
                         <Button
                             variant={status.hasJira ? "ghost" : "default"}
@@ -68,20 +70,21 @@ export function OnboardingWidget() {
                     </div>
 
                     {/* GitHub Card */}
-                    <div className={`p-4 rounded-lg border ${status.hasGithub ? "bg-green-500/10 border-green-500/20" : "bg-card border-border"}`}>
+                    <div className={cn(
+                        "p-4 rounded-lg border transition-all duration-200",
+                        status.hasGithub ? "bg-green-500/10 border-green-500/20" : "bg-card border-border hover:border-primary/50 hover:shadow-md"
+                    )}>
                         <div className="flex items-start justify-between mb-4">
                             <div className="h-10 w-10 rounded-lg bg-gray-500/10 flex items-center justify-center">
                                 <IconBrandGithub className="h-6 w-6 text-foreground" />
                             </div>
                             {status.hasGithub && (
-                                <span className="flex items-center text-xs font-medium text-green-500 bg-green-500/10 px-2 py-1 rounded">
-                                    Connected
-                                </span>
+                                <IconCircleCheckFilled className="h-5 w-5 text-green-500" />
                             )}
                         </div>
                         <h3 className="font-semibold">2. Verify Delivery</h3>
                         <p className="text-sm text-muted-foreground mb-4 h-10">
-                            Connect GitHub to generate tamper-evident proofs.
+                            Connect GitHub for evidence.
                         </p>
                         <Button
                             variant={status.hasGithub ? "ghost" : "default"}
@@ -94,20 +97,21 @@ export function OnboardingWidget() {
                     </div>
 
                     {/* Slack Card */}
-                    <div className={`p-4 rounded-lg border ${status.hasSlack ? "bg-green-500/10 border-green-500/20" : "bg-card border-border"}`}>
+                    <div className={cn(
+                        "p-4 rounded-lg border transition-all duration-200",
+                        status.hasSlack ? "bg-green-500/10 border-green-500/20" : "bg-card border-border hover:border-primary/50 hover:shadow-md"
+                    )}>
                         <div className="flex items-start justify-between mb-4">
                             <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
                                 <IconBrandSlack className="h-6 w-6 text-purple-500" />
                             </div>
                             {status.hasSlack && (
-                                <span className="flex items-center text-xs font-medium text-green-500 bg-green-500/10 px-2 py-1 rounded">
-                                    Connected
-                                </span>
+                                <IconCircleCheckFilled className="h-5 w-5 text-green-500" />
                             )}
                         </div>
                         <h3 className="font-semibold">3. Stay Notified</h3>
                         <p className="text-sm text-muted-foreground mb-4 h-10">
-                            Connect Slack to get handshake and closure alerts.
+                            Connect Slack for alerts.
                         </p>
                         <Button
                             variant={status.hasSlack ? "ghost" : "default"}

@@ -22,7 +22,9 @@ const OAUTH_CONFIG = {
     github: {
         authorizeUrl: "https://github.com/login/oauth/authorize",
         tokenUrl: "https://github.com/login/oauth/access_token",
-        scopes: ["read:user", "repo", "write:repo_hook"],
+        // CRITICAL SECURITY FIX: Removed 'repo' and 'write:repo_hook' to ensure Zero-Knowledge
+        // for code contents. Webhooks should be configured via GitHub App installation.
+        scopes: ["read:user", "user:email"],
     },
     jira: {
         authorizeUrl: "https://auth.atlassian.com/authorize",

@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
 import { type EventType, type JiraIssueEvent, WebhookResponseSchema } from "shared";
-import { scheduleClosureCheck } from "../../lib/job-queue";
+import { cancelClosureJob, scheduleClosureCheck } from "../../lib/job-queue";
 import { RateLimits, rateLimiter } from "../../middleware/rate-limiter";
 import {
     verifyGitHubSignature,
@@ -94,17 +94,36 @@ const webhooks = new Hono()
             const payload = JSON.parse(payloadStr);
             console.log(`[Slack Interactive] Type: ${payload.type}, Action:`, payload.actions);
 
+            // Workspace Lookup
+            const teamId = payload.team?.id;
+            const workspace = teamId ? await workspacesService.findBySlackTeamId(teamId) : null;
+
+            if (!workspace) {
+                console.warn(`[Slack Webhook] No workspace found for team: ${teamId}`);
+                return c.json({ success: false, message: "Workspace not found" }, 404);
+            }
+
             // Handle button actions
             if (payload.type === "block_actions" && payload.actions) {
                 const action = payload.actions[0];
                 const actionId = action.action_id;
                 const taskId = action.value; // Assuming button value contains taskId
+                const userId = payload.user?.id; // Slack User ID
 
                 // Example: Handle "Reject" button from Passive Handshake
                 if (actionId === "reject_task") {
                     console.log(`[Slack] Developer rejected task: ${taskId}`);
-                    // Log rejection event
-                    // TODO: Call eventsService.createEvent with 'handshake_rejected'
+
+                    await eventsService.createEvent({
+                        workspaceId: workspace.id,
+                        taskId,
+                        eventType: "handshake_rejected",
+                        triggerSource: "slack_webhook",
+                        payload: {
+                            rejectedBySlackUser: userId,
+                            raw: payload,
+                        },
+                    });
 
                     return c.json({
                         response_type: "ephemeral",
@@ -115,11 +134,41 @@ const webhooks = new Hono()
                 // Example: Handle "Veto" button from Optimistic Closure
                 if (actionId === "veto_closure") {
                     console.log(`[Slack] Manager vetoed closure for task: ${taskId}`);
-                    // Log veto event and cancel scheduled job
-                    // TODO: Cancel pg-boss job, log 'closure_vetoed' event
+
+                    // 1. Find the Closure Job ID from the most recent 'closure_proposed' event
+                    const { events } = await eventsService.listEvents({
+                        workspaceId: workspace.id,
+                        taskId,
+                        eventType: "closure_proposed",
+                        pageSize: 1,
+                    });
+
+                    const lastProposal = events[0];
+                    const jobId = lastProposal?.payload?.pgBossJobId as string | undefined;
+
+                    // 2. Cancel the job if found
+                    let cancelled = false;
+                    if (jobId) {
+                        cancelled = await cancelClosureJob(jobId);
+                    } else {
+                        console.warn(`[Slack] No job ID found for closure veto task ${taskId}`);
+                    }
+
+                    // 3. Log veto event
+                    await eventsService.createEvent({
+                        workspaceId: workspace.id,
+                        taskId,
+                        eventType: "closure_vetoed",
+                        triggerSource: "slack_webhook",
+                        payload: {
+                            vetoedBySlackUser: userId,
+                            cancelledJob: cancelled,
+                            jobId,
+                            raw: payload,
+                        },
+                    });
 
                     return c.json({
-                        response_type: "ephemeral",
                         text: `🛑 Auto-closure vetoed for ${taskId}. Task remains open.`,
                     });
                 }
@@ -237,19 +286,6 @@ const webhooks = new Hono()
                             `[GitHub] Task ${taskId} eligible for Optimistic Closure. Scheduling...`,
                         );
 
-                        // Log proposal
-                        await eventsService.createEvent({
-                            workspaceId: workspace.id,
-                            taskId,
-                            eventType: "closure_proposed",
-                            triggerSource: "automatic",
-                            payload: {
-                                policyId: checkResult.policyId,
-                                scheduledCloseAt: checkResult.scheduledCloseAt,
-                            },
-                        });
-
-                        // Schedule Job
                         if (checkResult.scheduledCloseAt) {
                             const delayMs =
                                 new Date(checkResult.scheduledCloseAt).getTime() - Date.now();
@@ -257,7 +293,24 @@ const webhooks = new Hono()
 
                             // Schedule closure check (default 24h)
                             // Parse timeout from string "24h" -> 24 if needed, assuming delayHours is number
-                            await scheduleClosureCheck(workspace.id, taskId, delayHours);
+                            const jobId = await scheduleClosureCheck(
+                                workspace.id,
+                                taskId,
+                                delayHours,
+                            );
+
+                            // Log proposal (Include Job ID for potential Veto)
+                            await eventsService.createEvent({
+                                workspaceId: workspace.id,
+                                taskId,
+                                eventType: "closure_proposed",
+                                triggerSource: "automatic",
+                                payload: {
+                                    policyId: checkResult.policyId,
+                                    scheduledCloseAt: checkResult.scheduledCloseAt,
+                                    pgBossJobId: jobId,
+                                },
+                            });
 
                             // PHASE 3: Send Slack closure proposal notification to manager (per thesis)
                             const prAuthorEmail = payload.pull_request?.user?.email || null;

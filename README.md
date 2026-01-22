@@ -117,7 +117,8 @@ graph TD
 
 ### Key Documentation Files
 - **[Thesis (`docs/trail.md`)](docs/trail.md)**: The original architectural blueprint & academic background.
-- **[Roadmap (`docs/ROADMAP.md`)](docs/ROADMAP.md)**: Strategic plan for V1, V1.1, and V2 commercial rollout.
+- **[Roadmap (`docs/ROADMAP.md`)](docs/ROADMAP.md)**: Strategic plan for V1, V1.1, and V2.
+- **[Strategy (`docs/STRATEGY.md`)](docs/STRATEGY.md)**: Commercial viability and market validation.
 - **[Architecture (`docs/ARCHITECTURE.md`)](docs/ARCHITECTURE.md)**: System design and security model.
 
 ---

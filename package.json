@@ -2,7 +2,7 @@
     "name": "honolulu",
     "version": "0.5.1",
     "description": "A monorepo template built with Bun, Hono, Vite, and React",
-    "author": "Steve Simkins",
+    "author": "Vince",
     "license": "MIT",
     "homepage": "https://github.com/vins-anity/Honolulu",
     "packageManager": "bun@1.2.4",

@@ -1,36 +1,21 @@
-import { useEvents } from "./use-events";
-import { useProofPackets } from "./use-proofs";
+import { useQuery } from "@tanstack/react-query";
 
 export function useDashboardStats() {
-    // 1. Pending Proofs (Status: pending)
-    const { data: pendingProofsData, isLoading: isLoadingPending } = useProofPackets({
-        status: "pending",
-        pageSize: 1,
+    const { data, isLoading } = useQuery({
+        queryKey: ["dashboard-stats"],
+        queryFn: async () => {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/events/stats`);
+            if (!res.ok) throw new Error("Failed to fetch stats");
+            return res.json();
+        },
     });
-
-    // 2. Completed Proofs (Status: exported)
-    const { data: completedProofsData, isLoading: isLoadingCompleted } = useProofPackets({
-        status: "exported",
-        pageSize: 1,
-    });
-
-    // 3. Vetoed Events (Event Type: closure_vetoed)
-    const { data: vetoedData, isLoading: isLoadingVetoed } = useEvents({
-        eventType: "closure_vetoed",
-        pageSize: 1,
-    });
-
-    // Mock Active Tasks for now (random number or derived)
-    const activeTasks = 12;
-
-    const isLoading = isLoadingPending || isLoadingCompleted || isLoadingVetoed;
 
     return {
         stats: {
-            activeTasks,
-            pendingProofs: pendingProofsData?.total || 0,
-            completedProofs: completedProofsData?.total || 0,
-            vetoed: vetoedData?.total || 0,
+            activeTasks: data?.activeTasks || 0,
+            pendingProofs: data?.pendingProofs || 0,
+            completedProofs: data?.completedProofs || 0,
+            vetoed: data?.vetoed || 0,
         },
         isLoading,
     };

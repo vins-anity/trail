@@ -1,36 +1,13 @@
-import { IconBrandGithub, IconBrandSlack, IconCheckbox, IconSettings } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { IconBrandGithub, IconBrandSlack, IconCheckbox } from "@tabler/icons-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Progress } from "../ui/progress";
-
-interface WorkspaceStatus {
-    id: string;
-    name: string;
-    hasSlack: boolean;
-    hasGithub: boolean;
-    hasJira: boolean;
-}
+import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
 
 export function OnboardingWidget() {
-    const [status, setStatus] = useState<WorkspaceStatus | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { data: status, isLoading } = useWorkspaceStatus();
 
-    useEffect(() => {
-        // Fetch current workspace status
-        fetch(`${import.meta.env.VITE_API_URL}/workspaces/current`)
-            .then((res) => res.json())
-            .then((data) => {
-                setStatus(data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.error("Failed to fetch workspace status:", err);
-                setLoading(false);
-            });
-    }, []);
-
-    if (loading || !status) return null;
+    if (isLoading || !status) return null;
 
     // Calculate progress (Account Created is step 1, so start with 1 point)
     let completedSteps = 1;
@@ -40,14 +17,6 @@ export function OnboardingWidget() {
 
     const totalSteps = 4;
     const progress = (completedSteps / totalSteps) * 100;
-
-    // If all done, hide widget (unless forced via URL for demo)
-    const urlParams = new URLSearchParams(window.location.search);
-    const forceShow = urlParams.get("onboarding") === "true";
-
-    console.log("[OnboardingWidget] Debug:", { completedSteps, totalSteps, forceShow, status });
-
-    if (completedSteps === totalSteps && !forceShow) return null;
 
     const handleConnect = (provider: string) => {
         window.location.href = `${import.meta.env.VITE_API_URL}/auth/${provider}/authorize?workspaceId=${status.id}`;

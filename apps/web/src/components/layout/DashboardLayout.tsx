@@ -126,13 +126,11 @@ export function DashboardLayout() {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="relative h-8 w-8 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/50">
-                                        <div className="flex h-full w-full items-center justify-center text-xs font-bold text-primary">
-                                            {user?.email?.charAt(0).toUpperCase() || "U"}
-                                        </div>
-                                    </Button>
-                                </DropdownMenuTrigger>
+                                <Button variant="ghost" className="relative h-8 w-8 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/50">
+                                    <div className="flex h-full w-full items-center justify-center text-xs font-bold text-primary">
+                                        {user?.email?.charAt(0).toUpperCase() || "U"}
+                                    </div>
+                                </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end" forceMount>
                                 <DropdownMenuLabel className="font-normal">

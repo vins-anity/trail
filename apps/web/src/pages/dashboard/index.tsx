@@ -3,15 +3,38 @@ import { formatDistanceToNow } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { useEvents } from "@/hooks/use-events";
+import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
 import { OnboardingWidget } from "../../components/onboarding/OnboardingWidget";
 
 export function DashboardPage() {
+    const { data: status, isLoading: statusLoading } = useWorkspaceStatus();
     const { stats, isLoading: statsLoading } = useDashboardStats();
     const { data: recentActivity, isLoading: activityLoading } = useEvents({ pageSize: 5 });
 
+    // 1. Loading State
+    if (statusLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[50vh]">
+                <div className="animate-pulse text-muted-foreground">Loading workspace...</div>
+            </div>
+        );
+    }
+
+    // 2. Onboarding Gate (Show ONLY widget if any service is missing)
+    // Account created is step 1, so we check the 3 integrations.
+    const isFullyOnboarded = status?.hasJira && status?.hasGithub && status?.hasSlack;
+
+    if (!isFullyOnboarded) {
+        return (
+            <div className="max-w-2xl mx-auto mt-20">
+                <OnboardingWidget />
+            </div>
+        );
+    }
+
+    // 3. Full Dashboard (Only shown if onboarded)
     return (
         <div className="space-y-6">
-            <OnboardingWidget />
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>

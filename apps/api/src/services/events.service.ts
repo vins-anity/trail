@@ -177,42 +177,61 @@ export async function verifyWorkspaceChain(workspaceId: string) {
  */
 export async function getDashboardStats(workspaceId?: string) {
     try {
-        // Active tasks = tasks with handshake but no closure_approved
-        // Note: closure_approved indicates a task is finalized (not closure_vetoed which means rejected)
+        const filters = workspaceId ? eq(schema.events.workspaceId, workspaceId) : undefined;
 
-        // Get all handshake task IDs
+        // 1. Active Tasks (Handshakes without closure)
+        // Handshakes
         const handshakes = await db
             .selectDistinct({ taskId: schema.events.taskId })
             .from(schema.events)
-            .where(
-                workspaceId
-                    ? and(
-                          eq(schema.events.workspaceId, workspaceId),
-                          eq(schema.events.eventType, "handshake"),
-                      )
-                    : eq(schema.events.eventType, "handshake"),
-            );
+            .where(and(filters, eq(schema.events.eventType, "handshake")));
 
-        // Get all closed task IDs (closure_approved means task is finalized)
+        // Finalized closures (approved)
         const closures = await db
             .selectDistinct({ taskId: schema.events.taskId })
             .from(schema.events)
-            .where(
-                workspaceId
-                    ? and(
-                          eq(schema.events.workspaceId, workspaceId),
-                          eq(schema.events.eventType, "closure_approved"),
-                      )
-                    : eq(schema.events.eventType, "closure_approved"),
-            );
+            .where(and(filters, eq(schema.events.eventType, "closure_approved")));
 
         const closedTaskIds = new Set(closures.map((c) => c.taskId).filter(Boolean));
         const activeTasks = handshakes.filter(
             (h) => h.taskId && !closedTaskIds.has(h.taskId),
         ).length;
 
+        // 2. Pending Proofs (closure_proposed but not finalized or vetoed)
+        // This is simplified: count events where eventType = closure_proposed 
+        // AND not followed by closure_approved or closure_vetoed for same task/proof
+        // For MVP speed, let's just count 'closure_proposed' events within last 24h that aren't closed?
+        // Better: Query existing pending jobs from pg-boss? 
+        // Alternative: Just count closure_proposed events that don't have a matching closure_approved/vetoed
+        // Let's go with the query approach similar to active tasks.
+
+        const proposed = await db
+            .selectDistinct({ taskId: schema.events.taskId })
+            .from(schema.events)
+            .where(and(filters, eq(schema.events.eventType, "closure_proposed")));
+
+        const vetoed = await db
+            .selectDistinct({ taskId: schema.events.taskId })
+            .from(schema.events)
+            .where(and(filters, eq(schema.events.eventType, "closure_vetoed")));
+
+        const finalizedTaskIds = new Set([...closures, ...vetoed].map(c => c.taskId).filter(Boolean));
+
+        const pendingProofs = proposed.filter(
+            (p) => p.taskId && !finalizedTaskIds.has(p.taskId)
+        ).length;
+
+        // 3. Completed Proofs (closure_approved)
+        const completedProofs = closures.length;
+
+        // 4. Vetoed (closure_vetoed)
+        const vetoedCount = vetoed.length;
+
         return {
             activeTasks,
+            pendingProofs,
+            completedProofs,
+            vetoed: vetoedCount
         };
     } catch (error) {
         console.error("DEBUG: Error in getDashboardStats:", error);

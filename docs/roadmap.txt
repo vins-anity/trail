@@ -1,0 +1,51 @@
+Build v1 as **metadata-first SaaS** (GitHub App + webhooks) that produces client Proof Packets immediately, then add GitHub Actions/CLI as an optional “Deep Proof” layer in v1.1+ for agencies that want stronger artifacts without giving you code access. This roadmap is fully aligned with your thesis scope (Passive Handshake → Evidence → Optimistic Closure → Proof Packets, plus hash-chained integrity). [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+## Full context (what Trail is selling)
+Trail AI’s core value is solving the “Client Trust Gap” by turning delivery into a verifiable narrative: intent (handshake), evidence (PR merged/approvals/CI), and authorization (optimistic closure + veto), packaged into shareable Proof Packets. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+The architectural principles you wrote—Passive Ingestion, Optimistic Trust, Tamper-Evident Audit Trail, Privacy by Design—are the guardrails for every roadmap decision. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+## V1 roadmap (ship this now)
+**Goal:** agencies can install in minutes and send clients Proof Packet links for invoices/updates. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+- **Onboarding + tenancy**
+  - GitHub App install (metadata-first) + repo selection; store workspace/org mapping. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+  - Minimal Slack integration only if you need veto/notifications in v1 (you already list Slack Bolt as in-scope). [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+- **Event ingestion (core)**
+  - Webhook Router that verifies signatures (you already specify HMAC-SHA256 verification for Slack and GitHub). [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+  - Normalize events into a single `events` table (append-only) with `prevhash` / `eventhash` for tamper evidence. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+- **Proof Packet generation (core deliverable)**
+  - Implement the Proof Packet JSON schema and viewer (even a basic viewer is enough for v1) so clients can verify “what happened” without reading Jira/GitHub. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+  - Include the hash-chain verification visualization (your doc calls this out as a key integrity feature). [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+- **Optimistic Closure (the wow feature)**
+  - Policy evaluation (Agile/Standard/Hardened) and the 24h auto-close timer with veto using pg-boss (all explicitly in your scope). [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+- **AI summaries (optional in v1)**
+  - If time is tight: generate summaries from PR title/body only (metadata), and clearly label it “metadata-based summary.” [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+  - If you can: keep Gemini summaries deterministic (you mention temperature 0) and store them inside the Proof Packet. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+## V1.1 roadmap (GitHub Actions + CLI “Deep Proof”)
+**Goal:** stronger client evidence without turning your SaaS into a “code auditor.” [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+- **GitHub Action (recommended before CLI)**
+  - Add a “Deep Proof” workflow that runs on PR merge/release and produces a sanitized payload: dependency list, build/test outputs, artifact hashes, release notes draft, etc. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+  - Upload only the sanitized payload back to Trail Cloud; no diffs/patches stored. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+- **CLI (optional, enterprise-friendly)**
+  - Provide `trail-cli` for agencies with non-GitHub CI or self-hosted runners; it outputs a Proof Payload + can optionally upload. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+  - This becomes your bridge toward self-hosted later, because the same payload format can target either cloud or on-prem endpoints. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+## V2 roadmap (enterprise / self-host without breaking things)
+You can add self-hosting later **without breaking contract** if you keep two things stable: (1) event schema + Proof Packet schema, and (2) the evaluation/closure engine behavior. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+Your thesis already describes production as a Docker container and a modular backend stack (Bun/Hono/Postgres), which is ideal for offering an on-prem “Trail Appliance” later. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+## What to implement first (priority order)
+1) Webhook ingestion + signature verification. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+2) Append-only hash-chained event log. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+3) Proof Packet JSON + basic client viewer link. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+4) Optimistic closure (timer + veto). [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+5) AI summary (metadata-only first), exports later. [ppl-ai-file-upload.s3.amazonaws](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/9787283/8654fde3-051d-4e0f-ab5b-3ba04dbb3ff0/Trail-AI-Thesis-Revised.md.pdf)
+
+If you paste your current v1 status (what’s already done + what’s blocked), I can turn this into a 7–10 day task list with exact endpoints/tables you should implement next.

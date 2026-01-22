@@ -3,6 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { useEvents } from "@/hooks/use-events";
+import { OnboardingWidget } from "../../components/onboarding/OnboardingWidget";
 
 export function DashboardPage() {
     const { stats, isLoading: statsLoading } = useDashboardStats();
@@ -10,6 +11,7 @@ export function DashboardPage() {
 
     return (
         <div className="space-y-6">
+            <OnboardingWidget />
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>

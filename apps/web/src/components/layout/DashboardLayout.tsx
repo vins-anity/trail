@@ -126,9 +126,13 @@ export function DashboardLayout() {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                                    <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 border border-white/20" />
-                                </Button>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="relative h-8 w-8 rounded-full bg-primary/20 hover:bg-primary/30 border border-primary/50">
+                                        <div className="flex h-full w-full items-center justify-center text-xs font-bold text-primary">
+                                            {user?.email?.charAt(0).toUpperCase() || "U"}
+                                        </div>
+                                    </Button>
+                                </DropdownMenuTrigger>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end" forceMount>
                                 <DropdownMenuLabel className="font-normal">
@@ -141,6 +145,17 @@ export function DashboardLayout() {
                                         </p>
                                     </div>
                                 </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={() => {
+                                        // Reset local storage or just force a reload to re-trigger checks
+                                        // For now, simpler: just reload dashboard
+                                        window.location.reload();
+                                    }}
+                                >
+                                    <IconLayoutDashboard className="mr-2 h-4 w-4 text-muted-foreground" />
+                                    <span>Reset Onboarding</span>
+                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
                                     <Link to="/settings">

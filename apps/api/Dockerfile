@@ -2,8 +2,8 @@ FROM oven/bun:1.2.2
 
 WORKDIR /app
 
-# Copy root package.json and lockfile
-COPY package.json bun.lock turbo.json ./
+# Copy root configs
+COPY package.json bun.lock turbo.json tsconfig.json biome.json ./
 
 # Copy packages
 COPY packages ./packages

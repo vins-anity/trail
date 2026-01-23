@@ -75,7 +75,7 @@ const auth = new Hono()
             );
 
             // Redirect back to frontend dashboard
-            const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+            const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
             return c.redirect(`${frontendUrl}/?connected=slack`);
         },
     )
@@ -137,7 +137,7 @@ const auth = new Hono()
             );
 
             // Redirect back to frontend dashboard
-            const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+            const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
             return c.redirect(`${frontendUrl}/?connected=github`);
         },
     )
@@ -199,7 +199,7 @@ const auth = new Hono()
             );
 
             // Redirect back to frontend dashboard
-            const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+            const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
             return c.redirect(`${frontendUrl}/?connected=jira`);
         },
     );

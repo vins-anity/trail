@@ -145,5 +145,5 @@ bun dev
 ```
 
 ### Verification
-- **Frontend**: http://localhost:5173
-- **API Docs**: http://localhost:3000/doc
+- **Frontend**: https://trail-web.pages.dev
+- **API Docs**: https://trail-api-sqoi.onrender.com/reference

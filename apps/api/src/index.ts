@@ -73,6 +73,10 @@ app.get(
             },
             servers: [
                 {
+                    url: "https://trail-api-sqoi.onrender.com",
+                    description: "Production Server",
+                },
+                {
                     url: "http://localhost:3000",
                     description: "Local Server",
                 },

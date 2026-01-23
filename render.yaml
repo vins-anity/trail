@@ -1,0 +1,36 @@
+services:
+  # The Main API
+  - type: web
+    name: trail-api
+    runtime: docker
+    repo: https://github.com/YOUR_USERNAME/trail
+    rootDir: .
+    dockerfilePath: ./apps/api/Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SLACK_CLIENT_ID
+        sync: false
+    startCommand: bun run start
+    plan: free
+
+  # The Background Worker (pg-boss)
+  - type: worker
+    name: trail-worker
+    runtime: docker
+    repo: https://github.com/YOUR_USERNAME/trail
+    rootDir: .
+    dockerfilePath: ./apps/api/Dockerfile
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+    startCommand: bun run worker
+    plan: free

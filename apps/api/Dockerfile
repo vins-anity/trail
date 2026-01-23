@@ -1,22 +1,25 @@
-FROM oven/bun:1 as base
+FROM oven/bun:1.2.2
+
 WORKDIR /app
 
-# Install dependencies
-COPY package.json bun.lockb ./
-RUN bun install --frozen-lockfile --production
+# Copy root package.json and lockfile
+COPY package.json bun.lock turbo.json ./
 
-# Copy source
-COPY . .
+# Copy packages
+COPY packages ./packages
 
-# Build TypeScript
-RUN bun run build
+# Copy apps
+COPY apps/api ./apps/api
+# We don't need apps/web for the API container
 
-# Expose port
+# Install dependencies (from root)
+RUN bun install
+
+# Build shared packages if necessary (or just run from source with Bun)
+# RUN bun run build --filter=shared
+
+# Expose API port
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD bun run -e "fetch('http://localhost:3000/health').then(r => r.ok ? process.exit(0) : process.exit(1))"
-
-# Start application
-CMD ["bun", "run", "src/index.ts"]
+# Default command (overridden by Render)
+CMD ["bun", "run", "apps/api/src/index.ts"]

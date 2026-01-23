@@ -19,7 +19,7 @@ services:
         sync: false
       - key: SLACK_CLIENT_ID
         sync: false
-    startCommand: bun run start
+    dockerCommand: bun run apps/api/src/index.ts
     plan: free
 
   # The Background Worker (pg-boss)
@@ -32,7 +32,7 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false
-    startCommand: bun run worker
+    dockerCommand: bun run apps/api/src/worker.ts
     plan: free
 
 

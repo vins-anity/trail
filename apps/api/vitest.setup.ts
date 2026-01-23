@@ -1,166 +1,163 @@
 import type { Context, Next } from "hono";
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
-// Mock globals if needed
-// biome-ignore lint/suspicious/noExplicitAny: mock
+// Mock globals
 global.fetch = vi.fn() as any;
 
-// Set dummy env vars for tests to prevent crashes if missing in CI
-process.env.SUPABASE_URL = process.env.SUPABASE_URL || "https://mock.supabase.co";
-process.env.SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "mock-key";
-process.env.DATABASE_URL = process.env.DATABASE_URL || "postgresql://mock:mock@localhost:5432/mock";
-process.env.ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "0000000000000000000000000000000000000000000000000000000000000000";
+// Set dummy env vars
+process.env.SUPABASE_URL = "https://mock.supabase.co";
+process.env.SUPABASE_ANON_KEY = "mock-key";
+process.env.DATABASE_URL = "postgresql://mock:mock@localhost:5432/mock";
+process.env.ENCRYPTION_KEY = "0000000000000000000000000000000000000000000000000000000000000000";
 
-// Mock Database to prevent connection attempts in tests
+// Shared state
+const { mockDbState } = vi.hoisted(() => ({
+    mockDbState: {} as Record<string, any[]>,
+}));
+
+// Reset state
+beforeEach(() => {
+    for (const key in mockDbState) delete mockDbState[key];
+});
+
+// Mock Database
 vi.mock("./src/db", async (importActual) => {
     const actual = await importActual<typeof import("./src/db")>();
+    const toSnakeCase = (str: string) => str.replace(/[A-Z]/g, l => `_${l.toLowerCase()}`);
 
-    // Shared state for the mock database to allow insert -> select to work
-    const dbState: Record<string, any[]> = {};
-
-    // Helper to get table name from Drizzle table object
     const getTableName = (table: any): string => {
         if (!table) return "generic";
-        // Drizzle stores table name in a few possible places depending on version
-        return table.name || table[Symbol.for('drizzle:Name')] || (typeof table === 'string' ? table : "generic");
+        if (typeof table === 'string') return toSnakeCase(table);
+        const name = table[Symbol.for('drizzle:Name')] || table.config?.name || table.name || (table._ && table._.name);
+        return name && typeof name === 'string' ? toSnakeCase(name) : "generic";
     };
 
-    // Helper to inject standard defaults if missing
+    // Exhaustive structural search
+    const findValues = (obj: any, values: Set<string | number> = new Set(), depth = 0): Set<string | number> => {
+        if (!obj || depth > 10) return values;
+
+        if (typeof obj === 'string' || typeof obj === 'number') {
+            const s = String(obj);
+            if (s.length > 3 && !s.includes(' ') && !s.includes('{')) values.add(obj);
+            return values;
+        }
+
+        if (typeof obj !== 'object' || Array.isArray(obj)) {
+            if (Array.isArray(obj)) for (const item of obj) findValues(item, values, depth + 1);
+            return values;
+        }
+
+        for (const k in obj) {
+            // Skip huge metadata/circular keys
+            if (k === 'table' || k === 'column' || k === '_') continue;
+            const v = (obj as any)[k];
+            if (v !== undefined && v !== null) {
+                if (typeof v === 'string' || typeof v === 'number') {
+                    const s = String(v);
+                    if (s.length > 3 && !s.includes(' ') && !s.includes('{')) values.add(v);
+                } else if (typeof v === 'object') {
+                    findValues(v, values, depth + 1);
+                }
+            }
+        }
+        return values;
+    };
+
     const withDefaults = (item: any) => {
         if (!item || typeof item !== "object" || Array.isArray(item)) return item;
-        return {
-            id: crypto.randomUUID(),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            isActive: true, // Default shared across many tables
-            isDefault: false,
-            ...item,
-        };
+        return { id: crypto.randomUUID(), createdAt: new Date(), updatedAt: new Date(), isActive: true, isDefault: false, ...item };
     };
 
-    /**
-     * Create a chainable mock that is also a Thenable (resolves to data or [])
-     */
     const createMockChain = (tableName?: string, queryData?: any, isAggregation = false) => {
         const chain: any = {
-            select: vi.fn((fields) => {
-                // Peek at fields to see if this is an aggregation (like { count: sql... })
-                const hasAggregation = fields && typeof fields === "object" && "count" in fields;
-                return createMockChain(tableName, queryData, hasAggregation);
-            }),
+            select: vi.fn((f) => createMockChain(tableName, queryData, f && typeof f === "object" && "count" in f)),
             selectDistinct: vi.fn(() => chain),
-            insert: vi.fn((table: any) => {
-                return createMockChain(getTableName(table));
-            }),
-            update: vi.fn((table: any) => {
-                return createMockChain(getTableName(table));
-            }),
-            delete: vi.fn((table: any) => {
-                return createMockChain(getTableName(table));
-            }),
-            from: vi.fn((table: any) => {
-                const name = getTableName(table);
-                // If we have data for this table in state, use it as default queryData
-                const data = dbState[name] || [];
-                return createMockChain(name, data);
+            insert: vi.fn((t) => createMockChain(getTableName(t))),
+            update: vi.fn((t) => createMockChain(getTableName(t))),
+            delete: vi.fn((t) => createMockChain(getTableName(t))),
+            from: vi.fn((t) => {
+                const name = getTableName(t);
+                return createMockChain(name, mockDbState[name] || []);
             }),
             values: vi.fn((vals) => {
-                const results = Array.isArray(vals) ? vals.map(withDefaults) : [withDefaults(vals)];
+                const results = (Array.isArray(vals) ? vals : [vals]).map(withDefaults);
                 if (tableName && tableName !== "generic") {
-                    dbState[tableName] = [...(dbState[tableName] || []), ...results];
+                    mockDbState[tableName] = [...(mockDbState[tableName] || []), ...results];
                 }
                 return createMockChain(tableName, results);
             }),
-            set: vi.fn((vals) => {
-                // For updates, we just return the values for now
-                const results = Array.isArray(vals) ? vals.map(withDefaults) : [withDefaults(vals)];
-                return createMockChain(tableName, results);
-            }),
+            returning: vi.fn(() => chain),
+            set: vi.fn((vals) => createMockChain(tableName, (Array.isArray(vals) ? vals : [vals]).map(withDefaults))),
             where: vi.fn((condition) => {
-                // Basic filtering for where(eq(id, proofId))
-                // Drizzle conditions: eq(col, val) => { left: col, right: val, operator: 'uuid' or '=' }
-                if (queryData && Array.isArray(queryData)) {
-                    // Try to find the value being compared
-                    const targetValue = condition?.right ?? condition?.value;
-                    if (targetValue !== undefined) {
-                        const filtered = queryData.filter(item =>
-                            item.id === targetValue ||
-                            item.workspaceId === targetValue ||
-                            item.taskId === targetValue
-                        );
-                        return createMockChain(tableName, filtered);
-                    }
-                    // If we can't parse the condition, return an empty chain to signal "found nothing"
-                    // IF it's likely a specific lookup (where has a condition)
-                    return createMockChain(tableName, []);
+                if (!queryData || !Array.isArray(queryData)) return chain;
+                if (!condition) return chain;
+
+                const vals = Array.from(findValues(condition));
+                if (vals.length > 0) {
+                    const filtered = queryData.filter(item => {
+                        const itemValues = Object.values(item).map(v => String(v).toLowerCase());
+                        return vals.some(v => itemValues.includes(String(v).toLowerCase()));
+                    });
+                    return createMockChain(tableName, filtered);
                 }
-                return chain;
+                // Strict: if parsing failed but condition exists, return nothing to avoid leak
+                return createMockChain(tableName, []);
             }),
-            limit: vi.fn((n) => {
-                if (queryData && Array.isArray(queryData)) {
-                    return createMockChain(tableName, queryData.slice(0, n));
-                }
-                return chain;
-            }),
+            limit: vi.fn((n) => createMockChain(tableName, Array.isArray(queryData) ? queryData.slice(0, n) : queryData)),
             offset: vi.fn(() => chain),
             orderBy: vi.fn(() => chain),
-            returning: vi.fn(() => chain),
             innerJoin: vi.fn(() => chain),
             leftJoin: vi.fn(() => chain),
             execute: vi.fn().mockImplementation(() => {
-                if (isAggregation) return Promise.resolve([{ count: queryData ? (Array.isArray(queryData) ? queryData.length : 1) : 0 }]);
-
-                let result = queryData
-                    ? (Array.isArray(queryData) ? queryData : [queryData])
-                    : [];
-
-                return Promise.resolve(result);
+                const res = isAggregation ? [{ count: queryData?.length || 0 }] : (queryData || []);
+                return Promise.resolve(res);
             }),
-            // Ensure compatibility with async/await destructuring
-            then: (onFulfilled: any) => {
-                if (isAggregation) return Promise.resolve([{ count: queryData ? (Array.isArray(queryData) ? queryData.length : 1) : 0 }]).then(onFulfilled);
-
-                let result = queryData
-                    ? (Array.isArray(queryData) ? queryData : [queryData])
-                    : [];
-
-                return Promise.resolve(result).then(onFulfilled);
-            },
+            then: (cb: any) => chain.execute().then(cb),
         };
         return chain;
     };
 
     const mockDb = createMockChain();
 
-    // Add db.query mock for relational queries (findFirst, findMany)
     mockDb.query = new Proxy({}, {
-        get: (target, table) => {
+        get: (_, tableKey) => {
+            const name = toSnakeCase(String(tableKey));
             return {
-                findFirst: vi.fn().mockImplementation(async (options) => {
-                    // Return a dummy object with defaults
-                    return withDefaults({ id: crypto.randomUUID(), role: "owner" });
+                findFirst: vi.fn().mockImplementation(async (opts) => {
+                    const data = mockDbState[name] || [];
+                    if (!opts?.where) return data[0] || null;
+                    const vals = Array.from(findValues(opts.where));
+                    const result = vals.length > 0 ? data.find(item => {
+                        const itemValues = Object.values(item).map(v => String(v).toLowerCase());
+                        return vals.some(v => itemValues.includes(String(v).toLowerCase()));
+                    }) : data[0];
+
+                    if (!result && (name === 'workspace_members' || name === 'workspaces' || name === 'users')) {
+                        const payload: any = { role: "owner", email: "test@example.com" };
+                        if (vals[0]) payload.id = String(vals[0]);
+                        return withDefaults(payload);
+                    }
+                    return result ? withDefaults(result) : null;
                 }),
-                findMany: vi.fn().mockImplementation(async (options) => {
-                    return [withDefaults({ id: crypto.randomUUID() })];
+                findMany: vi.fn().mockImplementation(async (opts) => {
+                    const data = mockDbState[name] || [];
+                    if (!opts?.where) return data.map(withDefaults);
+                    const vals = Array.from(findValues(opts.where));
+                    const filtered = vals.length > 0 ? data.filter(item => {
+                        const itemValues = Object.values(item).map(v => String(v).toLowerCase());
+                        return vals.some(v => itemValues.includes(String(v).toLowerCase()));
+                    }) : data;
+                    return filtered.map(withDefaults);
                 })
             };
         }
     });
 
     mockDb.transaction = vi.fn(async (cb) => await cb(createMockChain()));
-
-    return {
-        ...actual,
-        db: mockDb,
-        pgClient: {
-            options: {},
-            close: vi.fn(),
-            end: vi.fn(),
-        },
-    };
+    return { ...actual, db: mockDb, pgClient: { options: {}, close: vi.fn(), end: vi.fn() } };
 });
 
-// Mock Supabase Auth Middleware to bypass auth checks in tests
+// Mock Supabase Auth
 vi.mock("./src/middleware/supabase-auth", () => ({
     supabaseAuth: async (c: Context, next: Next) => {
         c.set("user", { id: "00000000-0000-0000-0000-000000000000", email: "test@example.com" });

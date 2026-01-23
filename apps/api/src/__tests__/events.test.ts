@@ -5,7 +5,7 @@
  */
 
 import { eq } from "drizzle-orm";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { db, schema } from "../db";
 import app from "../index";
 
@@ -13,8 +13,8 @@ const TEST_WORKSPACE_ID = crypto.randomUUID();
 const MOCK_USER_ID = "00000000-0000-0000-0000-000000000000";
 
 describe("Events API", () => {
-    // Setup: Create a test workspace
-    beforeAll(async () => {
+    // Setup for EVERY test (since state is reset in vitest.setup.ts beforeEach)
+    beforeEach(async () => {
         await db.insert(schema.workspaces).values({
             id: TEST_WORKSPACE_ID,
             name: "Test Workspace Events",

@@ -2,15 +2,34 @@ import { IconActivity, IconAlertCircle, IconCircleCheck, IconClock, IconTrending
 import { formatDistanceToNow } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCardSkeleton, ActivitySkeleton } from "@/components/ui/skeleton";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { useEvents } from "@/hooks/use-events";
 import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
 import { OnboardingWidget } from "../../components/onboarding/OnboardingWidget";
 
 export function DashboardPage() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const queryClient = useQueryClient();
     const { data: status, isLoading: statusLoading } = useWorkspaceStatus();
     const { stats, isLoading: statsLoading } = useDashboardStats();
     const { data: recentActivity, isLoading: activityLoading } = useEvents({ pageSize: 5 });
+
+    // Handle OAuth success redirect
+    useEffect(() => {
+        const connectedProvider = searchParams.get("connected");
+        if (connectedProvider) {
+            // Invalidate workspace status to fetch latest integration status
+            queryClient.invalidateQueries({ queryKey: ["workspace-status"] });
+
+            // Allow time for refetch then clear param
+            setTimeout(() => {
+                setSearchParams({}, { replace: true });
+            }, 1000);
+        }
+    }, [searchParams, queryClient, setSearchParams]);
 
     // 1. Loading State
     if (statusLoading) {

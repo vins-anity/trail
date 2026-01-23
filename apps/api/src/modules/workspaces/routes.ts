@@ -41,13 +41,13 @@ app.get("/current", async (c) => {
         return c.json({ error: "Workspace not found" }, 404);
     }
 
-    // Return status flags only, NOT the actua tokens
+    // Return status flags only, NOT the actual tokens
     return c.json({
         id: workspace.id,
         name: workspace.name,
-        hasSlack: !!workspace.slackAccessToken,
-        hasGithub: !!workspace.githubInstallationId,
-        hasJira: !!workspace.jiraAccessToken,
+        hasSlack: !!(workspace.slackTeamId || workspace.slackAccessToken),
+        hasGithub: !!(workspace.githubOrg || workspace.githubInstallationId),
+        hasJira: !!(workspace.jiraSite || workspace.jiraAccessToken),
         defaultPolicyTier: workspace.defaultPolicyTier,
     });
 });

@@ -74,7 +74,9 @@ const auth = new Hono()
                 tokens.refreshToken,
             );
 
-            return c.json({ success: true, message: "Slack connected successfully" });
+            // Redirect back to frontend dashboard
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            return c.redirect(`${frontendUrl}/?connected=slack`);
         },
     )
 
@@ -134,7 +136,9 @@ const auth = new Hono()
                 tokens.refreshToken,
             );
 
-            return c.json({ success: true, message: "GitHub connected successfully" });
+            // Redirect back to frontend dashboard
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            return c.redirect(`${frontendUrl}/?connected=github`);
         },
     )
 
@@ -194,7 +198,9 @@ const auth = new Hono()
                 tokens.refreshToken,
             );
 
-            return c.json({ success: true, message: "Jira connected successfully" });
+            // Redirect back to frontend dashboard
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            return c.redirect(`${frontendUrl}/?connected=jira`);
         },
     );
 

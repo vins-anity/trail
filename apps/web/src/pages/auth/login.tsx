@@ -15,7 +15,7 @@ const LoginSchema = v.object({
     password: v.pipe(v.string(), v.minLength(6, "Password must be at least 6 characters.")),
 });
 
-type LoginFormData = v.InferInput<typeof LoginSchema>;
+type LoginFormData = v.InferOutput<typeof LoginSchema>;
 
 export function LoginPage() {
     const [authError, setAuthError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export function LoginPage() {
         handleSubmit,
         formState: { errors, isSubmitting },
     } = useForm<LoginFormData>({
-        resolver: valibotResolver(LoginSchema),
+        resolver: valibotResolver(LoginSchema) as any,
         defaultValues: {
             email: "",
             password: "",

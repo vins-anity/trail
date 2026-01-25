@@ -30,7 +30,7 @@ export function LandingNav() {
                     >
                         FAQ
                     </a>
-                    <Button size="sm">Get Started</Button>
+                    <Button size="sm">Free Beta Trial</Button>
                 </div>
             </div>
         </nav>

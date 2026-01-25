@@ -8,8 +8,7 @@ export function LandingFeatures() {
             <div className="text-center space-y-4">
                 <h2 className="text-4xl font-bold">How Trail AI Works</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                    A four-stage workflow that captures intent, automates evidence, and produces
-                    audit-ready receipts.
+                    4-stage workflow: Intent → Evidence → Closure → Receipt.
                 </p>
             </div>
 
@@ -19,12 +18,10 @@ export function LandingFeatures() {
                     <div className="space-y-4">
                         <Badge>Stage 1</Badge>
                         <h3 className="text-2xl font-bold">
-                            Passive Handshake: Explicit Acceptance
+                            Passive Handshake
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            A developer moves a ticket in Jira or accepts a task in Slack. This
-                            automatically logs a formal commitment. The developer can
-                            "Reject" via a simple button if assigned in error.
+                            Jira move/Slack accept → Auto-logs commitment. First audit entry.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">
@@ -54,11 +51,9 @@ export function LandingFeatures() {
                 <div className="grid md:grid-cols-2 gap-8 items-center md:order-2">
                     <div className="space-y-4 md:order-2">
                         <Badge>Stage 2</Badge>
-                        <h3 className="text-2xl font-bold">Execute: Evidence Auto-Collection</h3>
+                        <h3 className="text-2xl font-bold">Execute</h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            Trail AI monitors GitHub webhooks. When code merges, reviews are
-                            approved, and CI passes—all evidence is captured automatically. No
-                            manual status updates.
+                            GitHub webhooks → Captures merges/reviews/CI. No updates needed.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">
@@ -97,12 +92,10 @@ export function LandingFeatures() {
                     <div className="space-y-4">
                         <Badge>Stage 3</Badge>
                         <h3 className="text-2xl font-bold">
-                            Optimistic Closure: Human-in-the-Loop
+                            Optimistic Closure
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            Once policy is met (PR merged + approvals + CI passing), Trail AI
-                            proposes closure. It auto-approves after a set window (e.g., 24h)
-                            unless a lead vetoes it. Speed with control.
+                            Policy met → Proposes close (24h auto unless veto). Speed + control.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">
@@ -144,12 +137,10 @@ export function LandingFeatures() {
                     <div className="space-y-4 md:order-2">
                         <Badge>Stage 4</Badge>
                         <h3 className="text-2xl font-bold">
-                            Proof Packet: AI-Enhanced Receipt
+                            Proof Packet
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            Generate a shareable, tamper-evident Proof Packet. OpenRouter AI
-                            transforms technical logs into business-readable summaries. Prove
-                            exactly what was delivered.
+                            Shareable/tamper-evident. AI turns logs into client summaries.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">

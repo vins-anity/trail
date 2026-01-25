@@ -12,8 +12,8 @@ export function LandingProblem() {
                 <div className="text-center space-y-4">
                     <h2 className="text-4xl font-bold">The Execution Gap</h2>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Without proof, delivery devolves into finger-pointing. Clients question
-                        completion. Managers lose visibility.
+                        Without proof, delivery = finger-pointing. Clients question. Managers
+                        chase visibility.
                     </p>
                 </div>
 
@@ -25,11 +25,9 @@ export function LandingProblem() {
                             <PersonIcon className="w-5 h-5 text-primary" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">Task Accepted in Slack</h3>
+                            <h3 className="font-semibold text-lg">Task in Slack</h3>
                             <p className="text-muted-foreground text-sm">
-                                Developer commits to work but there's no formal record.
-                                Intention lives in Slack—fleeting, searchable but not
-                                authoritative.
+                                Commits vanish—no formal record. Fleeting intent.
                             </p>
                         </div>
                     </div>
@@ -39,11 +37,9 @@ export function LandingProblem() {
                             <CodeIcon className="w-5 h-5 text-muted-foreground" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">Work Happens in GitHub</h3>
+                            <h3 className="font-semibold text-lg">GitHub Work</h3>
                             <p className="text-muted-foreground text-sm">
-                                Code merges, tests pass, reviews complete. But who authorized
-                                it? Managers scramble across PR comments, Jira, and Slack to
-                                piece together the story.
+                                Merges/tests pass—but authorization? Scramble PRs/Jira/Slack.
                             </p>
                         </div>
                     </div>
@@ -53,13 +49,9 @@ export function LandingProblem() {
                             <BarChartIcon className="w-5 h-5 text-muted-foreground" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">
-                                Status Lost in Translation
-                            </h3>
+                            <h3 className="font-semibold text-lg">Status Lost</h3>
                             <p className="text-muted-foreground text-sm">
-                                "Is it done?" becomes a question. Jira is stale. Slack is
-                                archived. GitHub shows code but not commitment. Nobody trusts
-                                the answer.
+                                "Done?" Jira stale, Slack archived, GitHub code-only. No trust.
                             </p>
                         </div>
                     </div>
@@ -69,11 +61,9 @@ export function LandingProblem() {
                             <ExclamationTriangleIcon className="w-5 h-5 text-destructive" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">Billing Dispute Erupts</h3>
+                            <h3 className="font-semibold text-lg">Billing Fight</h3>
                             <p className="text-muted-foreground text-sm">
-                                Client says they never approved final work. You have no single
-                                proof document. Days lost arguing over evidence that should have
-                                been obvious.
+                                No proof doc. Days lost arguing what was obvious.
                             </p>
                         </div>
                     </div>

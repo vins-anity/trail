@@ -13,7 +13,7 @@ export function LandingFooter() {
                             <span className="font-semibold">Trail AI</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                            Proof packets for agencies that deliver.
+                            Proof for agencies that deliver.
                         </p>
                     </div>
                     <div className="space-y-3">
@@ -106,7 +106,7 @@ export function LandingFooter() {
                 </div>
                 <div className="border-t border-border pt-8 text-center text-sm text-muted-foreground">
                     <p>
-                        Built by developers, for developers who ship. © 2026 Trail AI. All
+                        Built by devs, for agencies that ship. © 2026 Trail AI. All
                         rights reserved.
                     </p>
                 </div>

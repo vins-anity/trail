@@ -9,12 +9,11 @@ export function LandingCta() {
                     Ready to Stop Proving Nothing?
                 </h2>
                 <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                    Join 200+ agencies delivering proof with every deliverable. Start your free
-                    trial today—no credit card required.
+                    Join beta agencies proving every deliverable. Free trial—no card.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                     <Button size="lg" className="rounded-full px-8">
-                        Start 30-Day Free Trial{" "}
+                        Free Beta Trial (No CC){" "}
                         <ArrowRightIcon className="w-4 h-4 ml-2" />
                     </Button>
                     <Button

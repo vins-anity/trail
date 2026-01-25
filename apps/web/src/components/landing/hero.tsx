@@ -23,9 +23,8 @@ export function LandingHero() {
                     </h1>
 
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl font-light">
-                        Proof Packets end billing disputes instantly. Your work is documented,
-                        authorized, and client-ready—automatically. Using AI-Enhanced summaries
-                        and Optimistic Closure.
+                        Proof Packets end billing disputes automatically. Documented work from
+                        Jira/GitHub/Slack—client-ready with AI summaries & optimistic closure.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -33,7 +32,7 @@ export function LandingHero() {
                             size="lg"
                             className="gap-2 rounded-full px-8 text-base font-semibold w-fit"
                         >
-                            Start Free Trial <ArrowRightIcon className="w-4 h-4" />
+                            Free Beta Trial (No CC) <ArrowRightIcon className="w-4 h-4" />
                         </Button>
                         <Button
                             size="lg"
@@ -45,8 +44,8 @@ export function LandingHero() {
                     </div>
 
                     <div className="border-t border-border/30 pt-6 text-sm text-muted-foreground">
-                        <p className="font-medium">
-                            Trusted by 200+ agencies • 50K+ proof packets generated
+                        <p className="font-medium uppercase tracking-wider text-[10px] opacity-70">
+                            Beta-tested with agencies • Metadata-only security • Hash-chain tamper-proof
                         </p>
                     </div>
                 </div>

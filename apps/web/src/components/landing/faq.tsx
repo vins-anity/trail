@@ -6,28 +6,20 @@ export function LandingFaq() {
 
     const faqs = [
         {
-            q: "How long does it take to set up Trail AI?",
-            a: "About 5 minutes. Just connect your Slack workspace, Jira instance, and GitHub repo. Trail AI handles the rest automatically.",
+            q: "Setup",
+            a: "5 mins. Connect Slack/Jira/GitHub.",
         },
         {
-            q: "Do I need to change how my team works?",
-            a: "No. Your developers continue using Slack and GitHub exactly as before. Trail AI operates silently in the background, capturing and organizing evidence.",
+            q: "Team",
+            a: "Silent background—devs unchanged.",
         },
         {
-            q: "Can I customize the proof packet format?",
-            a: "Yes. Export as web-shareable link, PDF with your branding, or JSON for integration into your own systems. Enterprise customers get white-label options.",
+            q: "Customization",
+            a: "PDF/JSON links, branded exports.",
         },
         {
-            q: "Is my data secure?",
-            a: "Absolutely. We are SOC 2 Type II certified, HIPAA compliant, and use hash-chain immutability to ensure proof packets cannot be tampered with.",
-        },
-        {
-            q: "What if my team uses Asana, Linear, or other tools?",
-            a: "We currently support Slack, Jira, and GitHub. Custom integrations are available for Enterprise customers. Reach out to our sales team.",
-        },
-        {
-            q: "Can I cancel anytime?",
-            a: "Yes. No long-term contracts. You can cancel your subscription at any time, and your data exports immediately.",
+            q: "Flexibility",
+            a: "Beta free. Cancel/export anytime.",
         },
     ];
 

@@ -10,14 +10,10 @@ export function LandingWhy() {
                             Why We Built Trail AI
                         </h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            After 10 years of running a software agency, we watched billing
-                            disputes destroy relationships and waste weeks of management time.
-                            We knew there had to be a better way.
+                            10+ years agency pain—disputes wasted weeks. We fixed it.
                         </p>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            Trail AI is the result: a system that automatically proves what
-                            you've delivered and who approved it. It's not about distrust—it's
-                            about clarity. Proof eliminates arguments before they start.
+                            Trail AI is the result. Clarity Wins: Proof kills arguments pre-start.
                         </p>
                         <div className="space-y-4 pt-6">
                             <div className="flex gap-4">
@@ -26,10 +22,10 @@ export function LandingWhy() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold">
-                                        Built by Agency Founders
+                                        Agency-Built
                                     </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        We lived your pain.
+                                        Lived the chaos.
                                     </p>
                                 </div>
                             </div>
@@ -39,10 +35,10 @@ export function LandingWhy() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold">
-                                        Enterprise-Grade Security
+                                        Secure
                                     </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        SOC 2, HIPAA, compliance ready.
+                                        SOC2 path, hash-immutable. No code ingested.
                                     </p>
                                 </div>
                             </div>
@@ -52,7 +48,7 @@ export function LandingWhy() {
                         <div className="text-center space-y-4">
                             <LockClosedIcon className="w-24 h-24 text-primary mx-auto opacity-20" />
                             <p className="text-muted-foreground">
-                                200+ agencies trust Trail AI
+                                Join beta agencies proving every deliverable.
                             </p>
                         </div>
                     </div>

@@ -10,10 +10,10 @@ export function LandingProblem() {
         <section className="bg-card border-t border-b border-border py-20">
             <div className="max-w-6xl mx-auto px-6 space-y-12">
                 <div className="text-center space-y-4">
-                    <h2 className="text-4xl font-bold">The Execution Gap</h2>
+                    <h2 className="text-4xl font-bold uppercase tracking-tight">The Invoice Gap</h2>
                     <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                        Without proof, delivery = finger-pointing. Clients question. Managers
-                        chase visibility.
+                        You ship code. You bill for hours. The client pays for trust. When
+                        those don't align, you don't get paid.
                     </p>
                 </div>
 
@@ -25,9 +25,10 @@ export function LandingProblem() {
                             <PersonIcon className="w-5 h-5 text-primary" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">Task in Slack</h3>
+                            <h3 className="font-semibold text-lg">The Black Box</h3>
                             <p className="text-muted-foreground text-sm">
-                                Commits vanish—no formal record. Fleeting intent.
+                                Your team spent 40 hours on backend migrations. The client sees
+                                nothing. To them, the work didn't happen.
                             </p>
                         </div>
                     </div>
@@ -37,9 +38,10 @@ export function LandingProblem() {
                             <CodeIcon className="w-5 h-5 text-muted-foreground" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">GitHub Work</h3>
+                            <h3 className="font-semibold text-lg">The 'Status' Chase</h3>
                             <p className="text-muted-foreground text-sm">
-                                Merges/tests pass—but authorization? Scramble PRs/Jira/Slack.
+                                Clients ask 'Is it done?' because Jira is stale and Slack is
+                                noisy. You lose billable hours acting as a human status bot.
                             </p>
                         </div>
                     </div>
@@ -49,9 +51,10 @@ export function LandingProblem() {
                             <BarChartIcon className="w-5 h-5 text-muted-foreground" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">Status Lost</h3>
+                            <h3 className="font-semibold text-lg">Invoice Friction</h3>
                             <p className="text-muted-foreground text-sm">
-                                "Done?" Jira stale, Slack archived, GitHub code-only. No trust.
+                                You send the bill. They ask for 'details.' You scramble to find
+                                screenshots and git logs just to defend your revenue.
                             </p>
                         </div>
                     </div>
@@ -61,10 +64,9 @@ export function LandingProblem() {
                             <ExclamationTriangleIcon className="w-5 h-5 text-destructive" />
                         </div>
                         <div className="space-y-2 pt-2">
-                            <h3 className="font-semibold text-lg">Billing Fight</h3>
-                            <p className="text-muted-foreground text-sm">
-                                No proof doc. Days lost arguing what was obvious.
-                            </p>
+                            <h3 className="font-semibold text-lg font-mono opacity-50 italic">
+                                REVENUE AT RISK
+                            </h3>
                         </div>
                     </div>
                 </div>

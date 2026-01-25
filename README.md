@@ -1,4 +1,4 @@
-# Trail AI 🏔️
+# ShipDocket 📦
 
 **The Delivery Assurance Platform for High-Trust Agencies.**
 *Turn "code complete" into "client-ready proof" instantly.*
@@ -11,7 +11,7 @@ Agencies and clients suffer from a fundamental disconnect called the **Execution
 * **Clients** don't trust subjective status updates ("it's almost done") or opaque Jira tickets.
 * **Agencies** lose billable hours to administrative overhead, "clarification calls," and billing disputes.
 
-**Trail AI** is the solution: A "Metadata-First" system that acts as a neutral third-party notary for your software delivery.
+**ShipDocket** is the solution: A "Metadata-First" system that acts as a neutral third-party notary for your software delivery.
 
 ### 🚀 Key Benefits
 

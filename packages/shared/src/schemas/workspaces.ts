@@ -1,5 +1,5 @@
 /**
- * Trail AI Workspace Schemas
+ * ShipDocket Workspace Schemas
  *
  * Shared schemas for multi-tenant workspaces.
  */

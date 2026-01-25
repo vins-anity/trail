@@ -1,6 +1,6 @@
-# Trail AI Roadmap 🗺️
+# ShipDocket Roadmap 🗺️
 
-> **Strategic direction for Trail AI's development from V1 to Enterprise V2.**
+> **Strategic direction for ShipDocket's development from V1 to Enterprise V2.**
 
 ---
 
@@ -32,7 +32,7 @@
   - Generate sanctioned payloads: Dependency trees, Build/Test logs (Pass/Fail), Artifact Hashes.
   - **Security**: Action runs in user's CI; Trail only receives the *result* (sanitized JSON), never the source.
   
-- **CLI Tool (`trail-cli`)**:
+- **CLI Tool (`shipdocket-cli`)**:
   - For agencies without GitHub Actions (e.g., Jenkins, GitLab CI).
   - Standardizes evidence submission from any environment.
 
@@ -42,7 +42,7 @@
 **Goal:** "Trail Appliance" for regulated industries and large agencies.
 
 - **Dockerized Appliance**:
-  - Full Trail stack (API + DB + Worker) in a single container.
+  - Full ShipDocket stack (API + DB + Worker) in a single container.
   - Data stays on-prem; License key activation.
 - **Custom Policy Engine**:
   - Allow agencies to write custom OPA (Open Policy Agent) rules for closure.

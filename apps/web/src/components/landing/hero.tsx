@@ -17,14 +17,15 @@ export function LandingHero() {
                 {/* Left column: Headline and CTA */}
                 <div className="flex flex-col space-y-8">
                     <h1 className="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.1] text-balance">
-                        <span className="block">Stop</span>
-                        <span className="block text-primary">Proving</span>
-                        <span className="block">Nothing.</span>
+                        <span className="block">Turn</span>
+                        <span className="block text-primary">Commits</span>
+                        <span className="block">into Contracts.</span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-xl font-light">
-                        Proof Packets end billing disputes automatically. Documented work from
-                        Jira/GitHub/Slack—client-ready with AI summaries & optimistic closure.
+                        Stop defending your invoices. ShipDocket creates an automated
+                        'Bill of Lading' for your code—turning Jira tickets and GitHub merges
+                        into verified Proof Packets that get you paid faster.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-3 pt-4">
@@ -32,20 +33,20 @@ export function LandingHero() {
                             size="lg"
                             className="gap-2 rounded-full px-8 text-base font-semibold w-fit"
                         >
-                            Free Beta Trial (No CC) <ArrowRightIcon className="w-4 h-4" />
+                            Start Shipping (Free Beta) <ArrowRightIcon className="w-4 h-4" />
                         </Button>
                         <Button
                             size="lg"
                             variant="outline"
                             className="rounded-full px-8 text-base font-semibold bg-transparent w-fit"
                         >
-                            Watch Demo (2 min)
+                            See a Sample Proof Packet
                         </Button>
                     </div>
 
                     <div className="border-t border-border/30 pt-6 text-sm text-muted-foreground">
                         <p className="font-medium uppercase tracking-wider text-[10px] opacity-70">
-                            Beta-tested with agencies • Metadata-only security • Hash-chain tamper-proof
+                            🔒 Zero Code Access (Metadata Only) • 🔗 Tamper-Proof Hash Chain • 🛡️ SOC2-Ready Architecture
                         </p>
                     </div>
                 </div>
@@ -62,15 +63,15 @@ export function LandingHero() {
                             <div className="space-y-2 pb-4 border-b border-border/30">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xs font-mono font-semibold text-primary uppercase tracking-wider">
-                                        Proof Packet
+                                        OFFICIAL PROOF PACKET #402
                                     </span>
                                     <LockClosedIcon className="w-4 h-4 text-primary" />
                                 </div>
-                                <h3 className="text-lg font-bold text-foreground">
-                                    PP-PROJ-2847
+                                <h3 className="text-lg font-bold text-foreground uppercase">
+                                    DELIVERED & VERIFIED
                                 </h3>
                                 <p className="text-sm text-muted-foreground">
-                                    Authentication System Overhaul
+                                    User Authentication Refactor
                                 </p>
                             </div>
 
@@ -86,26 +87,26 @@ export function LandingHero() {
                             <div className="space-y-4">
                                 <div className="space-y-1">
                                     <p className="text-xs font-semibold text-muted-foreground uppercase">
-                                        Assigned to
+                                        Manifested
                                     </p>
                                     <p className="text-sm font-medium text-foreground">
-                                        Sarah Chen • Lead Engineer
+                                        Jan 10 • Jira #202
                                     </p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs font-semibold text-muted-foreground uppercase">
-                                        Completion Date
+                                        Cargo
                                     </p>
                                     <p className="text-sm font-medium text-foreground">
-                                        January 10, 2026 • 3:45 PM UTC
+                                        12 Commits, 2 PRs, CI Passed
                                     </p>
                                 </div>
                                 <div className="space-y-1">
                                     <p className="text-xs font-semibold text-muted-foreground uppercase">
-                                        Approved By
+                                        Authorized
                                     </p>
                                     <p className="text-sm font-medium text-foreground">
-                                        Mike Thompson • Project Manager
+                                        Jan 12 • Auto-closed
                                     </p>
                                 </div>
                             </div>
@@ -144,10 +145,13 @@ export function LandingHero() {
                             </div>
 
                             {/* Footer */}
-                            <div className="border-t border-border/30 pt-4">
+                            <div className="border-t border-border/30 pt-4 flex items-center justify-between">
                                 <p className="text-xs text-muted-foreground font-mono">
                                     Hash: <span className="text-primary">a7f3e9c2...</span>
                                 </p>
+                                <span className="text-[10px] font-bold text-primary uppercase">
+                                    Ready for Invoicing
+                                </span>
                             </div>
                         </div>
 
@@ -158,7 +162,7 @@ export function LandingHero() {
             </div>
 
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce">
-                <span className="text-xs text-muted-foreground">Scroll to explore</span>
+                <span className="text-xs text-muted-foreground">See how it works</span>
                 <div className="w-6 h-10 border-2 border-muted-foreground rounded-full flex items-start justify-center pt-2">
                     <div className="w-1 h-2 bg-muted-foreground rounded-full" />
                 </div>

@@ -1,6 +1,6 @@
 # Commercial Strategy & Market Validation 🚀
 
-> **"Hard Truths"**: What separates Trail AI as a Capstone vs. a Viable Startup.
+> **"Hard Truths"**: What separates ShipDocket as a Capstone vs. a Viable Startup.
 
 ---
 
@@ -24,7 +24,7 @@
 **Verdict**: **YES** — *if* we lock onto one specific outcome:
 > **"Get invoices approved faster with verified delivery receipts."**
 
-The logistics industry uses digital Proof of Delivery (PoD) to reduce invoicing errors. Trail AI applies this same "PoD" concept to software knowledge work.
+The logistics industry uses digital Proof of Delivery (PoD) to reduce invoicing errors. ShipDocket applies this same "PoD" concept to software knowledge work.
 *   *Reference*: [Proof of Delivery Systems](https://www.track-pod.com)
 
 ---

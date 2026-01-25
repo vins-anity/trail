@@ -6,9 +6,9 @@ export function LandingFeatures() {
     return (
         <section id="features" className="max-w-6xl mx-auto px-6 py-24 space-y-16">
             <div className="text-center space-y-4">
-                <h2 className="text-4xl font-bold">How Trail AI Works</h2>
+                <h2 className="text-4xl font-bold">The Delivery Supply Chain</h2>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                    4-stage workflow: Intent → Evidence → Closure → Receipt.
+                    From commitment to cash in 4 automated stages.
                 </p>
             </div>
 
@@ -16,12 +16,15 @@ export function LandingFeatures() {
                 {/* Stage 1 */}
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                     <div className="space-y-4">
-                        <Badge>Stage 1</Badge>
                         <h3 className="text-2xl font-bold">
-                            Passive Handshake
+                            Stage 1: The Manifest
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            Jira move/Slack accept → Auto-logs commitment. First audit entry.
+                            When a dev moves a ticket in Jira, ShipDocket 'manifests' the item.
+                            It’s now on the official record. No new tools, no manual start buttons.
+                        </p>
+                        <p className="text-sm font-semibold text-primary pt-2">
+                            Key Benefit: Formalizes intent instantly.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">
@@ -50,10 +53,13 @@ export function LandingFeatures() {
                 {/* Stage 2 */}
                 <div className="grid md:grid-cols-2 gap-8 items-center md:order-2">
                     <div className="space-y-4 md:order-2">
-                        <Badge>Stage 2</Badge>
-                        <h3 className="text-2xl font-bold">Execute</h3>
+                        <h3 className="text-2xl font-bold">Stage 2: The Cargo</h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            GitHub webhooks → Captures merges/reviews/CI. No updates needed.
+                            We attach the digital cargo: GitHub PRs, CI test results, and
+                            approvals. Every event is hash-chained to ensure it can't be faked.
+                        </p>
+                        <p className="text-sm font-semibold text-primary pt-2">
+                            Key Benefit: Indisputable proof of execution.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">
@@ -90,12 +96,15 @@ export function LandingFeatures() {
                 {/* Stage 3 */}
                 <div className="grid md:grid-cols-2 gap-8 items-center">
                     <div className="space-y-4">
-                        <Badge>Stage 3</Badge>
                         <h3 className="text-2xl font-bold">
-                            Optimistic Closure
+                            Stage 3: The Inspection
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            Policy met → Proposes close (24h auto unless veto). Speed + control.
+                            If tests pass and code is reviewed, ShipDocket proposes closure. It
+                            auto-closes in 24h unless you veto. Speed with control.
+                        </p>
+                        <p className="text-sm font-semibold text-primary pt-2">
+                            Key Benefit: Removes the project manager bottleneck.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">
@@ -135,12 +144,16 @@ export function LandingFeatures() {
                 {/* Stage 4 */}
                 <div className="grid md:grid-cols-2 gap-8 items-center md:order-2">
                     <div className="space-y-4 md:order-2">
-                        <Badge>Stage 4</Badge>
                         <h3 className="text-2xl font-bold">
-                            Proof Packet
+                            Stage 4: The Proof Packet
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            Shareable/tamper-evident. AI turns logs into client summaries.
+                            A client-ready link generated automatically. AI summarizes
+                            technical logs into business value language your client
+                            understands.
+                        </p>
+                        <p className="text-sm font-semibold text-primary pt-2">
+                            Key Benefit: Attach to invoice → Get paid.
                         </p>
                         <ul className="space-y-2 text-sm">
                             <li className="flex gap-2">

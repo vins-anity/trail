@@ -1,4 +1,4 @@
-import { LockClosedIcon } from "@radix-ui/react-icons";
+import { ReaderIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 
 export function LandingNav() {
@@ -7,9 +7,9 @@ export function LandingNav() {
             <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                        <LockClosedIcon className="w-5 h-5 text-primary-foreground" />
+                        <ReaderIcon className="w-5 h-5 text-primary-foreground" />
                     </div>
-                    <span className="font-semibold text-lg">Trail AI</span>
+                    <span className="font-semibold text-lg">ShipDocket</span>
                 </div>
                 <div className="flex items-center gap-4">
                     <a
@@ -30,7 +30,7 @@ export function LandingNav() {
                     >
                         FAQ
                     </a>
-                    <Button size="sm">Free Beta Trial</Button>
+                    <Button size="sm">Start Shipping (Free Beta)</Button>
                 </div>
             </div>
         </nav>

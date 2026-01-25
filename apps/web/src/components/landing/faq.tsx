@@ -6,20 +6,20 @@ export function LandingFaq() {
 
     const faqs = [
         {
-            q: "Setup",
-            a: "5 mins. Connect Slack/Jira/GitHub.",
+            q: "Does ShipDocket read my source code?",
+            a: "No. We operate on a Metadata-Only basis. We verify signals like 'PR Merged' or 'Tests Passed', but we never access your repository's code content.",
         },
         {
-            q: "Team",
-            a: "Silent background—devs unchanged.",
+            q: "Do I need to change my team's workflow?",
+            a: "Zero changes required. Your team keeps using Jira, Slack, and GitHub exactly as they do now. We run silently in the background.",
         },
         {
-            q: "Customization",
-            a: "PDF/JSON links, branded exports.",
+            q: "What is a 'Proof Packet'?",
+            a: "It's a verified, read-only web page that summarizes exactly what was delivered in a sprint, written in plain English.",
         },
         {
-            q: "Flexibility",
-            a: "Beta free. Cancel/export anytime.",
+            q: "Can I export it?",
+            a: "Yes. JSON for compliance, PDF for invoicing.",
         },
     ];
 

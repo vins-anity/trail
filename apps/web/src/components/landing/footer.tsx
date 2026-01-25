@@ -1,4 +1,4 @@
-import { LockClosedIcon } from "@radix-ui/react-icons";
+import { ReaderIcon } from "@radix-ui/react-icons";
 
 export function LandingFooter() {
     return (
@@ -8,12 +8,12 @@ export function LandingFooter() {
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                                <LockClosedIcon className="w-5 h-5 text-primary-foreground" />
+                                <ReaderIcon className="w-5 h-5 text-primary-foreground" />
                             </div>
-                            <span className="font-semibold">Trail AI</span>
+                            <span className="font-semibold">ShipDocket</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                            Proof for agencies that deliver.
+                            The Bill of Lading for Software.
                         </p>
                     </div>
                     <div className="space-y-3">
@@ -106,8 +106,7 @@ export function LandingFooter() {
                 </div>
                 <div className="border-t border-border pt-8 text-center text-sm text-muted-foreground">
                     <p>
-                        Built by devs, for agencies that ship. © 2026 Trail AI. All
-                        rights reserved.
+                        © 2026 ShipDocket. Verify everything.
                     </p>
                 </div>
             </div>

@@ -1,6 +1,6 @@
-# Trail AI Architecture 🏗️
+# ShipDocket Architecture 🏗️
 
-> **System Design, Data Flow, and Security Model.**
+> **System Design, Data Flow, and Security Model for ShipDocket.**
 
 ---
 

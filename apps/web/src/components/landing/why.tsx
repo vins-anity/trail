@@ -1,4 +1,4 @@
-import { PersonIcon, LockClosedIcon } from "@radix-ui/react-icons";
+import { PersonIcon, ReaderIcon } from "@radix-ui/react-icons";
 
 export function LandingWhy() {
     return (
@@ -7,13 +7,15 @@ export function LandingWhy() {
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                     <div className="space-y-6">
                         <h2 className="text-5xl font-bold leading-tight">
-                            Why We Built Trail AI
+                            Why We Built ShipDocket
                         </h2>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            10+ years agency pain—disputes wasted weeks. We fixed it.
+                            We ran a software agency for 10 years. We hated 'explaining' bills.
                         </p>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            Trail AI is the result. Clarity Wins: Proof kills arguments pre-start.
+                            The Logistics of Trust. In the shipping industry, you don't argue
+                            about delivery—you check the Bill of Lading. Software should be no
+                            different.
                         </p>
                         <div className="space-y-4 pt-6">
                             <div className="flex gap-4">
@@ -22,23 +24,25 @@ export function LandingWhy() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold">
-                                        Agency-Built
+                                        Built for Business
                                     </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        Lived the chaos.
+                                        Developers stay in their flow. You get a business asset that
+                                        proves value without micromanagement.
                                     </p>
                                 </div>
                             </div>
                             <div className="flex gap-4">
                                 <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
-                                    <LockClosedIcon className="w-6 h-6 text-primary" />
+                                    <ReaderIcon className="w-6 h-6 text-primary" />
                                 </div>
                                 <div>
                                     <h3 className="font-semibold">
-                                        Secure
+                                        Zero IP Risk
                                     </h3>
                                     <p className="text-sm text-muted-foreground">
-                                        SOC2 path, hash-immutable. No code ingested.
+                                        We verify the shipping container (metadata), we never open the
+                                        box (source code). Your IP is safe.
                                     </p>
                                 </div>
                             </div>
@@ -46,9 +50,12 @@ export function LandingWhy() {
                     </div>
                     <div className="bg-gradient-to-br from-primary/10 to-background border border-primary/20 rounded-2xl p-12 flex items-center justify-center min-h-96">
                         <div className="text-center space-y-4">
-                            <LockClosedIcon className="w-24 h-24 text-primary mx-auto opacity-20" />
+                            <ReaderIcon className="w-24 h-24 text-primary mx-auto opacity-20" />
+                            <p className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">
+                                Verified Logistics
+                            </p>
                             <p className="text-muted-foreground">
-                                Join beta agencies proving every deliverable.
+                                Don't just invoice. Send a Proof Packet.
                             </p>
                         </div>
                     </div>

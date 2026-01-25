@@ -1,7 +1,7 @@
 /**
- * Trail AI Database Schema
+ * ShipDocket Database Schema
  *
- * This schema implements the data model from the Trail AI thesis document.
+ * This schema implements the data model from the ShipDocket thesis document.
  * Key features:
  * - Hash-chained events for tamper-evident audit trail
  * - Workspaces for multi-tenant support

@@ -1,5 +1,5 @@
 /**
- * Trail AI Proof Packet Schemas
+ * ShipDocket Proof Packet Schemas
  *
  * Shared schemas for Proof Packets (shareable delivery receipts).
  *

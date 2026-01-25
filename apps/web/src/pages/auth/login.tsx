@@ -75,7 +75,7 @@ export function LoginPage() {
                     </div>
                     <div>
                         <CardTitle className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-                            Trail AI
+                            ShipDocket
                         </CardTitle>
                         <CardDescription className="mt-2 text-muted-foreground">
                             Delivery assurance for software teams

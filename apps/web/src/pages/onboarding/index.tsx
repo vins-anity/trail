@@ -62,7 +62,7 @@ export function OnboardingPage() {
                     <CardTitle className="text-2xl font-bold bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">
                         Create Your Workspace
                     </CardTitle>
-                    <CardDescription>Give your agency or team a home on Trail.</CardDescription>
+                    <CardDescription>Give your agency or team a home on ShipDocket.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4 pt-4">

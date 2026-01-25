@@ -31,7 +31,7 @@ export function LandingFaq() {
                         Frequently Asked Questions
                     </h2>
                     <p className="text-lg text-muted-foreground">
-                        Everything you need to know about Trail AI.
+                        Everything you need to know about ShipDocket.
                     </p>
                 </div>
 
@@ -61,6 +61,9 @@ export function LandingFaq() {
                             )}
                         </div>
                     ))}
+                    <div className="text-center pt-8 text-muted-foreground text-sm">
+                        <p>Have more questions? Check out our <a href="/security-faq" className="text-primary hover:underline">Security FAQ</a> or <a href="mailto:support@shipdocket.com" className="text-primary hover:underline">Contact Support</a>.</p>
+                    </div>
                 </div>
             </div>
         </section>

@@ -21,7 +21,7 @@ export function LandingFooter() {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
                                 <a
-                                    href="#features"
+                                    href="/services"
                                     className="hover:text-foreground transition"
                                 >
                                     How It Works
@@ -29,18 +29,10 @@ export function LandingFooter() {
                             </li>
                             <li>
                                 <a
-                                    href="#pricing"
+                                    href="/pricing"
                                     className="hover:text-foreground transition"
                                 >
                                     Pricing
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    className="hover:text-foreground transition"
-                                >
-                                    Integrations
                                 </a>
                             </li>
                         </ul>
@@ -50,7 +42,7 @@ export function LandingFooter() {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
                                 <a
-                                    href="#"
+                                    href="/blog"
                                     className="hover:text-foreground transition"
                                 >
                                     Blog
@@ -58,7 +50,7 @@ export function LandingFooter() {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/careers"
                                     className="hover:text-foreground transition"
                                 >
                                     Careers
@@ -66,7 +58,7 @@ export function LandingFooter() {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="mailto:support@shipdocket.com"
                                     className="hover:text-foreground transition"
                                 >
                                     Contact
@@ -79,7 +71,7 @@ export function LandingFooter() {
                         <ul className="space-y-2 text-sm text-muted-foreground">
                             <li>
                                 <a
-                                    href="#"
+                                    href="/legal/privacy"
                                     className="hover:text-foreground transition"
                                 >
                                     Privacy
@@ -87,7 +79,7 @@ export function LandingFooter() {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/legal/terms"
                                     className="hover:text-foreground transition"
                                 >
                                     Terms of Service
@@ -95,7 +87,7 @@ export function LandingFooter() {
                             </li>
                             <li>
                                 <a
-                                    href="#"
+                                    href="/security-faq"
                                     className="hover:text-foreground transition"
                                 >
                                     Security

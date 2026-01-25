@@ -1,7 +1,7 @@
 /**
- * Trail AI API Client
+ * ShipDocket API Client
  *
- * Type-safe API client for the Trail AI backend.
+ * Type-safe API client for the ShipDocket backend.
  */
 
 import type {

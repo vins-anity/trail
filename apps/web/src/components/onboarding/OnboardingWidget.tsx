@@ -45,8 +45,8 @@ export function OnboardingWidget() {
                         <div className="space-y-1">
                             <CardTitle className="text-2xl font-bold bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">
                                 {isComplete
-                                    ? "Trail is ready to launch!"
-                                    : "Set up your Trail workspace"}
+                                    ? "ShipDocket is ready to launch!"
+                                    : "Set up your ShipDocket workspace"}
                             </CardTitle>
                             <p className="text-sm text-muted-foreground">
                                 {isComplete
@@ -116,7 +116,7 @@ export function OnboardingWidget() {
                                     Workspace Configuration Complete
                                 </h3>
                                 <p className="text-muted-foreground max-w-sm mx-auto">
-                                    Your environment is fully synchronized. Trail is now passively
+                                    Your environment is fully synchronized. ShipDocket is now passively
                                     monitoring your development cycle.
                                 </p>
                             </div>

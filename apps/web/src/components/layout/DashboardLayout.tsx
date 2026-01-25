@@ -46,7 +46,7 @@ export function DashboardLayout() {
                     <div className="h-16 flex items-center px-6 border-b border-border/40">
                         <IconShieldCheck className="h-6 w-6 text-primary mr-2" />
                         <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-primary to-blue-400 bg-clip-text text-transparent">
-                            Trail AI
+                            ShipDocket
                         </span>
                     </div>
 
@@ -88,7 +88,7 @@ export function DashboardLayout() {
                     <div className="p-4 border-t border-border/40">
                         <div className="bg-gradient-to-br from-primary/20 to-purple-500/10 rounded-lg p-4 border border-white/5">
                             <h4 className="text-xs font-semibold text-primary mb-1">
-                                Trail Enterprise
+                                ShipDocket Enterprise
                             </h4>
                             <p className="text-[10px] text-muted-foreground">v0.1.0 • Connected</p>
                         </div>
@@ -142,7 +142,7 @@ export function DashboardLayout() {
                                 <DropdownMenuLabel className="font-normal">
                                     <div className="flex flex-col space-y-1">
                                         <p className="text-sm font-medium leading-none">
-                                            {user?.user_metadata?.full_name || "Trail User"}
+                                            {user?.user_metadata?.full_name || "ShipDocket User"}
                                         </p>
                                         <p className="text-xs leading-none text-muted-foreground">
                                             {user?.email}

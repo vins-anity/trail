@@ -1,7 +1,7 @@
 services:
   # The Main API
   - type: web
-    name: shipdocket.api
+    name: shipdocket-api
     runtime: docker
     repo: https://github.com/vins-anity/shipdocket
     rootDir: .

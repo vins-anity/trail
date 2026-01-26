@@ -23,6 +23,7 @@ services:
         sync: false
     dockerCommand: bun run apps/api/src/index.ts
     plan: free
+    region: singapore
 
 
 

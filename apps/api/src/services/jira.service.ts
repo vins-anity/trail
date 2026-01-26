@@ -1,4 +1,6 @@
 import { env } from "../env";
+import { getOAuthToken } from "./auth.service";
+import * as workspacesService from "./workspaces.service";
 
 export class JiraService {
     private baseUrl: string;
@@ -14,12 +16,32 @@ export class JiraService {
     /**
      * Transition a Jira issue to a new status
      */
-    async syncTaskStatus(taskId: string, status: string) {
+    async syncTaskStatus(workspaceId: string, taskId: string, status: string) {
+        // Try OAuth first
+        const oauthToken = await getOAuthToken(workspaceId, "jira");
+        const workspace = await workspacesService.getWorkspaceById(workspaceId);
+        const cloudId = workspace?.jiraSite;
+
+        if (oauthToken && cloudId) {
+            try {
+                await this.performTransitionOAuth(cloudId, oauthToken, taskId, status);
+                return;
+            } catch (error) {
+                console.warn("[Jira] OAuth sync failed, falling back to Basic Auth:", error);
+            }
+        }
+
+        // Fallback to Basic Auth
         if (!this.baseUrl || !this.email || !this.apiToken) {
-            console.warn("[Jira] Credentials missing, skipping status sync");
+            console.warn("[Jira] Credentials missing (OAuth & Basic), skipping status sync");
             return;
         }
 
+        await this.performTransitionBasic(taskId, status);
+    }
+
+    // ... (Existing Basic Auth Logic moved to private method)
+    private async performTransitionBasic(taskId: string, status: string) {
         try {
             // 1. Get available transitions
             const transitionsResponse = await fetch(
@@ -60,11 +82,60 @@ export class JiraService {
                 throw new Error(`Failed to update status: ${updateResponse.statusText}`);
             }
 
-            console.log(`[Jira] Synced status for ${taskId} to "${status}"`);
+            console.log(`[Jira] Synced status for ${taskId} to "${status}" (Basic Auth)`);
         } catch (error) {
             console.error(`[Jira] Failed to sync status for ${taskId}:`, error);
-            // Don't throw, just log. Jira sync failure shouldn't crash the app.
         }
+    }
+
+    private async performTransitionOAuth(cloudId: string, accessToken: string, taskId: string, status: string) {
+        // 1. Get available transitions (OAuth)
+        const transitionsResponse = await fetch(
+            `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${taskId}/transitions`,
+            {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    Accept: "application/json",
+                },
+            },
+        );
+
+        if (!transitionsResponse.ok) {
+            throw new Error(`Failed to get transitions: ${transitionsResponse.statusText}`);
+        }
+
+        const transitionsData = await transitionsResponse.json();
+        const transition = transitionsData.transitions.find(
+            (t: { name: string; id: string }) => t.name.toLowerCase() === status.toLowerCase(),
+        );
+
+        if (!transition) {
+            console.warn(`[Jira] Transition to "${status}" not found for ${taskId}`);
+            return;
+        }
+
+        // 2. Perform transition (OAuth)
+        const updateResponse = await fetch(
+            `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${taskId}/transitions`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    transition: { id: transition.id },
+                }),
+            },
+        );
+
+        if (!updateResponse.ok) {
+            throw new Error(`Failed to update status: ${updateResponse.statusText}`);
+        }
+
+        console.log(`[Jira] Synced status for ${taskId} to "${status}" (OAuth)`);
     }
 
     private getHeaders() {

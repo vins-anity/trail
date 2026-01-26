@@ -1,4 +1,4 @@
-import { IconBuildingSkyscraper, IconCheck, IconRocket } from "@tabler/icons-react";
+import { IconBuildingSkyscraper, IconCheck, IconRocket, IconBrandGithub, IconBrandSlack, IconBrandAsana } from "@tabler/icons-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,10 +7,17 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
 
 export function OnboardingPage() {
+    const [workspaceId, setWorkspaceId] = useState<string | null>(null);
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate();
+
+    const handleConnect = (provider: "github" | "slack" | "jira") => {
+        if (!workspaceId) return;
+        const baseUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+        window.location.href = `${baseUrl}/auth/${provider}/authorize?workspace_id=${workspaceId}`;
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,14 +46,74 @@ export function OnboardingPage() {
                 throw new Error(data.error || "Failed to create workspace");
             }
 
-            // Redirect to dashboard
-            navigate("/dashboard", { replace: true });
+            const newWorkspace = await res.json();
+            setWorkspaceId(newWorkspace.id);
+            setLoading(false);
+
+            // Don't redirect yet, let them connect apps
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "An error occurred");
-        } finally {
             setLoading(false);
         }
     };
+
+    if (workspaceId) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden font-sans">
+                {/* Background (Same as before) */}
+                <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-purple-500/10 blur-[120px] rounded-full animate-slower-pulse" />
+                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+
+                <div className="relative z-10 w-full max-w-lg px-4 animate-fade-in-up">
+                    <div className="text-center mb-8 space-y-2">
+                        <div className="inline-flex items-center justify-center p-3 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 mb-4">
+                            <IconCheck className="w-8 h-8" />
+                        </div>
+                        <h1 className="text-3xl font-bold text-white">Workspace Created!</h1>
+                        <p className="text-gray-400">Connect your tools to start tracking.</p>
+                    </div>
+
+                    <Card className="border-white/10 bg-gray-900/40 backdrop-blur-2xl">
+                        <CardContent className="p-8 space-y-4">
+                            <Button
+                                onClick={() => handleConnect("github")}
+                                className="w-full h-12 bg-[#24292e] hover:bg-[#2f363d] text-white border border-white/10 justify-start px-4"
+                            >
+                                <IconBrandGithub className="w-5 h-5 mr-3" />
+                                Connect GitHub
+                            </Button>
+
+                            <Button
+                                onClick={() => handleConnect("slack")}
+                                className="w-full h-12 bg-[#4A154B] hover:bg-[#611f69] text-white border border-white/10 justify-start px-4"
+                            >
+                                <IconBrandSlack className="w-5 h-5 mr-3" />
+                                Connect Slack
+                            </Button>
+
+                            <Button
+                                onClick={() => handleConnect("jira")}
+                                className="w-full h-12 bg-[#0052CC] hover:bg-[#0747a6] text-white border border-white/10 justify-start px-4"
+                            >
+                                <IconBrandAsana className="w-5 h-5 mr-3" /> {/* Using Asana icon as Jira placeholder if missing */}
+                                Connect Jira
+                            </Button>
+
+                            <div className="pt-6">
+                                <Button
+                                    onClick={() => navigate("/dashboard", { replace: true })}
+                                    variant="ghost"
+                                    className="w-full text-gray-400 hover:text-white"
+                                >
+                                    Skip for now &rarr;
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-black relative overflow-hidden font-sans">

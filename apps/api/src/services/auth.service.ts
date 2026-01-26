@@ -62,7 +62,7 @@ export async function exchangeCodeForToken(
     provider: OAuthProvider,
     code: string,
     redirectUri: string,
-): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number }> {
+): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number; cloudId?: string }> {
     const config = OAUTH_CONFIG[provider];
     const clientId = process.env[`${provider.toUpperCase()}_CLIENT_ID`];
     const clientSecret = process.env[`${provider.toUpperCase()}_CLIENT_SECRET`];
@@ -95,10 +95,29 @@ export async function exchangeCodeForToken(
 
     const data = await response.json();
 
+    let cloudId: string | undefined;
+    if (provider === "jira") {
+        const resourcesResponse = await fetch("https://api.atlassian.com/oauth/token/accessible-resources", {
+            headers: {
+                Authorization: `Bearer ${data.access_token}`,
+                Accept: "application/json",
+            },
+        });
+
+        if (resourcesResponse.ok) {
+            const resources = await resourcesResponse.json();
+            // Use the first accessible resource (cloud site)
+            if (resources.length > 0) {
+                cloudId = resources[0].id;
+            }
+        }
+    }
+
     return {
         accessToken: data.access_token,
         refreshToken: data.refresh_token,
         expiresIn: data.expires_in,
+        cloudId,
     };
 }
 
@@ -110,6 +129,7 @@ export async function storeOAuthToken(
     provider: OAuthProvider,
     accessToken: string,
     refreshToken?: string,
+    siteId?: string,
 ): Promise<void> {
     const encryptedAccessToken = await encryptToken(accessToken);
     const _encryptedRefreshToken = refreshToken ? await encryptToken(refreshToken) : undefined;
@@ -126,6 +146,9 @@ export async function storeOAuthToken(
             break;
         case "jira":
             updates.jiraAccessToken = encryptedAccessToken;
+            if (siteId) {
+                updates.jiraSite = siteId;
+            }
             break;
     }
 
@@ -170,7 +193,7 @@ export async function getOAuthToken(
  * Create Supabase client for user authentication
  */
 export function createSupabaseClient(authToken?: string) {
-    return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    return createClient(SUPABASE_URL || "", SUPABASE_ANON_KEY || "", {
         global: {
             headers: authToken ? { Authorization: `Bearer ${authToken}` } : {},
         },

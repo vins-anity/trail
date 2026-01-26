@@ -196,6 +196,7 @@ const auth = new Hono()
                 "jira",
                 tokens.accessToken,
                 tokens.refreshToken,
+                tokens.cloudId,
             );
 
             // Redirect back to frontend dashboard

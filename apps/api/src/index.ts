@@ -27,6 +27,7 @@ const app = new Hono()
     .use("*", cors())
     .get("/health", (c) => c.json({ status: "ok" }))
     .get("/", (c) => {
+        const frontendUrl = env.FRONTEND_URL || "https://shipdocket.pages.dev/";
         return c.html(`
 <!DOCTYPE html>
 <html lang="en">
@@ -77,25 +78,35 @@ const app = new Hono()
         </p>
 
         <!-- Action Cards -->
-        <div class="grid sm:grid-cols-2 gap-4 pt-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
             <a href="/reference" class="group glass rounded-xl p-6 text-left hover:bg-white/5 transition-all glow">
                 <div class="mb-3 text-blue-400 group-hover:scale-110 transition-transform origin-left">
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                 </div>
-                <h3 class="font-bold text-white mb-1">API Documentation</h3>
-                <p class="text-sm text-slate-500">Interactive endpoints & schema reference.</p>
+                <h3 class="font-bold text-white mb-1 whitespace-nowrap">API Docs</h3>
+                <p class="text-xs text-slate-500">Interactive endpoints reference.</p>
             </a>
 
-            <a href="https://shipdocket.vercel.app/" class="group glass rounded-xl p-6 text-left hover:bg-white/5 transition-all">
+            <a href="/status" class="group glass rounded-xl p-6 text-left hover:bg-white/5 transition-all border-green-500/10 hover:border-green-500/30">
+                <div class="mb-3 text-green-400 group-hover:scale-110 transition-transform origin-left">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <h3 class="font-bold text-white mb-1 whitespace-nowrap">System Status</h3>
+                <p class="text-xs text-slate-500">Live infrastructure monitoring.</p>
+            </a>
+
+            <a href="${frontendUrl}" class="group glass rounded-xl p-6 text-left hover:bg-white/5 transition-all mb-4 sm:mb-0">
                 <div class="mb-3 text-indigo-400 group-hover:scale-110 transition-transform origin-left">
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
-                <h3 class="font-bold text-white mb-1">Product</h3>
-                <p class="text-sm text-slate-500">Back to the main product page.</p>
+                <h3 class="font-bold text-white mb-1 whitespace-nowrap">Web App</h3>
+                <p class="text-xs text-slate-500">Back to the dashboard.</p>
             </a>
         </div>
         
@@ -121,6 +132,117 @@ const app = new Hono()
         const workspaceId = c.req.query("workspaceId");
         const stats = await eventsService.getDashboardStats(workspaceId);
         return c.json(stats);
+    })
+    // Health Status Dashboard
+    .get("/status", async (c) => {
+        const { healthService } = await import("./services");
+        const status = await healthService.getHealthStatus();
+
+        return c.html(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Status | ShipDocket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
+        .glass { background: rgba(51, 65, 85, 0.3); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .card-glow-ok { box-shadow: 0 0 40px -10px rgba(34, 197, 94, 0.15); }
+        .card-glow-error { box-shadow: 0 0 40px -10px rgba(239, 68, 68, 0.15); }
+        .card-glow-warning { box-shadow: 0 0 40px -10px rgba(234, 179, 8, 0.15); }
+        .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="min-h-screen p-8 flex flex-col items-center">
+    <div class="max-w-4xl w-full space-y-8 animate-in fade-in duration-700">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h1 class="text-4xl font-black tracking-tight flex items-center gap-3">
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">System Monitoring</span>
+                </h1>
+                <p class="text-slate-500 mt-1 font-medium">ShipDocket API Infrastructure Health</p>
+            </div>
+            <div class="px-4 py-2 rounded-lg glass text-xs font-mono text-slate-400">
+                Last Update: ${new Date(status.timestamp).toLocaleTimeString()}
+            </div>
+        </div>
+
+        <!-- Main Status Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Overall Status -->
+            <div class="md:col-span-2 glass rounded-2xl p-8 flex items-center justify-between ${status.status === 'ok' ? 'card-glow-ok' : status.status === 'warning' ? 'card-glow-warning' : 'card-glow-error'}">
+                <div class="space-y-4">
+                    <h2 class="text-lg font-bold text-slate-400 uppercase tracking-widest">Global Status</h2>
+                    <div class="flex items-center gap-4">
+                        <div class="w-4 h-4 rounded-full ${status.status === 'ok' ? 'bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]' : status.status === 'warning' ? 'bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)]' : 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]'} pulse"></div>
+                        <span class="text-5xl font-black uppercase">${status.status}</span>
+                    </div>
+                </div>
+                <div class="text-right space-y-1">
+                    <p class="text-3xl font-bold text-white">${status.uptime}s</p>
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-tighter">System Uptime</p>
+                </div>
+            </div>
+
+            <!-- Version Info -->
+            <div class="glass rounded-2xl p-8 flex flex-col justify-center items-center text-center">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Build Version</p>
+                <p class="text-4xl font-black text-white">v${status.version}</p>
+                <p class="text-[10px] mt-4 px-2 py-1 rounded bg-blue-500/10 text-blue-400 font-mono tracking-tighter uppercase font-bold">Production Node</p>
+            </div>
+        </div>
+
+        <!-- Metric Details -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Database -->
+            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.database.status === 'ok' ? 'border-green-500' : 'border-red-500'}">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-bold text-slate-300">PostgreSQL</h3>
+                    <span class="text-xs font-mono ${status.checks.database.status === 'ok' ? 'text-green-400' : 'text-red-400'}">${status.checks.database.latencyMs}ms</span>
+                </div>
+                <p class="text-sm text-slate-500">${status.checks.database.message || 'Connection healthy, latency within limits.'}</p>
+            </div>
+
+            <!-- Job Queue -->
+            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.jobQueue.status === 'ok' ? 'border-green-500' : 'border-red-500'}">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-bold text-slate-300">Job Queue (pg-boss)</h3>
+                    <div class="w-2 h-2 rounded-full ${status.checks.jobQueue.status === 'ok' ? 'bg-green-500' : 'bg-red-500'}"></div>
+                </div>
+                <p class="text-sm text-slate-500">${status.checks.jobQueue.message || 'Background worker active and processing.'}</p>
+            </div>
+
+            <!-- Environment -->
+            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.environment.status === 'ok' ? 'border-green-500' : 'border-yellow-500'}">
+                <div class="flex justify-between items-start">
+                    <h3 class="font-bold text-slate-300">Environment</h3>
+                    <div class="w-2 h-2 rounded-full ${status.checks.environment.status === 'ok' ? 'bg-green-500' : 'bg-yellow-500'}"></div>
+                </div>
+                ${status.checks.environment.missingOptionalVars.length > 0
+                ? `<p class="text-xs text-yellow-400 font-medium">Missing: ${status.checks.environment.missingOptionalVars.join(', ')}</p>`
+                : `<p class="text-sm text-slate-500">All required and optional variables are set.</p>`
+            }
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="pt-8 text-center">
+            <a href="/" class="text-slate-500 hover:text-white transition-colors text-sm font-medium flex items-center justify-center gap-2">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to API Gateway
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+        `);
     });
 
 // ============================================

@@ -9,13 +9,13 @@ export const env = createEnv({
         FRONTEND_URL: v.optional(v.pipe(v.string(), v.url())),
 
         // Supabase
-        DATABASE_URL: v.pipe(v.string(), v.minLength(1)),
-        SUPABASE_URL: v.pipe(v.string(), v.url()),
-        SUPABASE_ANON_KEY: v.pipe(v.string(), v.minLength(1)),
-        SUPABASE_SERVICE_ROLE_KEY: v.pipe(v.string(), v.minLength(1)),
+        DATABASE_URL: v.optional(v.pipe(v.string(), v.minLength(1))),
+        SUPABASE_URL: v.optional(v.pipe(v.string(), v.url())),
+        SUPABASE_ANON_KEY: v.optional(v.pipe(v.string(), v.minLength(1))),
+        SUPABASE_SERVICE_ROLE_KEY: v.optional(v.pipe(v.string(), v.minLength(1))),
 
         // Security
-        ENCRYPTION_KEY: v.pipe(v.string(), v.minLength(32)),
+        ENCRYPTION_KEY: v.optional(v.pipe(v.string(), v.minLength(32))),
 
         // AI
         GEMINI_API_KEY: v.optional(v.string()),

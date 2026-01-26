@@ -24,7 +24,8 @@ export function OnboardingPage() {
             const token = session?.access_token;
             if (!token) throw new Error("Not authenticated");
 
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/workspaces`, {
+            const baseUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+            const res = await fetch(`${baseUrl}/workspaces`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

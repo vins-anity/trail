@@ -29,7 +29,15 @@ import * as schema from "./schema";
 // Database Client Setup
 // ============================================
 
-const connectionString = env.DATABASE_URL;
+let connectionString = env.DATABASE_URL;
+
+// Log which connection mode we're using
+if (connectionString?.includes(":6543")) {
+    console.log("📡 Using Supabase Transaction Pooler (port 6543). Prepared statements disabled.");
+} else if (connectionString?.includes(":5432")) {
+    console.log("📡 Using Direct Connection (port 5432). Prepared statements enabled.");
+}
+
 if (!connectionString) {
     console.error(`
 ╔══════════════════════════════════════════════════════════════╗
@@ -72,13 +80,15 @@ const client = postgres(connectionString || "", {
     max: 10,
 
     // Supabase requires SSL in production
-    ssl: connectionString?.includes("supabase.co") ? "require" : false,
+    ssl: connectionString?.includes("supabase.co") || connectionString?.includes("supabase.com") ? "require" : false,
 
     // Helpful for debugging
     debug: process.env.NODE_ENV === "development" ? console.log : undefined,
 
-    // Prepare statements (set to false for transaction pooling mode)
-    prepare: false,
+    // Prepare statements:
+    // - Use FALSE for Transaction Pooler (6543)
+    // - Use TRUE (default) for Direct/Session (5432)
+    prepare: !connectionString?.includes(":6543"),
 });
 
 /**

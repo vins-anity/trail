@@ -19,6 +19,7 @@ import { SecurityFaqPage } from "@/pages/security-faq";
 import { ServicesPage } from "@/pages/services";
 import { SettingsPage } from "@/pages/settings";
 import { WhyPage } from "@/pages/why";
+import { NotFoundPage } from "@/pages/not-found";
 import { AppProviders } from "./providers";
 
 function App() {
@@ -48,6 +49,9 @@ function App() {
                             <Route path="/settings" element={<SettingsPage />} />
                         </Route>
                     </Route>
+
+                    {/* Catch-all 404 Route */}
+                    <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </AuthProvider>
         </AppProviders>

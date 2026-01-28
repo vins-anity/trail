@@ -1,8 +1,12 @@
 import {
     IconActivity,
     IconAlertCircle,
+    IconBrandGithub,
+    IconBrandTrello,
     IconCircleCheck,
     IconClock,
+    IconLink,
+    IconShieldCheck,
     IconTrendingUp,
 } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -11,6 +15,7 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ActivitySkeleton, StatCardSkeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { useEvents } from "@/hooks/use-events";
 import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
@@ -185,26 +190,60 @@ export function DashboardPage() {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {recentActivity?.events?.map((event) => (
-                                    <div
-                                        key={event.id}
-                                        className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors"
-                                    >
-                                        <div className="bg-primary/10 p-2 rounded-full">
-                                            <IconActivity className="h-4 w-4 text-primary" />
+                                {recentActivity?.events?.map((event) => {
+                                    const payload = event.payload as any;
+                                    let icon = <IconActivity className="h-4 w-4 text-primary" />;
+                                    // Fix: Explicitly type title as string to avoid strict union type mismatch
+                                    let title: string = event.eventType;
+                                    let link: string | null = null;
+
+                                    // ... rest of logic ...
+                                    if (event.eventType === "handshake") {
+                                        icon = <IconBrandTrello className="h-4 w-4 text-blue-400" />;
+                                        title = `Started ${payload.issueKey || "Task"} - ${payload.issueTitle || "Untitled"}`;
+                                    } else if (event.eventType.includes("pr")) {
+                                        icon = <IconBrandGithub className="h-4 w-4 text-gray-100" />;
+                                        title = `${event.eventType.replace("pr_", "PR ")}: ${payload.prTitle || "Unknown PR"}`;
+                                        link = payload.prUrl;
+                                    } else if (event.eventType === "closure_approved") {
+                                        icon = <IconShieldCheck className="h-4 w-4 text-green-400" />;
+                                        title = "Proof Packet Generated & Approved";
+                                    }
+
+                                    return (
+                                        <div
+                                            key={event.id}
+                                            className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/5 transition-colors group relative"
+                                        >
+                                            <div className="bg-primary/10 p-2 rounded-full">
+                                                {icon}
+                                            </div>
+                                            <div className="space-y-1 flex-1">
+                                                <p className="text-sm font-medium leading-none truncate pr-4">
+                                                    {link ? (
+                                                        <a href={link} target="_blank" rel="noreferrer" className="hover:underline flex items-center gap-1">
+                                                            {title} <IconLink size={10} className="text-muted-foreground opacity-50 group-hover:opacity-100" />
+                                                        </a>
+                                                    ) : (
+                                                        title
+                                                    )}
+                                                </p>
+                                                <div className="flex justify-between items-center">
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {formatDistanceToNow(new Date(event.createdAt), {
+                                                            addSuffix: true,
+                                                        })}
+                                                    </p>
+                                                    {event.taskId && (
+                                                        <Badge variant="outline" className="text-[10px] h-4 px-1 text-gray-500 border-gray-800">
+                                                            {event.taskId}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="space-y-1 flex-1">
-                                            <p className="text-sm font-medium leading-none">
-                                                {event.eventType}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {formatDistanceToNow(new Date(event.createdAt), {
-                                                    addSuffix: true,
-                                                })}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </CardContent>

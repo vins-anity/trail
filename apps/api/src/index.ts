@@ -3,6 +3,7 @@ import { apiReference } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { secureHeaders } from "hono/secure-headers";
 import { openAPISpecs } from "hono-openapi";
 import auth from "./modules/auth/routes";
 import events from "./modules/events/routes";
@@ -24,6 +25,26 @@ if (process.env.NODE_ENV !== "test") {
 
 const app = new Hono()
     .use("*", logger())
+    .use("*", secureHeaders({
+        contentSecurityPolicy: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            imgSrc: ["'self'", "data:", "https://*.supabase.co"],
+            connectSrc: ["'self'", "https://*.supabase.co", "https://shipdocket-api-sqoi.onrender.com"],
+            frameAncestors: ["'none'"],
+        },
+        strictTransportSecurity: "max-age=31536000; includeSubDomains; preload",
+        xFrameOptions: "DENY",
+        xContentTypeOptions: "nosniff",
+        referrerPolicy: "strict-origin-when-cross-origin",
+        permissionsPolicy: {
+            geolocation: ["'none'"],
+            microphone: ["'none'"],
+            camera: ["'none'"],
+        },
+    }))
     .use("*", cors())
     .get("/health", (c) => c.json({ status: "ok" }))
     .get("/", (c) => {

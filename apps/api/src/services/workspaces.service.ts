@@ -32,6 +32,37 @@ export interface UpdateWorkspaceInput {
     jiraSite?: string;
     jiraAccessToken?: string;
     defaultPolicyTier?: PolicyTier;
+    workflowSettings?: {
+        startTracking: string[];
+        reviewStatus: string[];
+        doneStatus: string[];
+    };
+}
+
+// ... (abbreviated for brevity, assuming existing code is fine)
+
+/**
+ * Verify if a user has access to a workspace
+ */
+export async function checkAccess(userId: string, workspaceId: string) {
+    const member = await db.query.workspaceMembers.findFirst({
+        where: and(
+            eq(schema.workspaceMembers.workspaceId, workspaceId),
+            eq(schema.workspaceMembers.userId, userId),
+        ),
+    });
+    return !!member;
+}
+
+/**
+ * Get all members of a workspace
+ */
+export async function getWorkspaceMembers(workspaceId: string) {
+    const members = await db.query.workspaceMembers.findMany({
+        where: eq(schema.workspaceMembers.workspaceId, workspaceId),
+    });
+
+    return members;
 }
 
 // ============================================
@@ -40,18 +71,38 @@ export interface UpdateWorkspaceInput {
 
 /**
  * Decrypt workspace tokens after DB read
+ * Gracefully handles decryption failures by returning null for failed tokens
  */
 async function decryptWorkspaceTokens(workspace: Workspace): Promise<Workspace> {
     const result = { ...workspace };
-    if (result.slackAccessToken) {
-        result.slackAccessToken = await decryptToken(result.slackAccessToken);
+
+    try {
+        if (result.slackAccessToken) {
+            result.slackAccessToken = await decryptToken(result.slackAccessToken);
+        }
+    } catch (e) {
+        console.warn(`Failed to decrypt slackAccessToken for workspace ${workspace.id}`);
+        result.slackAccessToken = null;
     }
-    if (result.githubInstallationId) {
-        result.githubInstallationId = await decryptToken(result.githubInstallationId);
+
+    try {
+        if (result.githubInstallationId) {
+            result.githubInstallationId = await decryptToken(result.githubInstallationId);
+        }
+    } catch (e) {
+        console.warn(`Failed to decrypt githubInstallationId for workspace ${workspace.id}`);
+        result.githubInstallationId = null;
     }
-    if (result.jiraAccessToken) {
-        result.jiraAccessToken = await decryptToken(result.jiraAccessToken);
+
+    try {
+        if (result.jiraAccessToken) {
+            result.jiraAccessToken = await decryptToken(result.jiraAccessToken);
+        }
+    } catch (e) {
+        console.warn(`Failed to decrypt jiraAccessToken for workspace ${workspace.id}`);
+        result.jiraAccessToken = null;
     }
+
     return result;
 }
 
@@ -225,24 +276,18 @@ export async function updateWorkspace(id: string, input: UpdateWorkspaceInput) {
  * Get all workspaces for a specific user
  */
 export async function getWorkspacesForUser(userId: string) {
-    const members = await db.query.workspaceMembers.findMany({
-        where: eq(schema.workspaceMembers.userId, userId),
-        with: {
-            workspace: true,
-        },
-    });
-    return members.map((m) => m.workspace).filter((w): w is NonNullable<typeof w> => !!w);
+    const result = await db
+        .select({
+            workspace: schema.workspaces,
+        })
+        .from(schema.workspaceMembers)
+        .innerJoin(
+            schema.workspaces,
+            eq(schema.workspaces.id, schema.workspaceMembers.workspaceId),
+        )
+        .where(eq(schema.workspaceMembers.userId, userId));
+
+    return await Promise.all(result.map((row) => decryptWorkspaceTokens(row.workspace)));
 }
 
-/**
- * Verify if a user has access to a workspace
- */
-export async function checkAccess(userId: string, workspaceId: string) {
-    const member = await db.query.workspaceMembers.findFirst({
-        where: and(
-            eq(schema.workspaceMembers.workspaceId, workspaceId),
-            eq(schema.workspaceMembers.userId, userId),
-        ),
-    });
-    return !!member;
-}
+

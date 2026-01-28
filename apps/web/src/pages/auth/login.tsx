@@ -24,9 +24,20 @@ export function LoginPage() {
     const { user, loading } = useAuth();
 
     useEffect(() => {
-        if (!loading && user) {
-            navigate("/dashboard");
-        }
+        const checkSession = async () => {
+            if (!loading && user) {
+                // Double-check if the session is actually valid on the server
+                // This prevents infinite loops where local storage has a token but it's revoked
+                const { error } = await supabase.auth.getUser();
+                if (!error) {
+                    navigate("/dashboard");
+                } else {
+                    // Token is invalid, clear it
+                    await supabase.auth.signOut();
+                }
+            }
+        };
+        checkSession();
     }, [user, loading, navigate]);
 
     const {

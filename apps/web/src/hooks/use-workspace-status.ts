@@ -27,6 +27,10 @@ export function useWorkspaceStatus() {
                 },
             });
 
+            if (res.status === 401) {
+                await supabase.auth.signOut();
+                throw new Error("Session expired");
+            }
             if (res.status === 404) return null;
             if (!res.ok) throw new Error("Failed to fetch workspace status");
 

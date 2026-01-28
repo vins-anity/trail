@@ -89,6 +89,15 @@ export const workspaces = pgTable("workspaces", {
 
     // Settings
     defaultPolicyTier: policyTierEnum("default_policy_tier").default("standard"),
+    workflowSettings: jsonb("workflow_settings").$type<{
+        startTracking: string[];
+        reviewStatus: string[];
+        doneStatus: string[];
+    }>().default({
+        startTracking: ["In Progress"],
+        reviewStatus: ["In Review"],
+        doneStatus: ["Done"]
+    }),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),

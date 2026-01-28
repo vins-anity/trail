@@ -319,7 +319,7 @@ const webhooks = new Hono()
                                     workspace.id,
                                     taskId,
                                     payload.pull_request?.title ||
-                                        `PR #${payload.pull_request?.number}`,
+                                    `PR #${payload.pull_request?.number}`,
                                     prAuthorEmail,
                                     new Date(checkResult.scheduledCloseAt),
                                 );
@@ -381,8 +381,16 @@ const webhooks = new Hono()
             if (statusChange) {
                 const toStatus = statusChange.toString;
 
-                // Trigger Passive Handshake when moving to "In Progress"
-                if (toStatus?.toLowerCase().includes("in progress")) {
+                // Trigger Passive Handshake based on Workspace Settings
+                const startTrackingStatuses = (
+                    workspace.workflowSettings as { startTracking: string[] }
+                )?.startTracking || ["In Progress"];
+
+                const isStartStatus = startTrackingStatuses.some(
+                    (s) => s.toLowerCase() === toStatus?.toLowerCase(),
+                );
+
+                if (isStartStatus) {
                     console.log(`[Jira] Passive Handshake detected for ${payload.issue?.key}`);
 
                     const taskId = payload.issue?.key || "UNKNOWN";

@@ -61,30 +61,79 @@ app.get("/current", async (c) => {
     const userId = c.get("userId") as string;
     const workspaceId = c.req.query("workspaceId");
 
-    const allWorkspaces = await workspacesService.getWorkspacesForUser(userId);
+    try {
+        const allWorkspaces = await workspacesService.getWorkspacesForUser(userId);
 
-    let workspace = null;
+        let workspace = null;
 
-    if (workspaceId) {
-        workspace = allWorkspaces.find((w) => w.id === workspaceId);
-    } else {
-        // Default to the first one found
-        workspace = allWorkspaces[0];
+        if (workspaceId) {
+            workspace = allWorkspaces.find((w) => w.id === workspaceId);
+        } else {
+            // Default to the first one found
+            workspace = allWorkspaces[0];
+        }
+
+        if (!workspace) {
+            return c.json({ error: "No workspace found" }, 404);
+        }
+
+        // Return sanitized status
+        return c.json({
+            id: workspace.id,
+            name: workspace.name,
+            hasSlack: !!(workspace.slackTeamId || workspace.slackAccessToken),
+            hasGithub: !!(workspace.githubOrg || workspace.githubInstallationId),
+            hasJira: !!(workspace.jiraSite || workspace.jiraAccessToken),
+            defaultPolicyTier: workspace.defaultPolicyTier,
+            workflowSettings: workspace.workflowSettings,
+        });
+    } catch (error) {
+        console.error("[/workspaces/current] Database error:", error);
+        return c.json({ error: "Failed to fetch workspace" }, 500);
     }
+});
 
-    if (!workspace) {
-        return c.json({ error: "No workspace found" }, 404);
-    }
 
-    // Return sanitized status
-    return c.json({
-        id: workspace.id,
-        name: workspace.name,
-        hasSlack: !!(workspace.slackTeamId || workspace.slackAccessToken),
-        hasGithub: !!(workspace.githubOrg || workspace.githubInstallationId),
-        hasJira: !!(workspace.jiraSite || workspace.jiraAccessToken),
-        defaultPolicyTier: workspace.defaultPolicyTier,
-    });
+/**
+ * GET /:id/members
+ * Fetch workspace members
+ */
+app.get("/:id/members", async (c) => {
+    const workspaceId = c.req.param("id");
+    // Verify access
+    const userId = c.get("userId") as string;
+    const hasAccess = await workspacesService.checkAccess(userId, workspaceId);
+    if (!hasAccess) return c.json({ error: "Unauthorized" }, 403);
+
+    const members = await workspacesService.getWorkspaceMembers(workspaceId);
+    return c.json(members);
+});
+
+/**
+ * GET /:id/audit-log
+ * Fetch hash-chained audit log
+ */
+app.get("/:id/audit-log", async (c) => {
+    const workspaceId = c.req.param("id");
+
+    // Verify access
+    const userId = c.get("userId") as string;
+    const hasAccess = await workspacesService.checkAccess(userId, workspaceId);
+    if (!hasAccess) return c.json({ error: "Unauthorized" }, 403);
+
+    // Dynamic import to avoid circular dependency issues if any, though eventsService is clean
+    const { eventsService } = await import("../../services");
+    const logs = await eventsService.getAuditLog(workspaceId);
+    return c.json(logs);
+});
+
+/**
+ * PATCH /:id/branding
+ * Update branding settings
+ */
+app.patch("/:id/branding", async (c) => {
+    // TODO: Implement branding update
+    return c.json({ success: true });
 });
 
 export default app;

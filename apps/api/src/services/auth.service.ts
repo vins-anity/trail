@@ -208,7 +208,7 @@ export async function verifySupabaseToken(token: string) {
     const { data, error } = await supabase.auth.getUser();
 
     if (error || !data.user) {
-        throw new Error("Invalid or expired token");
+        throw new Error(`Invalid token: ${error?.message || "User not found"}`);
     }
 
     return data.user;

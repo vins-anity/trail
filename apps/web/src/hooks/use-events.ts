@@ -16,5 +16,9 @@ export function useEvents(options: UseEventsOptions = {}) {
         queryFn: async () => {
             return api.events.list(options);
         },
+        // Only fetch when workspaceId is available
+        enabled: !!options.workspaceId,
+        // Don't retry on errors to prevent infinite loops
+        retry: false,
     });
 }

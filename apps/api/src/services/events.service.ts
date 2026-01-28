@@ -305,3 +305,17 @@ function mapEventToResponse(event: schema.Event) {
         createdAt: event.createdAt.toISOString(),
     };
 }
+
+/**
+ * Get audit log for valid chain visualization
+ */
+export async function getAuditLog(workspaceId: string, limit = 50) {
+    const events = await db
+        .select()
+        .from(schema.events)
+        .where(eq(schema.events.workspaceId, workspaceId))
+        .orderBy(desc(schema.events.createdAt))
+        .limit(limit);
+
+    return events.map(mapEventToResponse);
+}

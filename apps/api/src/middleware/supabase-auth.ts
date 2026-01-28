@@ -26,7 +26,8 @@ export async function supabaseAuth(c: Context, next: Next) {
         c.set("user", user);
         c.set("userId", user.id);
         await next();
-    } catch (_error) {
+    } catch (error: any) {
+        console.error(`[AUTH DEBUG] Token verification failed. Header len: ${authHeader.length}. Token prefix: ${token.substring(0, 5)}... Error: ${error.message}`);
         return c.json({ error: "Unauthorized - Invalid token" }, 401);
     }
 }

@@ -92,6 +92,14 @@ export const api = {
 
         verifyChain: (workspaceId: string) =>
             fetchWithAuth<{ valid: boolean; verifiedCount: number; errors: unknown[] }>(`/events/verify/${workspaceId}`),
+
+        stats: (workspaceId: string) =>
+            fetchWithAuth<{
+                activeTasks: number;
+                pendingProofs: number;
+                completedProofs: number;
+                vetoed: number;
+            }>(`/events/stats?workspaceId=${workspaceId}`),
     },
 
     // ============================================

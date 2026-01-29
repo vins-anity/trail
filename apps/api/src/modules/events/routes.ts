@@ -65,14 +65,11 @@ events
     // ----------------------------------------
     // Dashboard Stats
     // ----------------------------------------
-    .get(
-        "/stats",
-        async (c) => {
-            const workspaceId = c.req.query("workspaceId");
-            const stats = await eventsService.getDashboardStats(workspaceId);
-            return c.json(stats);
-        },
-    )
+    .get("/stats", async (c) => {
+        const workspaceId = c.req.query("workspaceId");
+        const stats = await eventsService.getDashboardStats(workspaceId);
+        return c.json(stats);
+    })
 
     // ----------------------------------------
     // Get Single Event
@@ -189,9 +186,7 @@ events
 
             return c.json(result);
         },
-    )
-
-    ;
+    );
 
 export default events;
 export type EventsApp = typeof events;

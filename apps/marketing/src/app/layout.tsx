@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Lora } from "next/font/google"; // Import Brand Fonts
+import { Lora, Poppins } from "next/font/google"; // Import Brand Fonts
 import { LandingFooter } from "@/components/landing/footer";
 import { LandingNav } from "@/components/landing/header";
 import "./globals.css";
@@ -29,7 +29,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${poppins.variable} ${lora.variable} antialiased font-sans flex flex-col min-h-screen bg-background text-foreground`}>
+            <body
+                className={`${poppins.variable} ${lora.variable} antialiased font-sans flex flex-col min-h-screen bg-background text-foreground`}
+            >
                 <LandingNav />
                 <main className="flex-1">{children}</main>
                 <LandingFooter />

@@ -38,7 +38,8 @@ export function useWorkspaceStatus() {
             });
 
             if (res.status === 401) {
-                await supabase.auth.signOut();
+                // Do NOT sign out here. Let the component handle the error.
+                // Signing out here causes an infinite loop if the token is valid in Supabase but invalid in the backend.
                 throw new Error("Session expired");
             }
             if (res.status === 404) return null;

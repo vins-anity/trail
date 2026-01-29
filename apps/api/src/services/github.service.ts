@@ -1,5 +1,5 @@
-import { env } from "../env";
 import { Octokit } from "@octokit/rest";
+import { env } from "../env";
 
 export class GitHubService {
     private octokit: Octokit;

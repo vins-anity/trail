@@ -281,13 +281,8 @@ export async function getWorkspacesForUser(userId: string) {
             workspace: schema.workspaces,
         })
         .from(schema.workspaceMembers)
-        .innerJoin(
-            schema.workspaces,
-            eq(schema.workspaces.id, schema.workspaceMembers.workspaceId),
-        )
+        .innerJoin(schema.workspaces, eq(schema.workspaces.id, schema.workspaceMembers.workspaceId))
         .where(eq(schema.workspaceMembers.userId, userId));
 
     return await Promise.all(result.map((row) => decryptWorkspaceTokens(row.workspace)));
 }
-
-

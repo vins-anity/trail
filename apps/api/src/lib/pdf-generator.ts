@@ -15,7 +15,6 @@ interface ProofPacket {
     updatedAt?: string | Date;
 }
 
-
 interface PDFGeneratorOptions {
     proof: ProofPacket;
     events?: Array<{
@@ -28,7 +27,6 @@ interface PDFGeneratorOptions {
     workspaceName?: string;
     brandColor?: string;
 }
-
 
 /**
  * Generates a branded PDF for a Proof Packet
@@ -89,7 +87,6 @@ export async function generateProofPDF(options: PDFGeneratorOptions): Promise<Bu
 
     yPos += 20;
 
-
     // ============================================
     // Task Details
     // ============================================
@@ -120,7 +117,6 @@ export async function generateProofPDF(options: PDFGeneratorOptions): Promise<Bu
         doc.text(String(value), margin + 30, yPos);
         yPos += 6;
     }
-
 
     yPos += 10;
 
@@ -192,7 +188,11 @@ export async function generateProofPDF(options: PDFGeneratorOptions): Promise<Bu
             doc.setFontSize(9);
             doc.setFont("helvetica", "bold");
             doc.setTextColor(0, 0, 0);
-            doc.text(`${icon} ${event.eventType.replace(/_/g, " ").toUpperCase()}`, margin + 3, yPos + 7);
+            doc.text(
+                `${icon} ${event.eventType.replace(/_/g, " ").toUpperCase()}`,
+                margin + 3,
+                yPos + 7,
+            );
 
             doc.setFont("helvetica", "normal");
             doc.setTextColor(107, 114, 128);

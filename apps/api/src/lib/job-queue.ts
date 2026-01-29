@@ -7,9 +7,8 @@
  */
 
 import { PgBoss } from "pg-boss";
-import { policiesService } from "../services";
-
 import { env } from "../env";
+import { policiesService } from "../services";
 
 const connectionString = env.DATABASE_URL;
 

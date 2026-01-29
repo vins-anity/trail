@@ -89,27 +89,30 @@ export const workspaces = pgTable("workspaces", {
 
     // Settings
     defaultPolicyTier: policyTierEnum("default_policy_tier").default("standard"),
-    workflowSettings: jsonb("workflow_settings").$type<{
-        startTracking: string[];
-        reviewStatus: string[];
-        doneStatus: string[];
-    }>().default({
-        startTracking: ["In Progress"],
-        reviewStatus: ["In Review"],
-        doneStatus: ["Done"]
-    }),
+    workflowSettings: jsonb("workflow_settings")
+        .$type<{
+            startTracking: string[];
+            reviewStatus: string[];
+            doneStatus: string[];
+        }>()
+        .default({
+            startTracking: ["In Progress"],
+            reviewStatus: ["In Review"],
+            doneStatus: ["Done"],
+        }),
 
     // Smart Proof Creation Rules
-    proofPacketRules: jsonb("proof_packet_rules").$type<{
-        autoCreateOnDone: boolean; // Create draft when task enters Done
-        minEventsForProof: number; // Minimum events required
-        excludedTaskTypes: string[]; // e.g. "Bug", "Chore"
-    }>().default({
-        autoCreateOnDone: true,
-        minEventsForProof: 5,
-        excludedTaskTypes: []
-    }),
-
+    proofPacketRules: jsonb("proof_packet_rules")
+        .$type<{
+            autoCreateOnDone: boolean; // Create draft when task enters Done
+            minEventsForProof: number; // Minimum events required
+            excludedTaskTypes: string[]; // e.g. "Bug", "Chore"
+        }>()
+        .default({
+            autoCreateOnDone: true,
+            minEventsForProof: 5,
+            excludedTaskTypes: [],
+        }),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
@@ -302,7 +305,6 @@ export const proofShares = pgTable(
     }),
 );
 
-
 // ============================================
 // Relations
 // ============================================
@@ -390,4 +392,3 @@ export type NewWorkspaceMember = typeof workspaceMembers.$inferInsert;
 
 export type ProofShare = typeof proofShares.$inferSelect;
 export type NewProofShare = typeof proofShares.$inferInsert;
-

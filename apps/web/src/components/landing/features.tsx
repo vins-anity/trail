@@ -1,6 +1,6 @@
 import { CheckCircledIcon } from "@radix-ui/react-icons";
+import { IconBuilding, IconFileCheck, IconPackage, IconShieldCheck } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { IconBuilding, IconPackage, IconShieldCheck, IconFileCheck } from "@tabler/icons-react";
 
 export function LandingFeatures() {
     return (
@@ -12,9 +12,12 @@ export function LandingFeatures() {
                     <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-brand-light shadow-sm mb-4">
                         <IconPackage className="w-8 h-8 text-brand-dark" />
                     </div>
-                    <h2 className="text-4xl md:text-5xl font-black font-heading text-brand-dark tracking-tight">The Delivery Supply Chain</h2>
+                    <h2 className="text-4xl md:text-5xl font-black font-heading text-brand-dark tracking-tight">
+                        The Delivery Supply Chain
+                    </h2>
                     <p className="text-xl text-brand-gray-mid font-serif leading-relaxed">
-                        From commitment to cash in 4 automated stages. We bring supply chain rigour to software delivery.
+                        From commitment to cash in 4 automated stages. We bring supply chain rigour
+                        to software delivery.
                     </p>
                 </div>
 
@@ -26,15 +29,22 @@ export function LandingFeatures() {
                     <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center relative group">
                         <div className="md:text-right space-y-6 relative z-10">
                             <div className="inline-flex items-center gap-3 mb-2 md:flex-row-reverse">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">1</span>
-                                <h3 className="text-2xl font-bold font-heading text-brand-dark">The Manifest</h3>
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">
+                                    1
+                                </span>
+                                <h3 className="text-2xl font-bold font-heading text-brand-dark">
+                                    The Manifest
+                                </h3>
                             </div>
                             <p className="text-brand-gray-mid text-lg leading-relaxed">
-                                When a dev moves a ticket in Jira, ShipDocket 'manifests' the item. It’s
-                                now on the official record. No new tools, no manual start buttons.
+                                When a dev moves a ticket in Jira, ShipDocket 'manifests' the item.
+                                It’s now on the official record. No new tools, no manual start
+                                buttons.
                             </p>
                             <div className="bg-brand-light p-4 rounded-xl border border-brand-gray-light/50 inline-block text-left">
-                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Key Benefit</p>
+                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">
+                                    Key Benefit
+                                </p>
                                 <ul className="space-y-2 text-sm text-brand-gray-mid font-medium">
                                     <li className="flex gap-2">
                                         <CheckCircledIcon className="w-4 h-4 text-brand-accent-green flex-shrink-0 mt-0.5" />
@@ -58,7 +68,9 @@ export function LandingFeatures() {
                                     </div>
                                 </div>
                                 <div className="pl-11 space-y-2">
-                                    <p className="text-brand-dark font-bold">Slack: "John, can you fix login timeout?"</p>
+                                    <p className="text-brand-dark font-bold">
+                                        Slack: "John, can you fix login timeout?"
+                                    </p>
                                     <div className="flex items-center gap-2 text-brand-accent-green font-bold text-xs bg-brand-accent-green/5 px-2 py-1 rounded w-fit">
                                         <CheckCircledIcon className="w-3 h-3" />
                                         John accepted task
@@ -103,15 +115,21 @@ export function LandingFeatures() {
                         </div>
                         <div className="space-y-6 md:order-2 sm:order-1 relative z-10">
                             <div className="inline-flex items-center gap-3 mb-2">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">2</span>
-                                <h3 className="text-2xl font-bold font-heading text-brand-dark">The Cargo</h3>
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">
+                                    2
+                                </span>
+                                <h3 className="text-2xl font-bold font-heading text-brand-dark">
+                                    The Cargo
+                                </h3>
                             </div>
                             <p className="text-brand-gray-mid text-lg leading-relaxed">
-                                We attach the digital cargo: GitHub PRs, CI test results, and approvals.
-                                Every event is hash-chained to ensure it can't be faked.
+                                We attach the digital cargo: GitHub PRs, CI test results, and
+                                approvals. Every event is hash-chained to ensure it can't be faked.
                             </p>
                             <div className="bg-brand-light p-4 rounded-xl border border-brand-gray-light/50 inline-block">
-                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Key Benefit</p>
+                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">
+                                    Key Benefit
+                                </p>
                                 <ul className="space-y-2 text-sm text-brand-gray-mid font-medium">
                                     <li className="flex gap-2">
                                         <CheckCircledIcon className="w-4 h-4 text-brand-accent-green flex-shrink-0 mt-0.5" />
@@ -130,15 +148,21 @@ export function LandingFeatures() {
                     <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center relative group">
                         <div className="md:text-right space-y-6 relative z-10">
                             <div className="inline-flex items-center gap-3 mb-2 md:flex-row-reverse">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">3</span>
-                                <h3 className="text-2xl font-bold font-heading text-brand-dark">The Inspection</h3>
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">
+                                    3
+                                </span>
+                                <h3 className="text-2xl font-bold font-heading text-brand-dark">
+                                    The Inspection
+                                </h3>
                             </div>
                             <p className="text-brand-gray-mid text-lg leading-relaxed">
                                 If tests pass and code is reviewed, ShipDocket proposes closure. It
                                 auto-closes in 24h unless you veto. Speed with control.
                             </p>
                             <div className="bg-brand-light p-4 rounded-xl border border-brand-gray-light/50 inline-block text-left">
-                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Key Benefit</p>
+                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">
+                                    Key Benefit
+                                </p>
                                 <ul className="space-y-2 text-sm text-brand-gray-mid font-medium">
                                     <li className="flex gap-2">
                                         <CheckCircledIcon className="w-4 h-4 text-brand-accent-green flex-shrink-0 mt-0.5" />
@@ -161,9 +185,15 @@ export function LandingFeatures() {
                                 </div>
                             </div>
                             <div className="bg-white rounded-xl border border-brand-gray-light p-6 space-y-4">
-                                <p className="text-sm font-medium text-brand-dark text-center">Auto-closing in <span className="font-bold tabular-nums">23h 45m 12s</span>...</p>
+                                <p className="text-sm font-medium text-brand-dark text-center">
+                                    Auto-closing in{" "}
+                                    <span className="font-bold tabular-nums">23h 45m 12s</span>...
+                                </p>
                                 <div className="flex gap-3">
-                                    <Button size="sm" className="flex-1 bg-brand-accent-green hover:bg-brand-accent-green/90 text-white font-bold rounded-lg shadow-sm">
+                                    <Button
+                                        size="sm"
+                                        className="flex-1 bg-brand-accent-green hover:bg-brand-accent-green/90 text-white font-bold rounded-lg shadow-sm"
+                                    >
                                         Approve Now
                                     </Button>
                                     <Button
@@ -183,7 +213,9 @@ export function LandingFeatures() {
                         <div className="bg-brand-light rounded-2xl border border-brand-gray-light p-8 shadow-sm group-hover:shadow-md transition-all duration-500 relative z-10 md:order-1 sm:order-2">
                             <div className="flex items-center gap-2 mb-4 p-2 bg-brand-dark rounded-lg w-fit shadow-lg transform -rotate-2">
                                 <IconShieldCheck className="w-4 h-4 text-brand-light" />
-                                <span className="text-xs font-bold text-brand-light uppercase tracking-wider">Proof Packet</span>
+                                <span className="text-xs font-bold text-brand-light uppercase tracking-wider">
+                                    Proof Packet
+                                </span>
                             </div>
                             <div className="space-y-4 font-mono text-xs bg-white rounded-xl p-6 border border-brand-gray-light shadow-inner">
                                 <div className="flex justify-between text-brand-gray-mid">
@@ -191,30 +223,42 @@ export function LandingFeatures() {
                                     <span>HASH: a7f3...9c2</span>
                                 </div>
                                 <div className="h-px bg-brand-gray-light/50" />
-                                <div className="text-brand-dark font-bold text-sm">Fix login timeout</div>
+                                <div className="text-brand-dark font-bold text-sm">
+                                    Fix login timeout
+                                </div>
                                 <div className="text-brand-gray-mid italic pl-3 border-l-2 border-brand-accent-blue/30">
                                     "Resolved session expiry issue ensuring users stay logged in for
                                     extended duration."
                                 </div>
                                 <div className="h-px bg-brand-gray-light/50" />
                                 <div className="flex justify-between items-center bg-brand-accent-green/5 p-2 rounded">
-                                    <span className="text-brand-dark font-semibold">Approved by sarah@example.com</span>
+                                    <span className="text-brand-dark font-semibold">
+                                        Approved by sarah@example.com
+                                    </span>
                                     <IconBuilding className="w-3 h-3 text-brand-accent-green" />
                                 </div>
-                                <div className="text-brand-gray-mid text-[10px] text-right">Jan 11, 2026 10:15 AM UTC</div>
+                                <div className="text-brand-gray-mid text-[10px] text-right">
+                                    Jan 11, 2026 10:15 AM UTC
+                                </div>
                             </div>
                         </div>
                         <div className="space-y-6 md:order-2 sm:order-1 relative z-10">
                             <div className="inline-flex items-center gap-3 mb-2">
-                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">4</span>
-                                <h3 className="text-2xl font-bold font-heading text-brand-dark">The Proof Packet</h3>
+                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-brand-dark text-white font-bold text-sm shadow-lg">
+                                    4
+                                </span>
+                                <h3 className="text-2xl font-bold font-heading text-brand-dark">
+                                    The Proof Packet
+                                </h3>
                             </div>
                             <p className="text-brand-gray-mid text-lg leading-relaxed">
                                 A client-ready link generated automatically. AI summarizes technical
                                 logs into business value language your client understands.
                             </p>
                             <div className="bg-brand-light p-4 rounded-xl border border-brand-gray-light/50 inline-block">
-                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Key Result</p>
+                                <p className="text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">
+                                    Key Result
+                                </p>
                                 <ul className="space-y-2 text-sm text-brand-gray-mid font-medium">
                                     <li className="flex gap-2">
                                         <CheckCircledIcon className="w-4 h-4 text-brand-accent-green flex-shrink-0 mt-0.5" />

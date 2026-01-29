@@ -1,5 +1,4 @@
-
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { app } from "../../index";
 import * as authService from "../../services/auth.service";
 
@@ -15,7 +14,7 @@ vi.mock("../../middleware/supabase-auth", () => ({
     optionalAuth: async (c: any, next: any) => {
         c.set("user", { id: "test-user-id", email: "gh-test@example.com" });
         await next();
-    }
+    },
 }));
 
 // Mock Database State
@@ -35,16 +34,16 @@ vi.mock("../../db", () => ({
                         return [ws];
                     }
                     return [{}];
-                })
-            }))
+                }),
+            })),
         })),
         query: {
             workspaces: {
                 findFirst: vi.fn(),
             },
             users: {
-                findFirst: vi.fn().mockResolvedValue({ id: "test-user-id" })
-            }
+                findFirst: vi.fn().mockResolvedValue({ id: "test-user-id" }),
+            },
         },
         update: vi.fn(() => ({
             set: vi.fn((data) => ({
@@ -54,21 +53,21 @@ vi.mock("../../db", () => ({
                         const updated = { ...ws, ...data };
                         mockDb.workspaces.set("ws-gh-123", updated);
                         return [updated];
-                    })
-                }))
-            }))
+                    }),
+                })),
+            })),
         })),
         select: vi.fn(() => ({
             from: vi.fn((table) => ({
                 where: vi.fn(() => ({
                     limit: vi.fn(() => ({
-                        then: vi.fn((resolve) => resolve([mockDb.workspaces.get("ws-gh-123")]))
-                    }))
-                }))
-            }))
-        }))
+                        then: vi.fn((resolve) => resolve([mockDb.workspaces.get("ws-gh-123")])),
+                    })),
+                })),
+            })),
+        })),
     },
-    schema: { workspaces: "workspaces" }
+    schema: { workspaces: "workspaces" },
 }));
 
 vi.mock("../../services/auth.service", async () => {
@@ -77,7 +76,7 @@ vi.mock("../../services/auth.service", async () => {
         ...actual,
         getAuthorizationUrl: vi.fn(),
         exchangeCodeForToken: vi.fn(),
-        storeOAuthToken: vi.fn() // Spy on this
+        storeOAuthToken: vi.fn(), // Spy on this
     };
 });
 
@@ -90,12 +89,14 @@ describe("Integration: GitHub Flow", () => {
         mockDb.workspaces.set("ws-gh-123", {
             id: "ws-gh-123",
             name: "GitHub Test Corp",
-            ownerId: "test-user-id"
+            ownerId: "test-user-id",
         });
     });
 
     it("should redirect to GitHub authorize URL", async () => {
-        vi.spyOn(authService, "getAuthorizationUrl").mockReturnValue("https://github.com/login/oauth/authorize?client_id=gh-123");
+        vi.spyOn(authService, "getAuthorizationUrl").mockReturnValue(
+            "https://github.com/login/oauth/authorize?client_id=gh-123",
+        );
 
         const res = await app.request("/auth/github/authorize?workspace_id=ws-gh-123");
 
@@ -104,7 +105,7 @@ describe("Integration: GitHub Flow", () => {
         expect(authService.getAuthorizationUrl).toHaveBeenCalledWith(
             "github",
             expect.stringContaining("ws-gh-123"),
-            expect.stringContaining("/auth/github/callback")
+            expect.stringContaining("/auth/github/callback"),
         );
     });
 
@@ -113,7 +114,7 @@ describe("Integration: GitHub Flow", () => {
         vi.spyOn(authService, "exchangeCodeForToken").mockResolvedValue({
             accessToken: "gh-installation-token",
             refreshToken: "gh-refresh-token", // GitHub apps might not provide this always, but checking persistence
-            expiresIn: 28800
+            expiresIn: 28800,
         });
 
         // Spy on storage
@@ -133,7 +134,7 @@ describe("Integration: GitHub Flow", () => {
             "ws-gh-123",
             "github",
             "gh-installation-token",
-            "gh-refresh-token"
+            "gh-refresh-token",
         );
     });
 });

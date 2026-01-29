@@ -1,5 +1,5 @@
 import { IconLoader2, IconRocket } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ export function DemoPage() {
         }
     }, [user, authLoading, navigate]);
 
-    const handleDemoAccess = async () => {
+    const handleDemoAccess = useCallback(async () => {
         setIsLoading(true);
         setError(null);
 
@@ -47,14 +47,14 @@ export function DemoPage() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [navigate]);
 
     // Auto-trigger demo access on page load
     useEffect(() => {
         if (!authLoading && !user) {
             handleDemoAccess();
         }
-    }, [authLoading, user]);
+    }, [authLoading, user, handleDemoAccess]);
 
     if (authLoading || isLoading) {
         return (
@@ -89,11 +89,7 @@ export function DemoPage() {
                                 </>
                             )}
                         </Button>
-                        <Button
-                            variant="outline"
-                            className="w-full"
-                            onClick={() => navigate("/")}
-                        >
+                        <Button variant="outline" className="w-full" onClick={() => navigate("/")}>
                             Back to Home
                         </Button>
                     </CardContent>

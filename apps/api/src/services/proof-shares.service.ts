@@ -50,10 +50,7 @@ export async function getShareLinkByToken(token: string) {
  * Get share links for a proof
  */
 export async function getShareLinksForProof(proofId: string) {
-    return db
-        .select()
-        .from(schema.proofShares)
-        .where(eq(schema.proofShares.proofId, proofId));
+    return db.select().from(schema.proofShares).where(eq(schema.proofShares.proofId, proofId));
 }
 
 /**

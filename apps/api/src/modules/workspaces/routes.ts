@@ -93,7 +93,6 @@ app.get("/current", async (c) => {
     }
 });
 
-
 /**
  * GET /:id/members
  * Fetch workspace members

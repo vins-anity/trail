@@ -1,7 +1,14 @@
-import { IconBuildingSkyscraper, IconCheck, IconRocket, IconBrandGithub, IconBrandSlack, IconBrandAsana } from "@tabler/icons-react";
+import {
+    IconBrandAsana,
+    IconBrandGithub,
+    IconBrandSlack,
+    IconBuildingSkyscraper,
+    IconCheck,
+    IconRocket,
+} from "@tabler/icons-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -71,8 +78,12 @@ export function OnboardingPage() {
                         <div className="inline-flex items-center justify-center p-4 rounded-full bg-brand-accent-green/10 text-brand-accent-green mb-2 shadow-sm border border-brand-accent-green/20">
                             <IconCheck className="w-8 h-8" />
                         </div>
-                        <h1 className="text-4xl font-black font-heading tracking-tight text-brand-dark">Workspace Created!</h1>
-                        <p className="text-brand-gray-mid font-serif italic text-lg">Connect your tools to start tracking.</p>
+                        <h1 className="text-4xl font-black font-heading tracking-tight text-brand-dark">
+                            Workspace Created!
+                        </h1>
+                        <p className="text-brand-gray-mid font-serif italic text-lg">
+                            Connect your tools to start tracking.
+                        </p>
                     </div>
 
                     <Card className="border-brand-gray-light bg-white/80 backdrop-blur-xl shadow-2xl rounded-3xl overflow-hidden">
@@ -97,7 +108,8 @@ export function OnboardingPage() {
                                 onClick={() => handleConnect("jira")}
                                 className="w-full h-14 bg-[#0052CC] hover:bg-[#0747a6] text-white justify-start px-6 rounded-xl font-heading font-medium text-base shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
                             >
-                                <IconBrandAsana className="w-6 h-6 mr-4" /> {/* Using Asana icon as Jira placeholder if missing */}
+                                <IconBrandAsana className="w-6 h-6 mr-4" />{" "}
+                                {/* Using Asana icon as Jira placeholder if missing */}
                                 Connect Jira
                             </Button>
 
@@ -105,7 +117,9 @@ export function OnboardingPage() {
                                 <Button
                                     onClick={() => {
                                         // Invalidate workspace status to ensure fresh data on dashboard
-                                        queryClient.invalidateQueries({ queryKey: ["workspace-status"] });
+                                        queryClient.invalidateQueries({
+                                            queryKey: ["workspace-status"],
+                                        });
                                         navigate("/dashboard", { replace: true });
                                     }}
                                     variant="ghost"
@@ -191,8 +205,19 @@ export function OnboardingPage() {
                                     <div className="flex items-center gap-2">
                                         Create Workspace
                                         {/* Arrow Icon */}
-                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                        <svg
+                                            className="w-5 h-5"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                            aria-label="Arrow right"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2.5}
+                                                d="M13 7l5 5m0 0l-5 5m5-5H6"
+                                            />
                                         </svg>
                                     </div>
                                 )}

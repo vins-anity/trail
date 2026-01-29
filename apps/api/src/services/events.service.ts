@@ -176,10 +176,15 @@ export async function createEvent(input: CreateEventInput) {
                 // If task moved to Done
                 if (doneStatuses.includes(newStatus)) {
                     // Check if proof already exists
-                    const existingProof = await proofsService.getProofPacketByTask(input.taskId, input.workspaceId);
+                    const existingProof = await proofsService.getProofPacketByTask(
+                        input.taskId,
+                        input.workspaceId,
+                    );
 
                     if (!existingProof) {
-                        console.log(`🤖 Smart Logic: Auto-creating proof for completed task ${input.taskId}`);
+                        console.log(
+                            `🤖 Smart Logic: Auto-creating proof for completed task ${input.taskId}`,
+                        );
                         await proofsService.createProofPacket({
                             workspaceId: input.workspaceId,
                             taskId: input.taskId,
@@ -195,7 +200,6 @@ export async function createEvent(input: CreateEventInput) {
 
     return mapEventToResponse(event);
 }
-
 
 /**
  * Verify hash chain integrity for a workspace

@@ -51,7 +51,8 @@ export async function getHealthStatus(): Promise<HealthStatus> {
     const missingOptionalVars = optionalVars.filter((key) => !process.env[key]);
 
     // Overall status
-    const status = dbStatus === "error" ? "error" : missingOptionalVars.length > 0 ? "warning" : "ok";
+    const status =
+        dbStatus === "error" ? "error" : missingOptionalVars.length > 0 ? "warning" : "ok";
 
     return {
         status,
@@ -65,7 +66,7 @@ export async function getHealthStatus(): Promise<HealthStatus> {
                 latencyMs: dbLatency,
             },
             jobQueue: {
-                // In a real app, we would ping pg-boss here. 
+                // In a real app, we would ping pg-boss here.
                 // For now, if DB is ok, job queue is likely ok as it shares the same DB.
                 status: dbStatus,
                 message: dbStatus === "error" ? "Database unreachable" : undefined,

@@ -1,20 +1,20 @@
 import {
     IconArrowLeft,
-    IconCheck,
-    IconClock,
-    IconDownload,
-    IconFileText,
-    IconLoader2,
-    IconShieldCheck,
-    IconSparkles,
     IconBrandGithub,
     IconBrandGoogle,
     IconBuilding,
     IconCalendar,
-    IconHash
+    IconCheck,
+    IconClock,
+    IconDownload,
+    IconFileText,
+    IconHash,
+    IconLoader2,
+    IconShieldCheck,
+    IconSparkles,
 } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -46,7 +46,11 @@ interface SharedProof {
 export function SharePage() {
     const { token } = useParams<{ token: string }>();
 
-    const { data: proof, isLoading, error } = useQuery<SharedProof>({
+    const {
+        data: proof,
+        isLoading,
+        error,
+    } = useQuery<SharedProof>({
         queryKey: ["shared-proof", token],
         queryFn: async () => {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/proofs/share/${token}`);
@@ -82,10 +86,14 @@ export function SharePage() {
                             Proof Not Found
                         </h2>
                         <p className="text-brand-gray-mid mb-8 leading-relaxed">
-                            This proof packet link may have expired or is invalid. Please contact the sender for a new link.
+                            This proof packet link may have expired or is invalid. Please contact
+                            the sender for a new link.
                         </p>
                         <Link to="/">
-                            <Button variant="outline" className="rounded-xl border-brand-gray-light hover:bg-brand-light hover:text-brand-dark transition-all">
+                            <Button
+                                variant="outline"
+                                className="rounded-xl border-brand-gray-light hover:bg-brand-light hover:text-brand-dark transition-all"
+                            >
                                 <IconArrowLeft className="h-4 w-4 mr-2" />
                                 Return Home
                             </Button>
@@ -124,13 +132,20 @@ export function SharePage() {
                             <IconShieldCheck className="h-5 w-5 text-brand-light" />
                         </div>
                         <div>
-                            <h1 className="text-lg font-black font-heading text-brand-dark tracking-tight">Proof Packet</h1>
+                            <h1 className="text-lg font-black font-heading text-brand-dark tracking-tight">
+                                Proof Packet
+                            </h1>
                             <p className="text-xs text-brand-gray-mid font-medium flex items-center gap-1">
-                                Verified by <span className="text-brand-dark font-bold">{proof.workspace?.name || "ShipDocket"}</span>
+                                Verified by{" "}
+                                <span className="text-brand-dark font-bold">
+                                    {proof.workspace?.name || "ShipDocket"}
+                                </span>
                             </p>
                         </div>
                     </div>
-                    <Badge className={`px-3 py-1 rounded-full font-bold uppercase tracking-wider text-xs shadow-sm border ${statusColors[proof.status] || "bg-brand-light text-brand-gray-mid border-brand-gray-mid/10"}`}>
+                    <Badge
+                        className={`px-3 py-1 rounded-full font-bold uppercase tracking-wider text-xs shadow-sm border ${statusColors[proof.status] || "bg-brand-light text-brand-gray-mid border-brand-gray-mid/10"}`}
+                    >
                         {proof.status}
                     </Badge>
                 </div>
@@ -152,12 +167,18 @@ export function SharePage() {
                             <div className="flex items-center gap-4 text-brand-gray-mid text-sm font-medium">
                                 <span className="flex items-center gap-1.5">
                                     <IconCalendar className="h-4 w-4" />
-                                    Created {new Date(proof.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                                    Created{" "}
+                                    {new Date(proof.createdAt).toLocaleDateString(undefined, {
+                                        dateStyle: "long",
+                                    })}
                                 </span>
                                 {proof.closedAt && (
                                     <span className="flex items-center gap-1.5 text-brand-accent-green">
                                         <IconCheck className="h-4 w-4" />
-                                        Closed {new Date(proof.closedAt).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                                        Closed{" "}
+                                        {new Date(proof.closedAt).toLocaleDateString(undefined, {
+                                            dateStyle: "long",
+                                        })}
                                     </span>
                                 )}
                             </div>
@@ -178,7 +199,10 @@ export function SharePage() {
                                     </p>
                                     {proof.aiSummaryModel && (
                                         <div className="mt-6 flex justify-end">
-                                            <Badge variant="outline" className="text-[10px] text-brand-gray-mid border-brand-gray-mid/20 bg-brand-light px-2 py-0.5">
+                                            <Badge
+                                                variant="outline"
+                                                className="text-[10px] text-brand-gray-mid border-brand-gray-mid/20 bg-brand-light px-2 py-0.5"
+                                            >
                                                 Generated by {proof.aiSummaryModel}
                                             </Badge>
                                         </div>
@@ -199,24 +223,34 @@ export function SharePage() {
                             </CardHeader>
                             <CardContent className="p-0">
                                 <div className="divide-y divide-brand-gray-light/30">
-                                    {proof.events && proof.events.length > 0 ? proof.events.map((event) => (
-                                        <div
-                                            key={event.id}
-                                            className="flex items-start gap-4 p-4 hover:bg-brand-light/30 transition-colors"
-                                        >
-                                            <div className="mt-1 p-1.5 rounded-lg bg-brand-light text-brand-dark shadow-sm border border-brand-gray-light/50">
-                                                {eventIcons[event.eventType] || <IconFileText className="h-4 w-4" />}
+                                    {proof.events && proof.events.length > 0 ? (
+                                        proof.events.map((event) => (
+                                            <div
+                                                key={event.id}
+                                                className="flex items-start gap-4 p-4 hover:bg-brand-light/30 transition-colors"
+                                            >
+                                                <div className="mt-1 p-1.5 rounded-lg bg-brand-light text-brand-dark shadow-sm border border-brand-gray-light/50">
+                                                    {eventIcons[event.eventType] || (
+                                                        <IconFileText className="h-4 w-4" />
+                                                    )}
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                    <p className="text-sm font-bold text-brand-dark capitalize leading-tight">
+                                                        {event.eventType.replace(/_/g, " ")}
+                                                    </p>
+                                                    <p className="text-xs text-brand-gray-mid font-medium">
+                                                        {new Date(event.createdAt).toLocaleString(
+                                                            undefined,
+                                                            {
+                                                                dateStyle: "medium",
+                                                                timeStyle: "short",
+                                                            },
+                                                        )}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div className="space-y-0.5">
-                                                <p className="text-sm font-bold text-brand-dark capitalize leading-tight">
-                                                    {event.eventType.replace(/_/g, " ")}
-                                                </p>
-                                                <p className="text-xs text-brand-gray-mid font-medium">
-                                                    {new Date(event.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    )) : (
+                                        ))
+                                    ) : (
                                         <div className="p-8 text-center text-brand-gray-mid italic text-sm">
                                             No events recorded.
                                         </div>
@@ -234,9 +268,12 @@ export function SharePage() {
                                             <IconShieldCheck className="h-6 w-6" />
                                         </div>
                                         <div>
-                                            <p className="font-bold text-brand-accent-green font-heading">Hash Chain Verified</p>
+                                            <p className="font-bold text-brand-accent-green font-heading">
+                                                Hash Chain Verified
+                                            </p>
                                             <p className="text-xs text-brand-accent-green/80 mt-1 mb-3 leading-snug">
-                                                This packet utilizes a cryptographic hash chain to ensure event integrity.
+                                                This packet utilizes a cryptographic hash chain to
+                                                ensure event integrity.
                                             </p>
                                             <div className="bg-white/50 p-2 rounded border border-brand-accent-green/20">
                                                 <p className="text-[10px] font-mono text-brand-accent-green/70 break-all leading-tight">
@@ -255,9 +292,14 @@ export function SharePage() {
 
                 {/* Footer */}
                 <div className="text-center text-sm text-brand-gray-mid pb-8">
-                    <p className="font-serif italic text-lg">This is a tamper-evident proof packet generated by ShipDocket.</p>
+                    <p className="font-serif italic text-lg">
+                        This is a tamper-evident proof packet generated by ShipDocket.
+                    </p>
                     <p className="mt-4">
-                        <a href="https://shipdocket.dev" className="inline-flex items-center gap-1 text-brand-dark font-bold hover:text-brand-accent-blue transition-colors group">
+                        <a
+                            href="https://shipdocket.dev"
+                            className="inline-flex items-center gap-1 text-brand-dark font-bold hover:text-brand-accent-blue transition-colors group"
+                        >
                             Learn more about ShipDocket
                             <IconArrowLeft className="h-3 w-3 rotate-180 group-hover:translate-x-1 transition-transform" />
                         </a>

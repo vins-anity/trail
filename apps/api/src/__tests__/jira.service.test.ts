@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { JiraService } from "../services/jira.service";
 import * as authService from "../services/auth.service";
+import { JiraService } from "../services/jira.service";
 import * as workspacesService from "../services/workspaces.service";
 
 // Mock dependencies
@@ -10,10 +10,16 @@ vi.mock("../services/workspaces.service");
 // Mock env to respect process.env changes
 vi.mock("../env", () => ({
     env: {
-        get JIRA_HOST() { return process.env.JIRA_HOST; },
-        get JIRA_EMAIL() { return process.env.JIRA_EMAIL; },
-        get JIRA_API_TOKEN() { return process.env.JIRA_API_TOKEN; },
-    }
+        get JIRA_HOST() {
+            return process.env.JIRA_HOST;
+        },
+        get JIRA_EMAIL() {
+            return process.env.JIRA_EMAIL;
+        },
+        get JIRA_API_TOKEN() {
+            return process.env.JIRA_API_TOKEN;
+        },
+    },
 }));
 
 // Use spyOn to allow implementation changes and avoid global type mismatches
@@ -57,7 +63,7 @@ describe("Jira Service", () => {
             mockFetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => ({}), // Return empty object for success
-                status: 204
+                status: 204,
             });
 
             await service.syncTaskStatus("workspace-123", "TRAIL-123", "Done");
@@ -85,7 +91,7 @@ describe("Jira Service", () => {
             vi.mocked(authService.getOAuthToken).mockResolvedValue("access-token-123");
             vi.mocked(workspacesService.getWorkspaceById).mockResolvedValue({
                 id: "workspace-123",
-                jiraSite: "cloud-id-123"
+                jiraSite: "cloud-id-123",
             } as any);
 
             // Mock transitions response
@@ -100,7 +106,7 @@ describe("Jira Service", () => {
             mockFetch.mockResolvedValueOnce({
                 ok: true,
                 json: async () => ({}),
-                status: 204
+                status: 204,
             });
 
             await service.syncTaskStatus("workspace-123", "TRAIL-123", "Done");
@@ -108,19 +114,23 @@ describe("Jira Service", () => {
             // Verify fetching transitions with Cloud ID
             expect(mockFetch).toHaveBeenNthCalledWith(
                 1,
-                expect.stringContaining("https://api.atlassian.com/ex/jira/cloud-id-123/rest/api/3/issue/TRAIL-123/transitions"),
+                expect.stringContaining(
+                    "https://api.atlassian.com/ex/jira/cloud-id-123/rest/api/3/issue/TRAIL-123/transitions",
+                ),
                 expect.objectContaining({
                     method: "GET",
                     headers: expect.objectContaining({
-                        Authorization: "Bearer access-token-123"
-                    })
+                        Authorization: "Bearer access-token-123",
+                    }),
                 }),
             );
 
             // Verify posting transition
             expect(mockFetch).toHaveBeenNthCalledWith(
                 2,
-                expect.stringContaining("https://api.atlassian.com/ex/jira/cloud-id-123/rest/api/3/issue/TRAIL-123/transitions"),
+                expect.stringContaining(
+                    "https://api.atlassian.com/ex/jira/cloud-id-123/rest/api/3/issue/TRAIL-123/transitions",
+                ),
                 expect.objectContaining({
                     method: "POST",
                     body: JSON.stringify({ transition: { id: "101" } }),

@@ -37,7 +37,6 @@ app.all("/process", async (c) => {
     // Verify token (Header OR Query Param)
     const token = c.req.header("X-Cron-Token") || c.req.query("token");
 
-
     if (!verifyCronToken(token)) {
         return c.json({ error: "Unauthorized" }, 401);
     }

@@ -1,5 +1,11 @@
 import { valibotResolver } from "@hookform/resolvers/valibot";
-import { IconAlertCircle, IconLoader2, IconShieldCheck, IconBrandGoogle, IconBrandGithub } from "@tabler/icons-react";
+import {
+    IconAlertCircle,
+    IconBrandGithub,
+    IconBrandGoogle,
+    IconLoader2,
+    IconShieldCheck,
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -131,7 +137,10 @@ export function LoginPage() {
                 <CardContent className="pt-8 px-8 pb-10">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                         {authError && (
-                            <Alert variant="destructive" className="animate-slide-up bg-red-50 border-red-100 text-red-600">
+                            <Alert
+                                variant="destructive"
+                                className="animate-slide-up bg-red-50 border-red-100 text-red-600"
+                            >
                                 <IconAlertCircle className="h-4 w-4" />
                                 <AlertDescription>{authError}</AlertDescription>
                             </Alert>
@@ -185,7 +194,9 @@ export function LoginPage() {
                                 <div className="w-full border-t border-brand-gray-light" />
                             </div>
                             <div className="relative flex justify-center text-xs uppercase tracking-widest font-bold">
-                                <span className="bg-white px-4 text-brand-gray-mid">Or continue with</span>
+                                <span className="bg-white px-4 text-brand-gray-mid">
+                                    Or continue with
+                                </span>
                             </div>
                         </div>
 
@@ -214,7 +225,10 @@ export function LoginPage() {
                     <div className="mt-8 text-center text-sm text-brand-gray-mid">
                         <p>
                             Want to explore first?{" "}
-                            <a href="/demo" className="font-bold text-brand-dark hover:text-brand-accent-blue hover:underline transition-colors">
+                            <a
+                                href="/demo"
+                                className="font-bold text-brand-dark hover:text-brand-accent-blue hover:underline transition-colors"
+                            >
                                 Try the demo
                             </a>
                         </p>

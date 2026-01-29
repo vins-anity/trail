@@ -1,8 +1,8 @@
 import { IconAlertCircle, IconLogout } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/components/auth/AuthProvider";
 
 const DEMO_USER_EMAIL = "demo@shipdocket.com";
 
@@ -25,15 +25,10 @@ export function DemoBanner() {
             <IconAlertCircle className="h-4 w-4 text-amber-500" />
             <AlertDescription className="flex items-center justify-between">
                 <span className="text-sm">
-                    <strong>Demo Mode:</strong> You're viewing a sandbox workspace with sample
-                    data. Data resets daily.
+                    <strong>Demo Mode:</strong> You're viewing a sandbox workspace with sample data.
+                    Data resets daily.
                 </span>
-                <Button
-                    size="sm"
-                    variant="outline"
-                    className="ml-4"
-                    onClick={handleExitDemo}
-                >
+                <Button size="sm" variant="outline" className="ml-4" onClick={handleExitDemo}>
                     <IconLogout className="h-3 w-3 mr-1" />
                     Exit Demo
                 </Button>

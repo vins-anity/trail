@@ -10,9 +10,9 @@
  * Run: bun run seed:demo
  */
 
+import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db, schema } from "../db";
-import { createHash } from "node:crypto";
 
 // Demo workspace configuration
 const DEMO_WORKSPACE_ID = process.env.DEMO_WORKSPACE_ID || "";

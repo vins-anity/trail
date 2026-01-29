@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface TypewriterProps {
     text: string;
@@ -10,7 +10,13 @@ interface TypewriterProps {
     onComplete?: () => void;
 }
 
-export function Typewriter({ text, delay = 0, speed = 20, className = "", onComplete }: TypewriterProps) {
+export function Typewriter({
+    text,
+    delay = 0,
+    speed = 20,
+    className = "",
+    onComplete,
+}: TypewriterProps) {
     const [displayedText, setDisplayedText] = useState("");
     const [isVisible, setIsVisible] = useState(false);
     const elementRef = useRef<HTMLSpanElement>(null);
@@ -28,7 +34,7 @@ export function Typewriter({ text, delay = 0, speed = 20, className = "", onComp
                     setIsVisible(false);
                 }
             },
-            { threshold: 0.3 }
+            { threshold: 0.3 },
         );
 
         if (elementRef.current) {

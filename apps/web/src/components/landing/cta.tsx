@@ -13,11 +13,16 @@ export function LandingCta() {
             <div className="relative z-10 max-w-4xl mx-auto px-6 text-center space-y-10 align-middle flex flex-col items-center">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 w-fit backdrop-blur-sm">
                     <IconShieldCheck className="w-4 h-4 text-brand-light" />
-                    <span className="text-xs font-bold uppercase tracking-widest text-brand-light/70">Secure & Verified</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-brand-light/70">
+                        Secure & Verified
+                    </span>
                 </div>
 
                 <h2 className="text-5xl md:text-7xl font-black font-heading leading-tight tracking-tight">
-                    Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-light to-brand-gray-mid">Ship?</span>
+                    Ready to{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-light to-brand-gray-mid">
+                        Ship?
+                    </span>
                 </h2>
 
                 <p className="text-xl md:text-2xl text-brand-gray-mid max-w-2xl mx-auto font-serif font-light leading-relaxed">
@@ -26,7 +31,10 @@ export function LandingCta() {
 
                 <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 w-full max-w-md mx-auto">
                     <Link to="/demo" className="w-full sm:w-auto">
-                        <Button size="lg" className="h-14 w-full sm:w-auto px-8 rounded-xl bg-brand-light text-brand-dark hover:bg-white hover:scale-105 transition-all duration-300 font-bold text-lg shadow-xl shadow-white/5 gap-2">
+                        <Button
+                            size="lg"
+                            className="h-14 w-full sm:w-auto px-8 rounded-xl bg-brand-light text-brand-dark hover:bg-white hover:scale-105 transition-all duration-300 font-bold text-lg shadow-xl shadow-white/5 gap-2"
+                        >
                             <IconRocket className="w-5 h-5 text-brand-accent-orange" />
                             Try Demo
                             <ArrowRightIcon className="w-5 h-5 ml-1" />

@@ -27,7 +27,9 @@ export function LandingFaq() {
         <section id="faq" className="relative py-32 overflow-hidden bg-white">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="text-center space-y-6 mb-20">
-                    <h2 className="text-4xl md:text-5xl font-black font-heading text-brand-dark tracking-tight">Frequently Asked Questions</h2>
+                    <h2 className="text-4xl md:text-5xl font-black font-heading text-brand-dark tracking-tight">
+                        Frequently Asked Questions
+                    </h2>
                     <p className="text-xl text-brand-gray-mid font-serif">
                         Everything you need to know about ShipDocket.
                     </p>
@@ -37,27 +39,38 @@ export function LandingFaq() {
                     {faqs.map((faq, idx) => (
                         <div
                             key={faq.q}
-                            className={`rounded-2xl border transition-all duration-300 overflow-hidden ${expandedFaq === idx
+                            className={`rounded-2xl border transition-all duration-300 overflow-hidden ${
+                                expandedFaq === idx
                                     ? "bg-brand-light border-brand-dark shadow-md"
                                     : "bg-white border-brand-gray-light hover:border-brand-gray-mid"
-                                }`}
+                            }`}
                         >
                             <button
                                 type="button"
                                 onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
                                 className="w-full px-8 py-6 flex items-center justify-between text-left focus:outline-none"
                             >
-                                <h3 className={`font-bold text-lg font-heading ${expandedFaq === idx ? "text-brand-dark" : "text-brand-gray-mid"}`}>
+                                <h3
+                                    className={`font-bold text-lg font-heading ${expandedFaq === idx ? "text-brand-dark" : "text-brand-gray-mid"}`}
+                                >
                                     {faq.q}
                                 </h3>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${expandedFaq === idx ? "bg-brand-dark text-brand-light rotate-180" : "bg-brand-light text-brand-gray-mid"
-                                    }`}>
+                                <div
+                                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                        expandedFaq === idx
+                                            ? "bg-brand-dark text-brand-light rotate-180"
+                                            : "bg-brand-light text-brand-gray-mid"
+                                    }`}
+                                >
                                     <ChevronDownIcon className="w-5 h-5" />
                                 </div>
                             </button>
                             <div
-                                className={`transition-all duration-300 ease-in-out overflow-hidden ${expandedFaq === idx ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-                                    }`}
+                                className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                                    expandedFaq === idx
+                                        ? "max-h-40 opacity-100"
+                                        : "max-h-0 opacity-0"
+                                }`}
                             >
                                 <div className="px-8 pb-8 text-brand-dark/80 leading-relaxed text-lg">
                                     {faq.a}
@@ -68,7 +81,10 @@ export function LandingFaq() {
                     <div className="text-center pt-12 text-brand-gray-mid">
                         <p>
                             Have more questions? Check out our{" "}
-                            <a href="/security-faq" className="text-brand-dark font-bold hover:text-brand-accent-blue hover:underline transition-colors">
+                            <a
+                                href="/security-faq"
+                                className="text-brand-dark font-bold hover:text-brand-accent-blue hover:underline transition-colors"
+                            >
                                 Security FAQ
                             </a>{" "}
                             or{" "}

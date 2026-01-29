@@ -363,7 +363,6 @@ proofs
         },
     )
 
-
     // ----------------------------------------
     // Export as JSON
     // ----------------------------------------
@@ -447,7 +446,6 @@ proofs
                 expiresAt,
             });
 
-
             // Update packet status
             const frontendUrl = process.env.FRONTEND_URL || "https://shipdocket.pages.dev";
             await proofsService.updateProofPacket(id, {
@@ -462,7 +460,6 @@ proofs
             });
         },
     );
-
 
 export default proofs;
 export type ProofsApp = typeof proofs;

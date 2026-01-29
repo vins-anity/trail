@@ -319,7 +319,7 @@ const webhooks = new Hono()
                                     workspace.id,
                                     taskId,
                                     payload.pull_request?.title ||
-                                    `PR #${payload.pull_request?.number}`,
+                                        `PR #${payload.pull_request?.number}`,
                                     prAuthorEmail,
                                     new Date(checkResult.scheduledCloseAt),
                                 );

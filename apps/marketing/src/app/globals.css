@@ -10,7 +10,7 @@
     --brand-gray-light: #e8e6dc;
 
     --brand-accent-orange: #d97757;
-    --brand-accent-blue: #2F4858;
+    --brand-accent-blue: #2f4858;
     --brand-accent-green: #788c5d;
 
     /* Semantic Mapping */
@@ -77,7 +77,9 @@
 }
 
 @theme {
-    --font-sans: var(--font-lora), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-sans:
+        var(--font-lora), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-heading: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 
     --color-background: var(--background);

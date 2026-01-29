@@ -1,4 +1,4 @@
-import { IconUser, IconShieldCheck } from "@tabler/icons-react";
+import { IconShieldCheck, IconUser } from "@tabler/icons-react";
 
 export function LandingWhy() {
     return (
@@ -10,13 +10,17 @@ export function LandingWhy() {
                     <div className="space-y-10">
                         <div className="space-y-6">
                             <h2 className="text-4xl md:text-5xl font-black font-heading leading-[1.1] text-brand-dark">
-                                Why We Built <br /><span className="text-brand-accent-blue">ShipDocket</span>
+                                Why We Built <br />
+                                <span className="text-brand-accent-blue">ShipDocket</span>
                             </h2>
                             <p className="text-2xl text-brand-gray-mid font-serif italic leading-relaxed">
-                                "We ran a software agency for 10 years. We hated 'explaining' bills."
+                                "We ran a software agency for 10 years. We hated 'explaining'
+                                bills."
                             </p>
                             <p className="text-lg text-brand-dark leading-relaxed font-light">
-                                <strong className="font-bold">The Logistics of Trust.</strong> In the shipping industry, you don't argue about delivery—you check the Bill of Lading. Software should be no different.
+                                <strong className="font-bold">The Logistics of Trust.</strong> In
+                                the shipping industry, you don't argue about delivery—you check the
+                                Bill of Lading. Software should be no different.
                             </p>
                         </div>
 
@@ -26,9 +30,12 @@ export function LandingWhy() {
                                     <IconUser className="w-8 h-8 text-brand-accent-blue" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold font-heading text-brand-dark mb-2">Built for Business</h3>
+                                    <h3 className="text-xl font-bold font-heading text-brand-dark mb-2">
+                                        Built for Business
+                                    </h3>
                                     <p className="text-brand-gray-mid leading-relaxed">
-                                        Developers stay in their flow. You get a business asset that proves value without micromanagement.
+                                        Developers stay in their flow. You get a business asset that
+                                        proves value without micromanagement.
                                     </p>
                                 </div>
                             </div>
@@ -37,9 +44,12 @@ export function LandingWhy() {
                                     <IconShieldCheck className="w-8 h-8 text-brand-accent-green" />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold font-heading text-brand-dark mb-2">Zero IP Risk</h3>
+                                    <h3 className="text-xl font-bold font-heading text-brand-dark mb-2">
+                                        Zero IP Risk
+                                    </h3>
                                     <p className="text-brand-gray-mid leading-relaxed">
-                                        We verify the shipping container (metadata), we never open the box (source code). Your IP is safe.
+                                        We verify the shipping container (metadata), we never open
+                                        the box (source code). Your IP is safe.
                                     </p>
                                 </div>
                             </div>
@@ -58,7 +68,9 @@ export function LandingWhy() {
                                         Verified Logistics
                                     </p>
                                     <p className="text-4xl font-black font-heading text-brand-dark leading-tight">
-                                        Don't just invoice.<br />Send a Proof Packet.
+                                        Don't just invoice.
+                                        <br />
+                                        Send a Proof Packet.
                                     </p>
                                 </div>
                             </div>

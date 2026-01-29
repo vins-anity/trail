@@ -88,7 +88,12 @@ export class JiraService {
         }
     }
 
-    private async performTransitionOAuth(cloudId: string, accessToken: string, taskId: string, status: string) {
+    private async performTransitionOAuth(
+        cloudId: string,
+        accessToken: string,
+        taskId: string,
+        status: string,
+    ) {
         // 1. Get available transitions (OAuth)
         const transitionsResponse = await fetch(
             `https://api.atlassian.com/ex/jira/${cloudId}/rest/api/3/issue/${taskId}/transitions`,

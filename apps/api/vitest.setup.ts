@@ -180,13 +180,13 @@ vi.mock("./src/db", async (importActual) => {
                         const result =
                             vals.length > 0
                                 ? data.find((item) => {
-                                    const itemValues = Object.values(item).map((v) =>
-                                        String(v).toLowerCase(),
-                                    );
-                                    return vals.some((v) =>
-                                        itemValues.includes(String(v).toLowerCase()),
-                                    );
-                                })
+                                      const itemValues = Object.values(item).map((v) =>
+                                          String(v).toLowerCase(),
+                                      );
+                                      return vals.some((v) =>
+                                          itemValues.includes(String(v).toLowerCase()),
+                                      );
+                                  })
                                 : data[0];
 
                         if (
@@ -209,13 +209,13 @@ vi.mock("./src/db", async (importActual) => {
                         const filtered =
                             vals.length > 0
                                 ? data.filter((item) => {
-                                    const itemValues = Object.values(item).map((v) =>
-                                        String(v).toLowerCase(),
-                                    );
-                                    return vals.some((v) =>
-                                        itemValues.includes(String(v).toLowerCase()),
-                                    );
-                                })
+                                      const itemValues = Object.values(item).map((v) =>
+                                          String(v).toLowerCase(),
+                                      );
+                                      return vals.some((v) =>
+                                          itemValues.includes(String(v).toLowerCase()),
+                                      );
+                                  })
                                 : data;
                         return filtered.map(withDefaults);
                     }),

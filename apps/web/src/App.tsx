@@ -4,14 +4,15 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { AboutPage } from "@/pages/about";
 import { LoginPage } from "@/pages/auth/login";
-import { DemoPage } from "@/pages/demo";
 import { BlogPage } from "@/pages/blog";
 import { CareersPage } from "@/pages/careers";
 import { DashboardPage } from "@/pages/dashboard";
+import { DemoPage } from "@/pages/demo";
 import { LandingPage } from "@/pages/landing";
 import { DpaPage } from "@/pages/legal/dpa";
 import { PrivacyPage } from "@/pages/legal/privacy";
 import { TermsPage } from "@/pages/legal/terms";
+import { NotFoundPage } from "@/pages/not-found";
 import { OnboardingPage } from "@/pages/onboarding";
 import { PricingPage } from "@/pages/pricing";
 import { ProofPacketsPage } from "@/pages/proofs";
@@ -21,7 +22,6 @@ import { ServicesPage } from "@/pages/services";
 import { SettingsPage } from "@/pages/settings";
 import { SharePage } from "@/pages/share/[token]";
 import { WhyPage } from "@/pages/why";
-import { NotFoundPage } from "@/pages/not-found";
 import { AppProviders } from "./providers";
 
 function App() {
@@ -63,6 +63,5 @@ function App() {
         </AppProviders>
     );
 }
-
 
 export default App;

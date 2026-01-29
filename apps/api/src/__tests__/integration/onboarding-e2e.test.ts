@@ -1,12 +1,11 @@
-
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { app } from "../../index";
 import * as authService from "../../services/auth.service";
 import * as slackService from "../../services/slack.service";
 
 /**
  * E2E INTEGRATION TEST: Full ShipDocket Workflow
- * 
+ *
  * This test simulates the complete user journey:
  * 1. User creates a new workspace (or selects existing).
  * 2. User connects multiple providers (Jira, Slack, GitHub).
@@ -27,14 +26,14 @@ vi.mock("../../middleware/supabase-auth", () => ({
     optionalAuth: async (c: any, next: any) => {
         c.set("user", { id: "test-user-id", email: "e2e@test.com" });
         await next();
-    }
+    },
 }));
 
 // Mock Database to simulate state persistence across steps
 // We use a simple in-memory object to act as our "DB" for this test run
 const mockDbState = {
     workspaces: new Map(),
-    events: [] as any[]
+    events: [] as any[],
 };
 
 vi.mock("../../db", () => ({
@@ -57,19 +56,19 @@ vi.mock("../../db", () => ({
                         return [evt];
                     }
                     return [{}];
-                })
-            }))
+                }),
+            })),
         })),
         query: {
             workspaces: {
                 findFirst: vi.fn().mockImplementation(async ({ where }) => {
                     // Simplified lookup mock
                     return mockDbState.workspaces.get("ws-e2e-123");
-                })
+                }),
             },
             users: {
-                findFirst: vi.fn().mockResolvedValue({ id: "test-user-id" })
-            }
+                findFirst: vi.fn().mockResolvedValue({ id: "test-user-id" }),
+            },
         },
         update: vi.fn(() => ({
             set: vi.fn((data) => ({
@@ -79,9 +78,9 @@ vi.mock("../../db", () => ({
                         const updated = { ...ws, ...data };
                         mockDbState.workspaces.set("ws-e2e-123", updated);
                         return [updated];
-                    })
-                }))
-            }))
+                    }),
+                })),
+            })),
         })),
         select: vi.fn(() => ({
             from: vi.fn((table) => {
@@ -89,9 +88,11 @@ vi.mock("../../db", () => ({
                     return {
                         where: vi.fn(() => ({
                             limit: vi.fn(() => ({
-                                then: vi.fn((resolve) => resolve([mockDbState.workspaces.get("ws-e2e-123")]))
-                            }))
-                        }))
+                                then: vi.fn((resolve) =>
+                                    resolve([mockDbState.workspaces.get("ws-e2e-123")]),
+                                ),
+                            })),
+                        })),
                     };
                 }
                 if (table === "events") {
@@ -101,60 +102,70 @@ vi.mock("../../db", () => ({
                                 limit: vi.fn(() => ({
                                     then: vi.fn((resolve) => {
                                         // Return the last event for hash chaining logic
-                                        const last = mockDbState.events[mockDbState.events.length - 1];
+                                        const last =
+                                            mockDbState.events[mockDbState.events.length - 1];
                                         return resolve(last ? [last] : []);
-                                    })
-                                }))
-                            }))
-                        }))
+                                    }),
+                                })),
+                            })),
+                        })),
                     };
                 }
                 return { where: vi.fn() };
-            })
+            }),
         })),
-        transaction: vi.fn((cb) => cb({
-            insert: vi.fn((table) => ({
-                values: vi.fn((data) => ({
-                    returning: vi.fn().mockImplementation(async () => {
-                        if (table === "workspaces") {
-                            const id = "ws-e2e-123";
-                            const ws = { ...data, id, ownerId: "test-user-id" };
-                            mockDbState.workspaces.set(id, ws);
-                            return [ws];
-                        }
-                        return [{}];
-                    })
-                }))
-            })),
-            query: { workspace_members: { findFirst: vi.fn() } },
-            update: vi.fn(() => ({ set: vi.fn(() => ({ where: vi.fn(() => ({ returning: vi.fn().mockResolvedValue([{}]) })) })) }))
-        }))
+        transaction: vi.fn((cb) =>
+            cb({
+                insert: vi.fn((table) => ({
+                    values: vi.fn((data) => ({
+                        returning: vi.fn().mockImplementation(async () => {
+                            if (table === "workspaces") {
+                                const id = "ws-e2e-123";
+                                const ws = { ...data, id, ownerId: "test-user-id" };
+                                mockDbState.workspaces.set(id, ws);
+                                return [ws];
+                            }
+                            return [{}];
+                        }),
+                    })),
+                })),
+                query: { workspace_members: { findFirst: vi.fn() } },
+                update: vi.fn(() => ({
+                    set: vi.fn(() => ({
+                        where: vi.fn(() => ({ returning: vi.fn().mockResolvedValue([{}]) })),
+                    })),
+                })),
+            }),
+        ),
     },
     schema: {
         workspaces: "workspaces",
         workspaceMembers: "workspace_members",
         users: "users",
-        events: "events"
-    }
+        events: "events",
+    },
 }));
 
 vi.mock("../../db/schema", () => ({
     events: "events",
     workspaces: "workspaces",
     workspaceMembers: "workspace_members",
-    users: "users"
+    users: "users",
 }));
 
 vi.mock("../../env", () => ({
-    env: { get ENCRYPTION_KEY() { return "0000000000000000000000000000000000000000000000000000000000000000"; } }
+    env: {
+        get ENCRYPTION_KEY() {
+            return "0000000000000000000000000000000000000000000000000000000000000000";
+        },
+    },
 }));
 
 vi.mock("../../lib/token-encryption", () => ({
     encryptToken: vi.fn(async (t) => t), // No-op for e2e test clarity
     decryptToken: vi.fn(async (t) => t),
-    generateEncryptionKey: vi.fn(() => "key")
+    generateEncryptionKey: vi.fn(() => "key"),
 }));
-
 
 // ---------------------------------------------------------------------------
 // TEST SUITE
@@ -173,8 +184,8 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
         // =========================================================================
         const createRes = await app.request("/workspaces", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer u" },
-            body: JSON.stringify({ name: "E2E Corp" })
+            headers: { "Content-Type": "application/json", Authorization: "Bearer u" },
+            body: JSON.stringify({ name: "E2E Corp" }),
         });
         expect(createRes.status).toBe(201);
         const workspace = await createRes.json();
@@ -192,7 +203,7 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
                     accessToken: "jira-access-token",
                     refreshToken: "jira-refresh-token",
                     expiresIn: 3600,
-                    cloudId: "jira-cloud-id"
+                    cloudId: "jira-cloud-id",
                 };
             }
             if (provider === "slack") {
@@ -200,16 +211,19 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
                     accessToken: "slack-xoxb-token",
                     teamId: "T-SLACK",
                     teamName: "Slack Team",
-                    botUserId: "U-BOT"
+                    botUserId: "U-BOT",
                 };
             }
             return {} as any;
         });
 
         // 2. Connect Jira
-        await app.request(`/auth/jira/callback?code=jira-code&state=${JSON.stringify({ workspaceId: workspace.id })}`, {
-            method: "GET"
-        });
+        await app.request(
+            `/auth/jira/callback?code=jira-code&state=${JSON.stringify({ workspaceId: workspace.id })}`,
+            {
+                method: "GET",
+            },
+        );
 
         // Verify Jira data persisted in "DB"
         const wsAfterJira = mockDbState.workspaces.get("ws-e2e-123");
@@ -217,9 +231,12 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
         expect(wsAfterJira.jiraAccessToken).toBe("jira-access-token");
 
         // 3. Connect Slack
-        await app.request(`/auth/slack/callback?code=slack-code&state=${JSON.stringify({ workspaceId: workspace.id })}`, {
-            method: "GET"
-        });
+        await app.request(
+            `/auth/slack/callback?code=slack-code&state=${JSON.stringify({ workspaceId: workspace.id })}`,
+            {
+                method: "GET",
+            },
+        );
 
         // Verify Slack data persisted
         const wsAfterSlack = mockDbState.workspaces.get("ws-e2e-123");
@@ -249,18 +266,18 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
                 fields: {
                     summary: "Final E2E Verification",
                     status: { name: "In Progress" },
-                    assignee: { emailAddress: "alice@e2e.com" }
-                }
+                    assignee: { emailAddress: "alice@e2e.com" },
+                },
             },
             changelog: {
-                items: [{ field: "status", toString: "In Progress", fromString: "To Do" }]
-            }
+                items: [{ field: "status", toString: "In Progress", fromString: "To Do" }],
+            },
         };
 
         const webhookRes = await app.request("/webhooks/jira", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(jiraEvent)
+            body: JSON.stringify(jiraEvent),
         });
 
         expect(webhookRes.status).toBe(200);
@@ -274,7 +291,7 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
             "ws-e2e-123",
             "E2E-9000",
             "Final E2E Verification",
-            "alice@e2e.com"
+            "alice@e2e.com",
         );
 
         // 2. Hash Chain Integrity: Was the event chained correctly?
@@ -291,7 +308,7 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
         // Ensure data was captured correctly
         expect(lastEvent.taskId).toBe("E2E-9000");
         expect(lastEvent.payload).toMatchObject({
-            status: "In Progress"
+            status: "In Progress",
         });
 
         const firstEventHash = lastEvent.eventHash;
@@ -308,18 +325,18 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
                 fields: {
                     summary: "Final E2E Verification",
                     status: { name: "Done" },
-                    assignee: { emailAddress: "alice@e2e.com" }
-                }
+                    assignee: { emailAddress: "alice@e2e.com" },
+                },
             },
             changelog: {
-                items: [{ field: "status", toString: "Done", fromString: "In Progress" }]
-            }
+                items: [{ field: "status", toString: "Done", fromString: "In Progress" }],
+            },
         };
 
         await app.request("/webhooks/jira", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(jiraEvent2)
+            body: JSON.stringify(jiraEvent2),
         });
 
         const storedEvents2 = mockDbState.events;

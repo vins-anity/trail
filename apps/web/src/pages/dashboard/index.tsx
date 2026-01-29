@@ -13,20 +13,21 @@ import { useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { DemoBanner } from "@/components/demo/DemoBanner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ActivitySkeleton, StatCardSkeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { useEvents } from "@/hooks/use-events";
 import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
 import { OnboardingWidget } from "../../components/onboarding/OnboardingWidget";
-import { DemoBanner } from "@/components/demo/DemoBanner";
 
 export function DashboardPage() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const queryClient = useQueryClient();
-    const { data: status, isLoading: statusLoading } = useWorkspaceStatus();
+    const { data: status, isLoading: statusLoading, error: statusError } = useWorkspaceStatus();
 
     // Redirect to onboarding if no workspace found
     useEffect(() => {
@@ -56,11 +57,42 @@ export function DashboardPage() {
         }
     }, [searchParams, queryClient, setSearchParams]);
 
-    // 1. Loading State
+    // 1. Error State (Prevent Loop)
+    if (statusError) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh] flex-col gap-4">
+                <div className="h-12 w-12 rounded-full bg-red-50 flex items-center justify-center">
+                    <IconAlertCircle className="h-6 w-6 text-red-500" />
+                </div>
+                <div className="text-center space-y-2">
+                    <h3 className="text-lg font-bold font-heading text-brand-dark">
+                        Unable to Load Workspace
+                    </h3>
+                    <p className="text-brand-gray-mid max-w-xs mx-auto text-sm">
+                        There was an issue connecting to your workspace. Please try signing in
+                        again.
+                    </p>
+                </div>
+                <Button
+                    onClick={() => {
+                        queryClient.clear();
+                        navigate("/login");
+                    }}
+                    variant="outline"
+                >
+                    Return to Login
+                </Button>
+            </div>
+        );
+    }
+
+    // 2. Loading State
     if (statusLoading) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
-                <div className="animate-pulse text-brand-gray-mid font-heading">Loading workspace...</div>
+                <div className="animate-pulse text-brand-gray-mid font-heading">
+                    Loading workspace...
+                </div>
             </div>
         );
     }
@@ -85,14 +117,18 @@ export function DashboardPage() {
 
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-bold font-heading tracking-tight text-brand-dark">Dashboard</h1>
+                    <h1 className="text-3xl font-bold font-heading tracking-tight text-brand-dark">
+                        Dashboard
+                    </h1>
                     <p className="text-brand-gray-mid font-light">
                         Overview of your delivery assurance metrics.
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="h-2 w-2 rounded-full bg-brand-accent-green animate-pulse"></div>
-                    <span className="text-sm font-medium text-brand-accent-green">Live Monitoring</span>
+                    <span className="text-sm font-medium text-brand-accent-green">
+                        Live Monitoring
+                    </span>
                 </div>
             </div>
 
@@ -169,7 +205,10 @@ export function DashboardPage() {
                                         <div className="flex items-center gap-1 mt-2">
                                             <IconTrendingUp className="h-3 w-3 text-brand-accent-green" />
                                             <p className="text-xs text-brand-gray-mid font-medium">
-                                                <span className="text-brand-accent-green">{stat.trend}</span> this week
+                                                <span className="text-brand-accent-green">
+                                                    {stat.trend}
+                                                </span>{" "}
+                                                this week
                                             </p>
                                         </div>
                                     </CardContent>
@@ -183,8 +222,12 @@ export function DashboardPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
                 <Card className="col-span-4 bg-white border-brand-gray-light shadow-sm">
                     <CardHeader>
-                        <CardTitle className="font-heading font-bold text-xl text-brand-dark">Recent Activity</CardTitle>
-                        <CardDescription className="text-brand-gray-mid">Latest events from your repositories.</CardDescription>
+                        <CardTitle className="font-heading font-bold text-xl text-brand-dark">
+                            Recent Activity
+                        </CardTitle>
+                        <CardDescription className="text-brand-gray-mid">
+                            Latest events from your repositories.
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {activityLoading ? (
@@ -217,14 +260,20 @@ export function DashboardPage() {
 
                                     // ... rest of logic ...
                                     if (event.eventType === "handshake") {
-                                        icon = <IconBrandTrello className="h-4 w-4 text-brand-accent-blue" />;
+                                        icon = (
+                                            <IconBrandTrello className="h-4 w-4 text-brand-accent-blue" />
+                                        );
                                         title = `Started ${payload.issueKey || "Task"} - ${payload.issueTitle || "Untitled"}`;
                                     } else if (event.eventType.includes("pr")) {
-                                        icon = <IconBrandGithub className="h-4 w-4 text-brand-dark" />;
+                                        icon = (
+                                            <IconBrandGithub className="h-4 w-4 text-brand-dark" />
+                                        );
                                         title = `${event.eventType.replace("pr_", "PR ")}: ${payload.prTitle || "Unknown PR"}`;
                                         link = payload.prUrl;
                                     } else if (event.eventType === "closure_approved") {
-                                        icon = <IconShieldCheck className="h-4 w-4 text-brand-accent-green" />;
+                                        icon = (
+                                            <IconShieldCheck className="h-4 w-4 text-brand-accent-green" />
+                                        );
                                         title = "Proof Packet Generated & Approved";
                                     }
 
@@ -239,8 +288,17 @@ export function DashboardPage() {
                                             <div className="space-y-1 flex-1">
                                                 <p className="text-sm font-semibold text-brand-dark leading-none truncate pr-4">
                                                     {link ? (
-                                                        <a href={link} target="_blank" rel="noreferrer" className="hover:text-brand-accent-blue transition-colors flex items-center gap-1">
-                                                            {title} <IconLink size={12} className="text-brand-gray-mid opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                        <a
+                                                            href={link}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            className="hover:text-brand-accent-blue transition-colors flex items-center gap-1"
+                                                        >
+                                                            {title}{" "}
+                                                            <IconLink
+                                                                size={12}
+                                                                className="text-brand-gray-mid opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            />
                                                         </a>
                                                     ) : (
                                                         title
@@ -248,12 +306,18 @@ export function DashboardPage() {
                                                 </p>
                                                 <div className="flex justify-between items-center">
                                                     <p className="text-xs text-brand-gray-mid font-medium">
-                                                        {formatDistanceToNow(new Date(event.createdAt), {
-                                                            addSuffix: true,
-                                                        })}
+                                                        {formatDistanceToNow(
+                                                            new Date(event.createdAt),
+                                                            {
+                                                                addSuffix: true,
+                                                            },
+                                                        )}
                                                     </p>
                                                     {event.taskId && (
-                                                        <Badge variant="outline" className="text-[10px] h-5 px-2 text-brand-gray-mid border-brand-gray-mid/30 bg-brand-light/30">
+                                                        <Badge
+                                                            variant="outline"
+                                                            className="text-[10px] h-5 px-2 text-brand-gray-mid border-brand-gray-mid/30 bg-brand-light/30"
+                                                        >
                                                             {event.taskId}
                                                         </Badge>
                                                     )}
@@ -269,8 +333,12 @@ export function DashboardPage() {
                 <Card className="col-span-3 bg-brand-dark text-brand-light border-brand-dark shadow-2xl overflow-hidden relative">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-brand-accent-blue/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                     <CardHeader className="relative z-10">
-                        <CardTitle className="font-heading font-bold text-xl text-brand-light">Optimistic Closures</CardTitle>
-                        <CardDescription className="text-brand-gray-mid">Scheduled for auto-finalization.</CardDescription>
+                        <CardTitle className="font-heading font-bold text-xl text-brand-light">
+                            Optimistic Closures
+                        </CardTitle>
+                        <CardDescription className="text-brand-gray-mid">
+                            Scheduled for auto-finalization.
+                        </CardDescription>
                     </CardHeader>
                     <CardContent className="relative z-10">
                         <div className="text-center py-16">

@@ -20,16 +20,16 @@
  * @see https://orm.drizzle.team/docs/get-started-postgresql
  */
 
-import { env } from "../env";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { env } from "../env";
 import * as schema from "./schema";
 
 // ============================================
 // Database Client Setup
 // ============================================
 
-let connectionString = env.DATABASE_URL;
+const connectionString = env.DATABASE_URL;
 
 // Log which connection mode we're using
 if (connectionString?.includes(":6543")) {
@@ -55,7 +55,6 @@ if (!connectionString) {
 // Don't exit in dev - allow app to start for other purposes
 // process.exit(1);
 
-
 // ============================================
 // Database Client Setup
 // ============================================
@@ -80,7 +79,10 @@ const client = postgres(connectionString || "", {
     max: 10,
 
     // Supabase requires SSL in production
-    ssl: connectionString?.includes("supabase.co") || connectionString?.includes("supabase.com") ? "require" : false,
+    ssl:
+        connectionString?.includes("supabase.co") || connectionString?.includes("supabase.com")
+            ? "require"
+            : false,
 
     // Helpful for debugging
     debug: process.env.NODE_ENV === "development" ? console.log : undefined,

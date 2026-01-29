@@ -1,5 +1,5 @@
+import { Home, MoveLeft, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-import { MoveLeft, Home, Search } from "lucide-react";
 
 export const NotFoundPage = () => {
     return (
@@ -23,7 +23,8 @@ export const NotFoundPage = () => {
                         Lost in Space
                     </h1>
                     <p className="text-lg text-muted-foreground leading-relaxed">
-                        The page you are looking for has been moved, deleted, or never existed in this dimension.
+                        The page you are looking for has been moved, deleted, or never existed in
+                        this dimension.
                     </p>
                 </div>
 
@@ -46,6 +47,7 @@ export const NotFoundPage = () => {
                         Go Home
                     </Link>
                     <button
+                        type="button"
                         onClick={() => window.history.back()}
                         className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl glass hover:bg-white/10 text-foreground font-semibold transition-all hover-lift"
                     >
@@ -55,7 +57,8 @@ export const NotFoundPage = () => {
                 </div>
 
                 <div className="pt-8 text-xs text-muted-foreground font-mono">
-                    SHIPDOCKET-NAV-ERROR // TRACE_ID: {Math.random().toString(36).substring(7).toUpperCase()}
+                    SHIPDOCKET-NAV-ERROR {/* TRACE_ID: */}
+                    {Math.random().toString(36).substring(7).toUpperCase()}
                 </div>
             </div>
         </div>

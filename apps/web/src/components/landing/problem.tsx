@@ -1,4 +1,4 @@
-import { IconChartBar, IconCode, IconAlertTriangle, IconUser } from "@tabler/icons-react";
+import { IconAlertTriangle, IconChartBar, IconCode, IconUser } from "@tabler/icons-react";
 
 export function LandingProblem() {
     return (
@@ -12,9 +12,13 @@ export function LandingProblem() {
                         <IconAlertTriangle className="w-3 h-3" />
                         The Problem
                     </div>
-                    <h2 className="text-4xl md:text-6xl font-black font-heading tracking-tight text-brand-dark">The Invoice Gap</h2>
+                    <h2 className="text-4xl md:text-6xl font-black font-heading tracking-tight text-brand-dark">
+                        The Invoice Gap
+                    </h2>
                     <p className="text-xl md:text-2xl text-brand-gray-mid max-w-3xl mx-auto font-serif leading-relaxed">
-                        You ship code. You bill for hours. The client pays for trust. <br className="hidden md:block" />When those don't align, you don't get paid.
+                        You ship code. You bill for hours. The client pays for trust.{" "}
+                        <br className="hidden md:block" />
+                        When those don't align, you don't get paid.
                     </p>
                 </div>
 
@@ -24,9 +28,12 @@ export function LandingProblem() {
                         <div className="w-14 h-14 rounded-2xl bg-white border border-brand-gray-light flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                             <IconUser className="w-7 h-7 text-brand-accent-blue" />
                         </div>
-                        <h3 className="text-2xl font-bold font-heading text-brand-dark mb-4 group-hover:text-brand-accent-blue transition-colors">The Black Box</h3>
+                        <h3 className="text-2xl font-bold font-heading text-brand-dark mb-4 group-hover:text-brand-accent-blue transition-colors">
+                            The Black Box
+                        </h3>
                         <p className="text-brand-gray-mid leading-relaxed">
-                            Your team spent 40 hours on backend migrations. The client sees nothing. To them, the work didn't happen because they can't touch it.
+                            Your team spent 40 hours on backend migrations. The client sees nothing.
+                            To them, the work didn't happen because they can't touch it.
                         </p>
                     </div>
 
@@ -35,9 +42,13 @@ export function LandingProblem() {
                         <div className="w-14 h-14 rounded-2xl bg-white border border-brand-gray-light flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                             <IconCode className="w-7 h-7 text-brand-accent-purple" />
                         </div>
-                        <h3 className="text-2xl font-bold font-heading text-brand-dark mb-4 group-hover:text-brand-accent-purple transition-colors">The 'Status' Chase</h3>
+                        <h3 className="text-2xl font-bold font-heading text-brand-dark mb-4 group-hover:text-brand-accent-purple transition-colors">
+                            The 'Status' Chase
+                        </h3>
                         <p className="text-brand-gray-mid leading-relaxed">
-                            Clients ask 'Is it done?' because Jira is stale and Slack is noisy. You lose billable hours acting as a human status bot explaining technical details.
+                            Clients ask 'Is it done?' because Jira is stale and Slack is noisy. You
+                            lose billable hours acting as a human status bot explaining technical
+                            details.
                         </p>
                     </div>
 
@@ -46,9 +57,13 @@ export function LandingProblem() {
                         <div className="w-14 h-14 rounded-2xl bg-white border border-brand-gray-light flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                             <IconChartBar className="w-7 h-7 text-brand-accent-orange" />
                         </div>
-                        <h3 className="text-2xl font-bold font-heading text-brand-dark mb-4 group-hover:text-brand-accent-orange transition-colors">Invoice Friction</h3>
+                        <h3 className="text-2xl font-bold font-heading text-brand-dark mb-4 group-hover:text-brand-accent-orange transition-colors">
+                            Invoice Friction
+                        </h3>
                         <p className="text-brand-gray-mid leading-relaxed">
-                            You send the bill. They ask for 'details.' You scramble to find screenshots and git logs just to defend your revenue and prove you did the work.
+                            You send the bill. They ask for 'details.' You scramble to find
+                            screenshots and git logs just to defend your revenue and prove you did
+                            the work.
                         </p>
                     </div>
                 </div>
@@ -56,7 +71,9 @@ export function LandingProblem() {
                 <div className="flex justify-center">
                     <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-brand-dark text-brand-light shadow-lg">
                         <IconAlertTriangle className="w-5 h-5 text-brand-accent-orange animate-pulse" />
-                        <span className="font-bold text-sm uppercase tracking-wider">Result: Revenue at Risk</span>
+                        <span className="font-bold text-sm uppercase tracking-wider">
+                            Result: Revenue at Risk
+                        </span>
                     </div>
                 </div>
             </div>

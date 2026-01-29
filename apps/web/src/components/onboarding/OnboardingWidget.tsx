@@ -1,25 +1,26 @@
 import {
+    IconArrowRight,
     IconBrandGithub,
     IconBrandSlack,
     IconCheckbox,
     IconCircleCheckFilled,
-    IconArrowRight,
-    IconLoader2
+    IconLoader2,
 } from "@tabler/icons-react";
 import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
 import { cn } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Badge } from "../ui/badge";
 
 export function OnboardingWidget() {
     const { data: status, isLoading } = useWorkspaceStatus();
 
-    if (isLoading || !status) return (
-        <div className="max-w-5xl mx-auto h-64 flex items-center justify-center">
-            <IconLoader2 className="w-8 h-8 text-brand-gray-light animate-spin" />
-        </div>
-    );
+    if (isLoading || !status)
+        return (
+            <div className="max-w-5xl mx-auto h-64 flex items-center justify-center">
+                <IconLoader2 className="w-8 h-8 text-brand-gray-light animate-spin" />
+            </div>
+        );
 
     // Calculate progress
     let completedSteps = 1; // Account created
@@ -53,7 +54,10 @@ export function OnboardingWidget() {
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                         <div className="space-y-3">
                             <div className="flex items-center gap-3">
-                                <Badge variant="outline" className="border-brand-accent-blue/30 text-brand-accent-blue bg-brand-accent-blue/5 uppercase tracking-wider text-[10px] font-bold px-2 py-0.5">
+                                <Badge
+                                    variant="outline"
+                                    className="border-brand-accent-blue/30 text-brand-accent-blue bg-brand-accent-blue/5 uppercase tracking-wider text-[10px] font-bold px-2 py-0.5"
+                                >
                                     {isComplete ? "Ready" : "Setup Required"}
                                 </Badge>
                                 <span className="text-xs font-medium text-brand-gray-mid font-mono">
@@ -74,7 +78,11 @@ export function OnboardingWidget() {
 
                         <div className="flex-shrink-0">
                             <div className="relative h-20 w-20 flex items-center justify-center">
-                                <svg className="h-full w-full -rotate-90" viewBox="0 0 36 36">
+                                <svg
+                                    className="h-full w-full -rotate-90"
+                                    viewBox="0 0 36 36"
+                                    aria-label="Progress circle"
+                                >
                                     <path
                                         className="text-brand-light"
                                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -92,7 +100,9 @@ export function OnboardingWidget() {
                                     />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span className="text-sm font-bold text-brand-dark">{Math.round(progress)}%</span>
+                                    <span className="text-sm font-bold text-brand-dark">
+                                        {Math.round(progress)}%
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -141,9 +151,12 @@ export function OnboardingWidget() {
                                 <IconCircleCheckFilled className="h-12 w-12 text-brand-accent-green" />
                             </div>
                             <div className="space-y-2">
-                                <h3 className="text-2xl font-bold font-heading text-brand-dark">Configuration Complete</h3>
+                                <h3 className="text-2xl font-bold font-heading text-brand-dark">
+                                    Configuration Complete
+                                </h3>
                                 <p className="text-brand-gray-mid max-w-md mx-auto">
-                                    Your environment is fully synchronized. ShipDocket is now passively monitoring your development cycle.
+                                    Your environment is fully synchronized. ShipDocket is now
+                                    passively monitoring your development cycle.
                                 </p>
                             </div>
                             <Button
@@ -173,38 +186,58 @@ interface OnboardingCardProps {
     label: string;
 }
 
-function OnboardingCard({ step, title, description, icon, iconBg, isConnected, onConnect, label }: OnboardingCardProps) {
+function OnboardingCard({
+    step,
+    title,
+    description,
+    icon,
+    iconBg,
+    isConnected,
+    onConnect,
+    label,
+}: OnboardingCardProps) {
     return (
         <div
             className={cn(
                 "group relative p-6 rounded-2xl border transition-all duration-300 flex flex-col h-full",
                 isConnected
                     ? "bg-brand-light border-brand-accent-green/20"
-                    : "bg-white border-brand-gray-light hover:border-brand-accent-blue/30 hover:shadow-lg hover:shadow-brand-accent-blue/5 hover:-translate-y-1"
+                    : "bg-white border-brand-gray-light hover:border-brand-accent-blue/30 hover:shadow-lg hover:shadow-brand-accent-blue/5 hover:-translate-y-1",
             )}
         >
             <div className="flex items-start justify-between mb-6">
-                <div className={cn(
-                    "w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105",
-                    isConnected ? "bg-brand-accent-green/10" : iconBg
-                )}>
-                    {isConnected ? <IconCircleCheckFilled className="w-6 h-6 text-brand-accent-green" /> : icon}
+                <div
+                    className={cn(
+                        "w-12 h-12 rounded-xl flex items-center justify-center shadow-sm transition-transform group-hover:scale-105",
+                        isConnected ? "bg-brand-accent-green/10" : iconBg,
+                    )}
+                >
+                    {isConnected ? (
+                        <IconCircleCheckFilled className="w-6 h-6 text-brand-accent-green" />
+                    ) : (
+                        icon
+                    )}
                 </div>
-                <span className={cn(
-                    "text-6xl font-black font-heading leading-none opacity-5 select-none transition-colors",
-                    isConnected ? "text-brand-accent-green" : "text-brand-dark"
-                )}>
+                <span
+                    className={cn(
+                        "text-6xl font-black font-heading leading-none opacity-5 select-none transition-colors",
+                        isConnected ? "text-brand-accent-green" : "text-brand-dark",
+                    )}
+                >
                     {step}
                 </span>
             </div>
 
             <div className="space-y-2 flex-1">
-                <h3 className={cn("font-bold text-lg font-heading", isConnected ? "text-brand-accent-green" : "text-brand-dark")}>
+                <h3
+                    className={cn(
+                        "font-bold text-lg font-heading",
+                        isConnected ? "text-brand-accent-green" : "text-brand-dark",
+                    )}
+                >
                     {title}
                 </h3>
-                <p className="text-sm text-brand-gray-mid leading-relaxed">
-                    {description}
-                </p>
+                <p className="text-sm text-brand-gray-mid leading-relaxed">{description}</p>
             </div>
 
             <div className="mt-8">
@@ -216,7 +249,7 @@ function OnboardingCard({ step, title, description, icon, iconBg, isConnected, o
                         "w-full h-11 rounded-xl font-bold transition-all duration-200 border",
                         isConnected
                             ? "bg-transparent text-brand-accent-green border-transparent"
-                            : "bg-brand-light text-brand-dark border-brand-gray-light hover:bg-brand-dark hover:text-brand-light hover:border-brand-dark"
+                            : "bg-brand-light text-brand-dark border-brand-gray-light hover:bg-brand-dark hover:text-brand-light hover:border-brand-dark",
                     )}
                 >
                     {isConnected ? "Connected" : `Connect ${label}`}

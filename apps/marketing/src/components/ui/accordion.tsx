@@ -1,8 +1,8 @@
 "use client";
 
-import * as React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 interface AccordionItemProps {
@@ -20,14 +20,14 @@ export function AccordionItem({ value, title, children, isOpen, onToggle }: Acco
                 onClick={onToggle}
                 className={cn(
                     "w-full flex items-center justify-between p-6 text-left transition-all",
-                    isOpen ? "bg-brand-light" : "bg-white hover:bg-brand-light/50"
+                    isOpen ? "bg-brand-light" : "bg-white hover:bg-brand-light/50",
                 )}
             >
                 <span className="text-lg font-bold font-heading text-brand-dark">{title}</span>
                 <ChevronDown
                     className={cn(
                         "w-5 h-5 text-muted-foreground transition-transform duration-300",
-                        isOpen && "transform rotate-180"
+                        isOpen && "transform rotate-180",
                     )}
                 />
             </button>

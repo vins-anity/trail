@@ -104,16 +104,23 @@ export function ProofDetailPage() {
                             <IconFileText className="h-7 w-7 text-brand-accent-blue" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-black font-heading tracking-tight text-brand-dark">{proof.task.key}</h1>
+                            <h1 className="text-3xl font-black font-heading tracking-tight text-brand-dark">
+                                {proof.task.key}
+                            </h1>
                             <p className="text-brand-gray-mid font-medium flex items-center gap-2">
                                 Proof Packet
                                 <span className="w-1 h-1 rounded-full bg-brand-gray-mid/30" />
-                                Created {new Date(proof.createdAt).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                                Created{" "}
+                                {new Date(proof.createdAt).toLocaleDateString(undefined, {
+                                    dateStyle: "long",
+                                })}
                             </p>
                         </div>
                     </div>
                 </div>
-                <Badge className={`px-4 py-1.5 rounded-full font-bold uppercase tracking-wider text-xs shadow-sm border ${statusColors[proof.status] || "bg-brand-light text-brand-gray-mid border-brand-gray-mid/10"}`}>
+                <Badge
+                    className={`px-4 py-1.5 rounded-full font-bold uppercase tracking-wider text-xs shadow-sm border ${statusColors[proof.status] || "bg-brand-light text-brand-gray-mid border-brand-gray-mid/10"}`}
+                >
                     {proof.status.charAt(0).toUpperCase() + proof.status.slice(1)}
                 </Badge>
             </div>
@@ -132,8 +139,12 @@ export function ProofDetailPage() {
                                         <IconSparkles className="h-5 w-5 text-brand-accent-purple" />
                                     </div>
                                     <div>
-                                        <CardTitle className="font-heading font-bold text-lg text-brand-dark">AI Summary</CardTitle>
-                                        <CardDescription className="text-brand-gray-mid">Client-friendly overview</CardDescription>
+                                        <CardTitle className="font-heading font-bold text-lg text-brand-dark">
+                                            AI Summary
+                                        </CardTitle>
+                                        <CardDescription className="text-brand-gray-mid">
+                                            Client-friendly overview
+                                        </CardDescription>
                                     </div>
                                 </div>
                                 <Button
@@ -188,7 +199,9 @@ export function ProofDetailPage() {
                                     <IconClock className="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <CardTitle className="font-heading font-bold text-lg text-brand-dark">Event Timeline</CardTitle>
+                                    <CardTitle className="font-heading font-bold text-lg text-brand-dark">
+                                        Event Timeline
+                                    </CardTitle>
                                     <CardDescription className="text-brand-gray-mid">
                                         Hash-chained audit trail of all task events
                                     </CardDescription>
@@ -212,7 +225,9 @@ export function ProofDetailPage() {
                     {/* Actions Card */}
                     <Card className="bg-white border-brand-gray-light shadow-sm rounded-2xl overflow-hidden">
                         <CardHeader className="py-5 bg-brand-light/30 border-b border-brand-gray-light/30">
-                            <CardTitle className="font-heading font-bold text-base text-brand-dark">Actions</CardTitle>
+                            <CardTitle className="font-heading font-bold text-base text-brand-dark">
+                                Actions
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="p-6 space-y-4">
                             <Button
@@ -241,7 +256,7 @@ export function ProofDetailPage() {
 
                             <Button
                                 variant="outline"
-                                className={`w-full justify-start h-12 text-base font-medium border-brand-gray-light/50 hover:bg-brand-light hover:text-brand-dark transition-all rounded-xl ${shareUrl ? 'bg-brand-accent-green/10 border-brand-accent-green/30 text-brand-accent-green hover:bg-brand-accent-green/20' : ''}`}
+                                className={`w-full justify-start h-12 text-base font-medium border-brand-gray-light/50 hover:bg-brand-light hover:text-brand-dark transition-all rounded-xl ${shareUrl ? "bg-brand-accent-green/10 border-brand-accent-green/30 text-brand-accent-green hover:bg-brand-accent-green/20" : ""}`}
                                 onClick={handleShare}
                                 disabled={shareProof.isPending}
                             >
@@ -272,27 +287,37 @@ export function ProofDetailPage() {
                     {/* Details Card */}
                     <Card className="bg-white border-brand-gray-light shadow-sm rounded-2xl overflow-hidden">
                         <CardHeader className="py-5 bg-brand-light/30 border-b border-brand-gray-light/30">
-                            <CardTitle className="font-heading font-bold text-base text-brand-dark">Details</CardTitle>
+                            <CardTitle className="font-heading font-bold text-base text-brand-dark">
+                                Details
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="p-6 space-y-4 text-sm">
                             <div className="flex justify-between items-center py-2 border-b border-brand-gray-light/20 last:border-0">
                                 <span className="text-brand-gray-mid font-medium">Status</span>
-                                <Badge className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusColors[proof.status]} bg-transparent border-0 shadow-none p-0`}>
+                                <Badge
+                                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusColors[proof.status]} bg-transparent border-0 shadow-none p-0`}
+                                >
                                     {proof.status}
                                 </Badge>
                             </div>
                             <div className="flex justify-between items-center py-2 border-b border-brand-gray-light/20 last:border-0">
                                 <span className="text-brand-gray-mid font-medium">Task ID</span>
-                                <span className="font-mono text-xs bg-brand-light px-2 py-1 rounded text-brand-dark border border-brand-gray-light/50">{proof.task.key}</span>
+                                <span className="font-mono text-xs bg-brand-light px-2 py-1 rounded text-brand-dark border border-brand-gray-light/50">
+                                    {proof.task.key}
+                                </span>
                             </div>
                             <div className="flex justify-between items-center py-2 border-b border-brand-gray-light/20 last:border-0">
                                 <span className="text-brand-gray-mid font-medium">Created</span>
-                                <span className="text-brand-dark font-medium">{new Date(proof.createdAt).toLocaleDateString()}</span>
+                                <span className="text-brand-dark font-medium">
+                                    {new Date(proof.createdAt).toLocaleDateString()}
+                                </span>
                             </div>
                             {proof.closure?.closedAt && (
                                 <div className="flex justify-between items-center py-2 border-b border-brand-gray-light/20 last:border-0">
                                     <span className="text-brand-gray-mid font-medium">Closed</span>
-                                    <span className="text-brand-dark font-medium">{new Date(proof.closure.closedAt).toLocaleDateString()}</span>
+                                    <span className="text-brand-dark font-medium">
+                                        {new Date(proof.closure.closedAt).toLocaleDateString()}
+                                    </span>
                                 </div>
                             )}
                             {proof.hashChainRoot && (

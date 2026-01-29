@@ -46,22 +46,24 @@ export function WordFlip({ pairs, className = "", interval = 3500, position }: W
 
     if (shuffledPairs.length === 0) return null;
 
-    const currentWord = position === "from"
-        ? shuffledPairs[currentPairIndex].from
-        : shuffledPairs[currentPairIndex].to;
+    const currentWord =
+        position === "from"
+            ? shuffledPairs[currentPairIndex].from
+            : shuffledPairs[currentPairIndex].to;
 
     return (
         <span className={`inline-block ${className}`}>
             <span
-                className={`inline-block transition-all duration-400 ${!hasIntroPlayed
+                className={`inline-block transition-all duration-400 ${
+                    !hasIntroPlayed
                         ? "opacity-0 scale-90"
                         : isFlipping
-                            ? "animate-flip-out"
-                            : "animate-flip-in"
-                    }`}
+                          ? "animate-flip-out"
+                          : "animate-flip-in"
+                }`}
                 style={{
                     transformStyle: "preserve-3d",
-                    perspective: "1000px"
+                    perspective: "1000px",
                 }}
             >
                 {currentWord}

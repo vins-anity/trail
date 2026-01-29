@@ -61,7 +61,9 @@ export function ProofPacketsPage() {
                             {proofs.length} Total
                         </span>
                     </h1>
-                    <p className="text-brand-gray-mid mt-1 font-serif italic text-lg">Tamper-evident delivery receipts.</p>
+                    <p className="text-brand-gray-mid mt-1 font-serif italic text-lg">
+                        Tamper-evident delivery receipts.
+                    </p>
                 </div>
                 <Button className="bg-brand-dark text-white hover:bg-black shadow-lg hover:-translate-y-0.5 transition-all rounded-xl px-6 font-heading font-bold">
                     Export Report
@@ -80,7 +82,10 @@ export function ProofPacketsPage() {
                         Proof packets will appear here when tasks are tracked through your connected
                         tools. Make sure your integrations are set up correctly.
                     </p>
-                    <Button variant="outline" className="border-brand-gray-mid/30 text-brand-dark hover:bg-brand-dark hover:text-white transition-all rounded-xl">
+                    <Button
+                        variant="outline"
+                        className="border-brand-gray-mid/30 text-brand-dark hover:bg-brand-dark hover:text-white transition-all rounded-xl"
+                    >
                         View Integration Status
                     </Button>
                 </div>
@@ -101,15 +106,23 @@ export function ProofPacketsPage() {
                                             <p className="text-sm text-brand-gray-mid font-medium flex items-center gap-2">
                                                 {proof.task?.summary || "Proof Packet"}
                                                 <span className="w-1 h-1 rounded-full bg-brand-gray-mid/30" />
-                                                {new Date(proof.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {new Date(proof.createdAt).toLocaleDateString(
+                                                    undefined,
+                                                    {
+                                                        month: "short",
+                                                        day: "numeric",
+                                                        year: "numeric",
+                                                    },
+                                                )}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6">
                                         <Badge
-                                            className={`px-3 py-1 rounded-full font-bold uppercase tracking-wider text-xs shadow-sm border ${statusColors[proof.status] ||
+                                            className={`px-3 py-1 rounded-full font-bold uppercase tracking-wider text-xs shadow-sm border ${
+                                                statusColors[proof.status] ||
                                                 "bg-brand-gray-light text-brand-gray-mid border-brand-gray-mid/10"
-                                                }`}
+                                            }`}
                                         >
                                             {proof.status?.charAt(0).toUpperCase() +
                                                 proof.status?.slice(1) || "Pending"}

@@ -19,7 +19,6 @@ const KEY_LENGTH = 256;
 async function getEncryptionKey(): Promise<CryptoKey> {
     const keyString = env.ENCRYPTION_KEY;
 
-
     // Convert hex string to ArrayBuffer
     const keyData = new Uint8Array(
         (keyString || "").match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || [],

@@ -97,12 +97,15 @@ export async function exchangeCodeForToken(
 
     let cloudId: string | undefined;
     if (provider === "jira") {
-        const resourcesResponse = await fetch("https://api.atlassian.com/oauth/token/accessible-resources", {
-            headers: {
-                Authorization: `Bearer ${data.access_token}`,
-                Accept: "application/json",
+        const resourcesResponse = await fetch(
+            "https://api.atlassian.com/oauth/token/accessible-resources",
+            {
+                headers: {
+                    Authorization: `Bearer ${data.access_token}`,
+                    Accept: "application/json",
+                },
             },
-        });
+        );
 
         if (resourcesResponse.ok) {
             const resources = await resourcesResponse.json();

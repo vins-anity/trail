@@ -5,7 +5,6 @@
  * Handles Auth Headers & Error redirection automatically.
  */
 
-import { supabase } from "@/lib/supabase";
 import type {
     CreateProofPacket,
     EvaluateClosure,
@@ -15,6 +14,7 @@ import type {
     Policy,
     ProofPacket,
 } from "shared";
+import { supabase } from "@/lib/supabase";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -26,7 +26,9 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
  */
 async function fetchWithAuth<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     // 1. Get Session Token
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+        data: { session },
+    } = await supabase.auth.getSession();
     const token = session?.access_token;
 
     // 2. Prepare Headers
@@ -88,10 +90,14 @@ export const api = {
         get: (id: string) => fetchWithAuth<Event>(`/events/${id}`),
 
         getByTask: (taskId: string) =>
-            fetchWithAuth<{ taskId: string; events: Event[]; summary: Record<string, unknown> }>(`/events/task/${taskId}`),
+            fetchWithAuth<{ taskId: string; events: Event[]; summary: Record<string, unknown> }>(
+                `/events/task/${taskId}`,
+            ),
 
         verifyChain: (workspaceId: string) =>
-            fetchWithAuth<{ valid: boolean; verifiedCount: number; errors: unknown[] }>(`/events/verify/${workspaceId}`),
+            fetchWithAuth<{ valid: boolean; verifiedCount: number; errors: unknown[] }>(
+                `/events/verify/${workspaceId}`,
+            ),
 
         stats: (workspaceId: string) =>
             fetchWithAuth<{
@@ -128,16 +134,24 @@ export const api = {
             }),
 
         summarize: (id: string, options?: { includeCommits?: boolean; tone?: string }) =>
-            fetchWithAuth<{ success: boolean; summary: string; model: string }>(`/proofs/${id}/summarize`, {
-                method: "POST",
-                body: JSON.stringify(options || {}),
-            }),
+            fetchWithAuth<{ success: boolean; summary: string; model: string }>(
+                `/proofs/${id}/summarize`,
+                {
+                    method: "POST",
+                    body: JSON.stringify(options || {}),
+                },
+            ),
 
         exportPdf: (id: string) =>
-            fetchWithAuth<{ success: boolean; url: string; expiresAt: string }>(`/proofs/${id}/pdf`),
+            fetchWithAuth<{ success: boolean; url: string; expiresAt: string }>(
+                `/proofs/${id}/pdf`,
+            ),
 
         share: (id: string) =>
-            fetchWithAuth<{ success: boolean; shareUrl: string; expiresAt: string }>(`/proofs/${id}/share`, { method: "POST" }),
+            fetchWithAuth<{ success: boolean; shareUrl: string; expiresAt: string }>(
+                `/proofs/${id}/share`,
+                { method: "POST" },
+            ),
     },
 
     // ============================================

@@ -89,7 +89,9 @@ export function DashboardLayout() {
                             </h4>
                             <div className="flex items-center gap-2 mt-2">
                                 <div className="h-2 w-2 rounded-full bg-brand-accent-green animate-pulse"></div>
-                                <p className="text-[11px] text-brand-gray-mid">System Operational</p>
+                                <p className="text-[11px] text-brand-gray-mid">
+                                    System Operational
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -140,7 +142,11 @@ export function DashboardLayout() {
                                     </div>
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-60 p-2 rounded-xl border-brand-gray-mid/20 shadow-xl bg-white" align="end" forceMount>
+                            <DropdownMenuContent
+                                className="w-60 p-2 rounded-xl border-brand-gray-mid/20 shadow-xl bg-white"
+                                align="end"
+                                forceMount
+                            >
                                 <DropdownMenuLabel className="font-normal p-2">
                                     <div className="flex flex-col space-y-1">
                                         <p className="text-sm font-bold text-brand-dark leading-none">

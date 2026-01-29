@@ -1,10 +1,11 @@
-import { env } from "./env";
 import { apiReference } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 import { openAPISpecs } from "hono-openapi";
+import { env } from "./env";
+import { startJobQueue } from "./lib/job-queue";
 import auth from "./modules/auth/routes";
 import events from "./modules/events/routes";
 import jobs from "./modules/jobs/routes";
@@ -13,7 +14,6 @@ import proofs from "./modules/proofs/routes";
 import slackInteractions from "./modules/slack/interactions";
 import webhooks from "./modules/webhooks/routes";
 import workspaces from "./modules/workspaces/routes";
-import { startJobQueue } from "./lib/job-queue";
 
 // Start the background worker (Free Tier Strategy)
 // In production, we run this in the same process to avoid paying for a second service.
@@ -25,26 +25,33 @@ if (process.env.NODE_ENV !== "test") {
 
 const app = new Hono()
     .use("*", logger())
-    .use("*", secureHeaders({
-        contentSecurityPolicy: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "https://*.supabase.co"],
-            connectSrc: ["'self'", "https://*.supabase.co", "https://shipdocket-api-sqoi.onrender.com"],
-            frameAncestors: ["'none'"],
-        },
-        strictTransportSecurity: "max-age=31536000; includeSubDomains; preload",
-        xFrameOptions: "DENY",
-        xContentTypeOptions: "nosniff",
-        referrerPolicy: "strict-origin-when-cross-origin",
-        permissionsPolicy: {
-            geolocation: ["'none'"],
-            microphone: ["'none'"],
-            camera: ["'none'"],
-        },
-    }))
+    .use(
+        "*",
+        secureHeaders({
+            contentSecurityPolicy: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
+                styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+                fontSrc: ["'self'", "https://fonts.gstatic.com"],
+                imgSrc: ["'self'", "data:", "https://*.supabase.co"],
+                connectSrc: [
+                    "'self'",
+                    "https://*.supabase.co",
+                    "https://shipdocket-api-sqoi.onrender.com",
+                ],
+                frameAncestors: ["'none'"],
+            },
+            strictTransportSecurity: "max-age=31536000; includeSubDomains; preload",
+            xFrameOptions: "DENY",
+            xContentTypeOptions: "nosniff",
+            referrerPolicy: "strict-origin-when-cross-origin",
+            permissionsPolicy: {
+                geolocation: ["'none'"],
+                microphone: ["'none'"],
+                camera: ["'none'"],
+            },
+        }),
+    )
     .use("*", cors())
     .get("/health", (c) => c.json({ status: "ok" }))
     .get("/", (c) => {
@@ -148,7 +155,8 @@ const app = new Hono()
         const token = c.req.param("token");
 
         // Import services dynamically
-        const { proofSharesService, proofsService, eventsService, workspacesService } = await import("./services");
+        const { proofSharesService, proofsService, eventsService, workspacesService } =
+            await import("./services");
 
         // Get share link by token
         const shareLink = await proofSharesService?.getShareLinkByToken(token);
@@ -246,11 +254,11 @@ const app = new Hono()
         <!-- Main Status Overview -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- Overall Status -->
-            <div class="md:col-span-2 glass rounded-2xl p-8 flex items-center justify-between ${status.status === 'ok' ? 'card-glow-ok' : status.status === 'warning' ? 'card-glow-warning' : 'card-glow-error'}">
+            <div class="md:col-span-2 glass rounded-2xl p-8 flex items-center justify-between ${status.status === "ok" ? "card-glow-ok" : status.status === "warning" ? "card-glow-warning" : "card-glow-error"}">
                 <div class="space-y-4">
                     <h2 class="text-lg font-bold text-slate-400 uppercase tracking-widest">Global Status</h2>
                     <div class="flex items-center gap-4">
-                        <div class="w-4 h-4 rounded-full ${status.status === 'ok' ? 'bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]' : status.status === 'warning' ? 'bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)]' : 'bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]'} pulse"></div>
+                        <div class="w-4 h-4 rounded-full ${status.status === "ok" ? "bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.5)]" : status.status === "warning" ? "bg-yellow-500 shadow-[0_0_15px_rgba(234,179,8,0.5)]" : "bg-red-500 shadow-[0_0_15px_rgba(239,68,68,0.5)]"} pulse"></div>
                         <span class="text-5xl font-black uppercase">${status.status}</span>
                     </div>
                 </div>
@@ -271,33 +279,34 @@ const app = new Hono()
         <!-- Metric Details -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Database -->
-            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.database.status === 'ok' ? 'border-green-500' : 'border-red-500'}">
+            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.database.status === "ok" ? "border-green-500" : "border-red-500"}">
                 <div class="flex justify-between items-start">
                     <h3 class="font-bold text-slate-300">PostgreSQL</h3>
-                    <span class="text-xs font-mono ${status.checks.database.status === 'ok' ? 'text-green-400' : 'text-red-400'}">${status.checks.database.latencyMs}ms</span>
+                    <span class="text-xs font-mono ${status.checks.database.status === "ok" ? "text-green-400" : "text-red-400"}">${status.checks.database.latencyMs}ms</span>
                 </div>
-                <p class="text-sm text-slate-500">${status.checks.database.message || 'Connection healthy, latency within limits.'}</p>
+                <p class="text-sm text-slate-500">${status.checks.database.message || "Connection healthy, latency within limits."}</p>
             </div>
 
             <!-- Job Queue -->
-            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.jobQueue.status === 'ok' ? 'border-green-500' : 'border-red-500'}">
+            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.jobQueue.status === "ok" ? "border-green-500" : "border-red-500"}">
                 <div class="flex justify-between items-start">
                     <h3 class="font-bold text-slate-300">Job Queue (pg-boss)</h3>
-                    <div class="w-2 h-2 rounded-full ${status.checks.jobQueue.status === 'ok' ? 'bg-green-500' : 'bg-red-500'}"></div>
+                    <div class="w-2 h-2 rounded-full ${status.checks.jobQueue.status === "ok" ? "bg-green-500" : "bg-red-500"}"></div>
                 </div>
-                <p class="text-sm text-slate-500">${status.checks.jobQueue.message || 'Background worker active and processing.'}</p>
+                <p class="text-sm text-slate-500">${status.checks.jobQueue.message || "Background worker active and processing."}</p>
             </div>
 
             <!-- Environment -->
-            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.environment.status === 'ok' ? 'border-green-500' : 'border-yellow-500'}">
+            <div class="glass rounded-2xl p-6 space-y-4 border-l-4 ${status.checks.environment.status === "ok" ? "border-green-500" : "border-yellow-500"}">
                 <div class="flex justify-between items-start">
                     <h3 class="font-bold text-slate-300">Environment</h3>
-                    <div class="w-2 h-2 rounded-full ${status.checks.environment.status === 'ok' ? 'bg-green-500' : 'bg-yellow-500'}"></div>
+                    <div class="w-2 h-2 rounded-full ${status.checks.environment.status === "ok" ? "bg-green-500" : "bg-yellow-500"}"></div>
                 </div>
-                ${status.checks.environment.missingOptionalVars.length > 0
-                ? `<p class="text-xs text-yellow-400 font-medium">Missing: ${status.checks.environment.missingOptionalVars.join(', ')}</p>`
-                : `<p class="text-sm text-slate-500">All required and optional variables are set.</p>`
-            }
+                ${
+                    status.checks.environment.missingOptionalVars.length > 0
+                        ? `<p class="text-xs text-yellow-400 font-medium">Missing: ${status.checks.environment.missingOptionalVars.join(", ")}</p>`
+                        : `<p class="text-sm text-slate-500">All required and optional variables are set.</p>`
+                }
             </div>
         </div>
 

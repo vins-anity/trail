@@ -16,15 +16,22 @@ export function LandingHero() {
                     <div className="space-y-6">
                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-dark/[0.03] border border-brand-dark/[0.05] w-fit">
                             <span className="flex h-2 w-2 rounded-full bg-brand-accent-green animate-pulse"></span>
-                            <span className="text-xs font-bold uppercase tracking-widest text-brand-gray-mid">Now in Public Beta</span>
+                            <span className="text-xs font-bold uppercase tracking-widest text-brand-gray-mid">
+                                Now in Public Beta
+                            </span>
                         </div>
                         <h1 className="text-6xl md:text-7xl lg:text-8xl font-black font-heading leading-[1.05] tracking-tight text-brand-dark">
-                            Turn <span className="text-brand-accent-orange">Commits</span><br />
+                            Turn <span className="text-brand-accent-orange">Commits</span>
+                            <br />
                             into <span className="text-brand-accent-blue">Contracts</span>.
                         </h1>
 
                         <p className="text-xl md:text-2xl text-brand-gray-mid leading-relaxed max-w-xl font-serif font-light">
-                            Stop defending your invoices. ShipDocket creates an automated <span className="text-brand-dark font-medium italic">'Bill of Lading'</span> for your code—turning Jira tickets and PRs into verified Proof Packets.
+                            Stop defending your invoices. ShipDocket creates an automated{" "}
+                            <span className="text-brand-dark font-medium italic">
+                                'Bill of Lading'
+                            </span>{" "}
+                            for your code—turning Jira tickets and PRs into verified Proof Packets.
                         </p>
                     </div>
 
@@ -53,7 +60,9 @@ export function LandingHero() {
                     </div>
 
                     <div className="border-t border-brand-gray-light pt-8">
-                        <p className="font-bold text-xs uppercase tracking-widest text-brand-gray-mid mb-4">Trusted Architecture</p>
+                        <p className="font-bold text-xs uppercase tracking-widest text-brand-gray-mid mb-4">
+                            Trusted Architecture
+                        </p>
                         <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-brand-dark/70 font-medium">
                             <span className="flex items-center gap-2">
                                 <CheckCircledIcon className="w-4 h-4 text-brand-accent-green" />
@@ -102,8 +111,12 @@ export function LandingHero() {
                                         <div className="w-2 h-2 rounded-full bg-brand-accent-orange" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-brand-gray-mid uppercase tracking-wider mb-0.5">Manifested</p>
-                                        <p className="text-sm font-semibold text-brand-dark">Jan 10 • Jira #202</p>
+                                        <p className="text-xs font-bold text-brand-gray-mid uppercase tracking-wider mb-0.5">
+                                            Manifested
+                                        </p>
+                                        <p className="text-sm font-semibold text-brand-dark">
+                                            Jan 10 • Jira #202
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
@@ -111,8 +124,12 @@ export function LandingHero() {
                                         <div className="w-2 h-2 rounded-full bg-brand-accent-blue" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-brand-gray-mid uppercase tracking-wider mb-0.5">Cargo</p>
-                                        <p className="text-sm font-semibold text-brand-dark">12 Commits, 2 PRs, CI Passed</p>
+                                        <p className="text-xs font-bold text-brand-gray-mid uppercase tracking-wider mb-0.5">
+                                            Cargo
+                                        </p>
+                                        <p className="text-sm font-semibold text-brand-dark">
+                                            12 Commits, 2 PRs, CI Passed
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-4">
@@ -120,8 +137,12 @@ export function LandingHero() {
                                         <div className="w-2 h-2 rounded-full bg-brand-accent-green" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-bold text-brand-gray-mid uppercase tracking-wider mb-0.5">Authorized</p>
-                                        <p className="text-sm font-semibold text-brand-dark">Jan 12 • Auto-closed</p>
+                                        <p className="text-xs font-bold text-brand-gray-mid uppercase tracking-wider mb-0.5">
+                                            Authorized
+                                        </p>
+                                        <p className="text-sm font-semibold text-brand-dark">
+                                            Jan 12 • Auto-closed
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -136,9 +157,12 @@ export function LandingHero() {
                                         "PR #847 merged with 2 approvals",
                                         "All CI checks passed (142 tests)",
                                         "Code review completed by @senior-dev",
-                                        "Hash chain verified: a7f3e9..."
-                                    ].map((item, i) => (
-                                        <div key={i} className="flex items-center gap-3 text-xs font-medium text-brand-gray-mid">
+                                        "Hash chain verified: a7f3e9...",
+                                    ].map((item) => (
+                                        <div
+                                            key={item}
+                                            className="flex items-center gap-3 text-xs font-medium text-brand-gray-mid"
+                                        >
                                             <CheckCircledIcon className="w-4 h-4 text-brand-accent-green flex-shrink-0" />
                                             <span>{item}</span>
                                         </div>
@@ -154,7 +178,9 @@ export function LandingHero() {
                                         Ready for Invoicing
                                     </span>
                                 </div>
-                                <div className="h-8 w-8 rounded-full bg-brand-dark flex items-center justify-center text-brand-light font-bold text-xs shadow-lg">SD</div>
+                                <div className="h-8 w-8 rounded-full bg-brand-dark flex items-center justify-center text-brand-light font-bold text-xs shadow-lg">
+                                    SD
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -162,7 +188,9 @@ export function LandingHero() {
             </div>
 
             <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-3 animate-bounce cursor-pointer opacity-50 hover:opacity-100 transition-opacity">
-                <span className="text-xs font-bold uppercase tracking-widest text-brand-gray-mid">Scroll for more</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-brand-gray-mid">
+                    Scroll for more
+                </span>
                 <div className="w-5 h-8 border-2 border-brand-gray-mid rounded-full flex items-start justify-center pt-2">
                     <div className="w-1 h-1.5 bg-brand-gray-mid rounded-full" />
                 </div>

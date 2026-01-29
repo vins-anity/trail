@@ -43,13 +43,7 @@ export function AnimatedUnderline({ children, className = "" }: AnimatedUnderlin
                 {/* Pencil tip that follows the path */}
                 {isAnimating && (
                     <g className="animate-pencil-move">
-                        <circle
-                            cx="0"
-                            cy="0"
-                            r="2.5"
-                            fill="currentColor"
-                            opacity="0.9"
-                        />
+                        <circle cx="0" cy="0" r="2.5" fill="currentColor" opacity="0.9" />
                     </g>
                 )}
             </svg>

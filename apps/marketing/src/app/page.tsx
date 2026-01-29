@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2, ShieldCheck, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Typewriter } from "@/components/ui/typewriter";
+import { WordFlip } from "@/components/ui/word-flip";
 
 export default function Home() {
     return (
@@ -19,9 +21,34 @@ export default function Home() {
                         The Trust Protocol for Software Agencies
                     </div>
 
-                    <h1 className="text-6xl md:text-8xl font-heading font-bold tracking-tight text-brand-dark leading-[1.1] animate-slide-up">
-                        Turn Commits <br className="hidden md:block" />
-                        into <span className="text-brand-accent-orange">Contracts</span>.
+                    <h1 className="text-6xl md:text-8xl font-heading font-bold tracking-tight text-brand-dark leading-[1.1]">
+                        <span className="inline-block animate-hero-word-1">Turn </span>
+                        <WordFlip
+                            pairs={[
+                                { from: "Commits", to: "Contracts" },
+                                { from: "Code", to: "Trust" },
+                                { from: "Hours", to: "Revenue" },
+                                { from: "Work", to: "Proof" },
+                                { from: "Sprints", to: "Value" },
+                                { from: "Logs", to: "Certainty" }
+                            ]}
+                            position="from"
+                            className="text-brand-accent-blue mx-2"
+                        />
+                        <br className="hidden md:block" />
+                        <span className="inline-block animate-hero-word-2">into </span>
+                        <WordFlip
+                            pairs={[
+                                { from: "Commits", to: "Contracts" },
+                                { from: "Code", to: "Trust" },
+                                { from: "Hours", to: "Revenue" },
+                                { from: "Work", to: "Proof" },
+                                { from: "Sprints", to: "Value" },
+                                { from: "Logs", to: "Certainty" }
+                            ]}
+                            position="to"
+                            className="text-brand-accent-orange mx-2"
+                        /><span className="animate-hero-word-3">.</span>
                     </h1>
 
                     <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-light leading-relaxed animate-slide-up" style={{ animationDelay: "0.1s" }}>
@@ -233,15 +260,21 @@ export default function Home() {
                             <div className="space-y-6 mb-8">
                                 <div>
                                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Manifested</p>
-                                    <p className="text-brand-dark font-bold">Jan 10 • Jira #202</p>
+                                    <p className="text-brand-dark font-bold">
+                                        <Typewriter text="Jan 10 • Jira #202" delay={200} speed={25} />
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Cargo</p>
-                                    <p className="text-brand-dark font-bold">12 Commits, 2 PRs, CI Passed</p>
+                                    <p className="text-brand-dark font-bold">
+                                        <Typewriter text="12 Commits, 2 PRs, CI Passed" delay={500} speed={22} />
+                                    </p>
                                 </div>
                                 <div>
                                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Authorized</p>
-                                    <p className="text-brand-dark font-bold">Jan 12 • Auto-closed</p>
+                                    <p className="text-brand-dark font-bold">
+                                        <Typewriter text="Jan 12 • Auto-closed" delay={900} speed={25} />
+                                    </p>
                                 </div>
                             </div>
 
@@ -250,14 +283,16 @@ export default function Home() {
                                 <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2">Evidence Summary</p>
                                 <div className="space-y-2">
                                     {[
-                                        "PR #847 merged with 2 approvals",
-                                        "All CI checks passed",
-                                        "Code review completed",
-                                        "Hash chain verified"
+                                        { text: "PR #847 merged with 2 approvals", delay: 1300 },
+                                        { text: "All CI checks passed", delay: 1600 },
+                                        { text: "Code review completed", delay: 1850 },
+                                        { text: "Hash chain verified", delay: 2100 }
                                     ].map((item, i) => (
                                         <div key={i} className="flex items-center gap-2">
                                             <div className="h-2 w-2 rounded-full bg-brand-accent-green shadow-sm shadow-green-200" />
-                                            <span className="text-xs font-medium text-muted-foreground">{item}</span>
+                                            <span className="text-xs font-medium text-muted-foreground">
+                                                <Typewriter text={item.text} delay={item.delay} speed={25} />
+                                            </span>
                                         </div>
                                     ))}
                                 </div>

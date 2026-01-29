@@ -36,7 +36,10 @@ export function LandingNav() {
                     </Link>
 
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition outline-none">
+                        <DropdownMenuTrigger
+                            suppressHydrationWarning
+                            className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition outline-none"
+                        >
                             Company <ChevronDownIcon className="w-3 h-3" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -53,7 +56,10 @@ export function LandingNav() {
                     </DropdownMenu>
 
                     <DropdownMenu>
-                        <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition outline-none">
+                        <DropdownMenuTrigger
+                            suppressHydrationWarning
+                            className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition outline-none"
+                        >
                             Resources <ChevronDownIcon className="w-3 h-3" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">

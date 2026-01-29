@@ -10,7 +10,7 @@
     --brand-gray-light: #e8e6dc;
 
     --brand-accent-orange: #d97757;
-    --brand-accent-blue: #6a9bcc;
+    --brand-accent-blue: #2F4858;
     --brand-accent-green: #788c5d;
 
     /* Semantic Mapping */
@@ -155,4 +155,68 @@
     h6 {
         @apply font-heading font-semibold tracking-tight;
     }
+}
+
+/* Word Flip Animation - 3D Rotation */
+@keyframes flip-out {
+    0% {
+        transform: rotateX(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotateX(90deg);
+        opacity: 0;
+    }
+}
+
+@keyframes flip-in {
+    0% {
+        transform: rotateX(-90deg);
+        opacity: 0;
+    }
+
+    100% {
+        transform: rotateX(0deg);
+        opacity: 1;
+    }
+}
+
+.animate-flip-out {
+    animation: flip-out 0.4s ease-in forwards;
+}
+
+.animate-flip-in {
+    animation: flip-in 0.4s ease-out forwards;
+}
+
+/* Hero Intro Animation - Staggered Scale In */
+@keyframes hero-word-in {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.animate-hero-word-1 {
+    animation: hero-word-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.1s;
+    opacity: 0;
+}
+
+.animate-hero-word-2 {
+    animation: hero-word-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.3s;
+    opacity: 0;
+}
+
+.animate-hero-word-3 {
+    animation: hero-word-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.5s;
+    opacity: 0;
 }

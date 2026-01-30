@@ -198,6 +198,8 @@ function mapProofPacketToResponse(packet: schema.ProofPacket) {
         status: packet.status,
         aiSummary: packet.aiSummary,
         aiSummaryModel: packet.aiSummaryModel,
+        handshakeEventId: packet.handshakeEventId,
+        closureEventId: packet.closureEventId,
         hashChainRoot: packet.hashChainRoot,
         exportedUrl: packet.exportedUrl,
         closedAt: packet.closedAt?.toISOString() || null,

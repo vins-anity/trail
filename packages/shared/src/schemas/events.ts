@@ -26,6 +26,8 @@ export const EventTypeSchema = v.picklist([
     "closure_vetoed",
     "jira_status_changed",
     "slack_message",
+    "deployed",
+    "released",
 ]);
 
 export const TriggerSourceSchema = v.picklist([

@@ -251,6 +251,16 @@ const webhooks = new Hono()
                         return c.json({ success: true, message: "Ignoring check in progress" });
                     }
                     break;
+                case "deployment_status":
+                    if (payload.deployment_status?.state === "success") {
+                        _trailEventType = "deployed";
+                    }
+                    break;
+                case "release":
+                    if (payload.action === "published") {
+                        _trailEventType = "released";
+                    }
+                    break;
             }
 
             if (_trailEventType) {
@@ -319,7 +329,7 @@ const webhooks = new Hono()
                                     workspace.id,
                                     taskId,
                                     payload.pull_request?.title ||
-                                        `PR #${payload.pull_request?.number}`,
+                                    `PR #${payload.pull_request?.number}`,
                                     prAuthorEmail,
                                     new Date(checkResult.scheduledCloseAt),
                                 );

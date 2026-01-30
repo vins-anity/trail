@@ -9,6 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ConnectIntegrationsStepProps {
     workspaceId: string;
@@ -17,6 +20,31 @@ interface ConnectIntegrationsStepProps {
 
 export function ConnectIntegrationsStep({ workspaceId, onNext }: ConnectIntegrationsStepProps) {
     const { data: workspace, isLoading } = useWorkspaceStatus();
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const connected = params.get("connected");
+        const error = params.get("error");
+
+        if (connected) {
+            toast.success(`${connected.charAt(0).toUpperCase() + connected.slice(1)} linked successfully!`, {
+                description: "Your integration is now active.",
+            });
+            // Refresh workspace data to show the green checkmark
+            queryClient.invalidateQueries({ queryKey: ["workspace-status"] });
+            // Clean up URL
+            window.history.replaceState({}, "", "/onboarding?step=integrations");
+        }
+
+        if (error) {
+            toast.error("Integration failed", {
+                description: decodeURIComponent(error),
+            });
+            // Clean up URL
+            window.history.replaceState({}, "", "/onboarding?step=integrations");
+        }
+    }, [queryClient]);
 
     const handleConnect = (provider: "jira" | "github" | "slack") => {
         const baseUrl = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");

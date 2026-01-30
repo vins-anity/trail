@@ -36,6 +36,30 @@ export function OnboardingWidget({ workspaceId }: { workspaceId?: string | null 
         window.location.href = `${import.meta.env.VITE_API_URL}/auth/${provider}/authorize?workspace_id=${status.id}`;
     };
 
+    const handleLaunch = async () => {
+        // Mark onboarding as complete in the backend
+        try {
+            const token = localStorage.getItem("supabase.auth.token");
+            const session = token ? JSON.parse(token) : null;
+            const accessToken = session?.currentSession?.access_token;
+
+            await fetch(`${import.meta.env.VITE_API_URL}/workspaces/${status.id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: accessToken ? `Bearer ${accessToken}` : "",
+                },
+                body: JSON.stringify({
+                    onboardingCompletedAt: new Date().toISOString(),
+                }),
+            });
+            window.location.reload();
+        } catch (e) {
+            console.error("Failed to complete onboarding:", e);
+            window.location.reload();
+        }
+    };
+
     return (
         <div className="relative group max-w-5xl mx-auto font-sans">
             {/* Background Decor */}
@@ -162,7 +186,7 @@ export function OnboardingWidget({ workspaceId }: { workspaceId?: string | null 
                             <Button
                                 size="lg"
                                 className="bg-brand-dark text-brand-light hover:bg-brand-accent-blue transition-all duration-300 rounded-xl px-8 h-12 text-base font-bold shadow-lg shadow-brand-dark/10"
-                                onClick={() => window.location.reload()}
+                                onClick={handleLaunch}
                             >
                                 Launch Dashboard
                                 <IconArrowRight className="w-4 h-4 ml-2" />

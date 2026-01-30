@@ -36,6 +36,10 @@ export function SettingsPage() {
     // Workflow State
     const [startStatuses, setStartStatuses] = useState<string[]>([]);
     const [newStatus, setNewStatus] = useState("");
+    const [teamType, setTeamType] = useState("agency");
+    const [stack, setStack] = useState<string[]>([]);
+    const [culture, setCulture] = useState("scrum");
+    const [audience, setAudience] = useState("internal");
 
     // Branding State
     const [brandColor, setBrandColor] = useState("#3b82f6");
@@ -48,6 +52,16 @@ export function SettingsPage() {
     useEffect(() => {
         if (workspace?.workflowSettings?.startTracking) {
             setStartStatuses(workspace.workflowSettings.startTracking);
+        }
+        if (workspace?.workflowSettings) {
+            setTeamType(workspace.workflowSettings.teamType || "agency");
+            setStack(workspace.workflowSettings.stack || []);
+            setCulture(workspace.workflowSettings.culture || "scrum");
+            setAudience(workspace.workflowSettings.audience || "internal");
+            if (workspace.workflowSettings.branding) {
+                setBrandColor(workspace.workflowSettings.branding.brandColor || "#3b82f6");
+                setBrandLogo(workspace.workflowSettings.branding.brandLogo || "");
+            }
         }
         if (workspace?.proofPacketRules) {
             setAutoCreateOnDone(workspace.proofPacketRules.autoCreateOnDone ?? true);
@@ -105,12 +119,48 @@ export function SettingsPage() {
                 startTracking: startStatuses,
                 reviewStatus: ["In Review"], // naive preserve
                 doneStatus: ["Done"],
+                teamType,
+                stack,
+                culture,
+                audience,
             },
         });
     };
 
+    const handleSaveGeneralConfig = () => {
+        updateSettingsMutation.mutate({
+            workflowSettings: {
+                startTracking: startStatuses,
+                reviewStatus: ["In Review"],
+                doneStatus: ["Done"],
+                teamType,
+                stack,
+                culture,
+                audience,
+            },
+            proofPacketRules: {
+                ...workspace?.proofPacketRules,
+                enableClientPortal: audience === "clients",
+            }
+        });
+    };
+
     const handleSaveBranding = () => {
-        toast.success("Branding assets updated");
+        updateSettingsMutation.mutate({
+            workflowSettings: {
+                startTracking: startStatuses,
+                reviewStatus: ["In Review"],
+                doneStatus: ["Done"],
+                teamType,
+                stack,
+                culture,
+                audience,
+                branding: {
+                    brandColor,
+                    brandLogo,
+                },
+            },
+        });
     };
 
     const handleSaveRules = () => {
@@ -270,6 +320,91 @@ export function SettingsPage() {
 
                 {/* WORKFLOW TAB */}
                 <TabsContent value="workflow" className="space-y-4">
+                    <Card className="bg-white border-brand-gray-light shadow-sm rounded-xl overflow-hidden">
+                        <CardHeader className="bg-brand-light/30 border-b border-brand-gray-light/30 pb-4">
+                            <CardTitle className="text-xl font-heading font-bold text-brand-dark">
+                                General Configuration
+                            </CardTitle>
+                            <CardDescription className="text-brand-gray-mid font-serif italic">
+                                Core settings that define your workspace identity.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6 pt-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-brand-dark">Team Type</label>
+                                    <select
+                                        value={teamType}
+                                        onChange={(e) => setTeamType(e.target.value)}
+                                        className="w-full p-2 rounded-lg border border-brand-gray-light bg-brand-light font-medium"
+                                    >
+                                        <option value="agency">Creative Agency</option>
+                                        <option value="dev_shop">Dev Shop</option>
+                                        <option value="product">Product Team</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-brand-dark">Culture</label>
+                                    <div className="flex gap-4 p-2">
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="culture"
+                                                value="scrum"
+                                                checked={culture === "scrum"}
+                                                onChange={(e) => setCulture(e.target.value)}
+                                                className="accent-brand-accent-blue"
+                                            />
+                                            <span className="text-sm font-medium">Scrum (Sprints)</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="culture"
+                                                value="kanban"
+                                                checked={culture === "kanban"}
+                                                onChange={(e) => setCulture(e.target.value)}
+                                                className="accent-brand-accent-green"
+                                            />
+                                            <span className="text-sm font-medium">Kanban (Flow)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-brand-dark">Audience</label>
+                                    <div className="flex gap-4 p-2">
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="audience"
+                                                value="internal"
+                                                checked={audience === "internal"}
+                                                onChange={(e) => setAudience(e.target.value)}
+                                            />
+                                            <span className="text-sm font-medium">Internal Team</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="radio"
+                                                name="audience"
+                                                value="clients"
+                                                checked={audience === "clients"}
+                                                onChange={(e) => setAudience(e.target.value)}
+                                            />
+                                            <span className="text-sm font-medium">External Clients</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <Button
+                                onClick={handleSaveGeneralConfig}
+                                className="bg-brand-dark text-white hover:bg-black font-bold shadow-md rounded-lg"
+                            >
+                                <IconDeviceFloppy className="w-4 h-4 mr-2" /> Save Configuration
+                            </Button>
+                        </CardContent>
+                    </Card>
+
                     <Card className="bg-white border-brand-gray-light shadow-sm rounded-xl overflow-hidden">
                         <CardHeader className="bg-brand-light/30 border-b border-brand-gray-light/30 pb-4">
                             <CardTitle className="text-xl font-heading font-bold text-brand-dark">

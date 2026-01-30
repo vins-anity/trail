@@ -7,11 +7,20 @@ const mockListForAuthenticatedUser = vi.fn();
 
 vi.mock("@octokit/rest", () => ({
     Octokit: class {
+        static plugin() {
+            return this;
+        }
+        constructor(options: any) { }
         actions = {
             listRepoWorkflows: mockListRepoWorkflows,
         };
         repos = {
             listForAuthenticatedUser: mockListForAuthenticatedUser,
+            getContent: vi.fn(), // Add for completeness since valid code uses it
+        };
+        log = {
+            warn: vi.fn(),
+            info: vi.fn(),
         };
     },
 }));

@@ -19,10 +19,18 @@ const workspaceSchema = z.object({
             /^[a-zA-Z0-9\s-_]+$/,
             "Only letters, numbers, spaces, hyphens, and underscores allowed"
         ),
+    teamType: z.enum(["agency", "dev_shop", "product"]).default("agency"),
 });
+
+const TEAM_TYPES = [
+    { id: "agency", label: "Creative Agency", icon: "🎨" },
+    { id: "dev_shop", label: "Dev Shop", icon: "💻" },
+    { id: "product", label: "Product Team", icon: "🚀" },
+];
 
 export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
     const [name, setName] = useState("");
+    const [teamType, setTeamType] = useState("agency");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -32,7 +40,7 @@ export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
         setError("");
 
         // Client-side validation
-        const validation = workspaceSchema.safeParse({ name });
+        const validation = workspaceSchema.safeParse({ name, teamType });
         if (!validation.success) {
             setError(validation.error.issues[0]?.message || "Invalid input");
             setLoading(false);
@@ -53,7 +61,10 @@ export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ name }),
+                body: JSON.stringify({
+                    name,
+                    workflowSettings: { teamType }, // STore team type in settings immediately
+                }),
             });
 
             if (!res.ok) {
@@ -125,6 +136,31 @@ export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
                                 <div className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-medium text-brand-gray-mid pointer-events-none group-focus-within:text-brand-accent-blue transition-colors">
                                     Enter to continue ↵
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Team Type Selection */}
+                        <div className="space-y-3">
+                            <label className="text-sm font-bold font-heading text-brand-dark ml-1 flex items-center gap-2 uppercase tracking-wide">
+                                <span className="text-lg">👥</span> Team Type
+                            </label>
+                            <div className="grid grid-cols-3 gap-3">
+                                {TEAM_TYPES.map((type) => (
+                                    <button
+                                        key={type.id}
+                                        type="button"
+                                        onClick={() => setTeamType(type.id)}
+                                        className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-2 transition-all duration-200 ${teamType === type.id
+                                                ? "bg-brand-dark text-brand-light border-brand-dark shadow-md scale-[1.02]"
+                                                : "bg-white text-brand-gray-mid border-brand-gray-light hover:border-brand-accent-blue/50 hover:bg-brand-light/50"
+                                            }`}
+                                    >
+                                        <span className="text-2xl">{type.icon}</span>
+                                        <span className="text-xs font-bold text-center leading-tight">
+                                            {type.label}
+                                        </span>
+                                    </button>
+                                ))}
                             </div>
                         </div>
 

@@ -40,6 +40,14 @@ interface SharedProof {
     }>;
     workspace: {
         name: string;
+        workflowSettings?: {
+            teamType?: string;
+            branding?: {
+                brandColor?: string;
+                brandLogo?: string;
+            };
+            audience?: string;
+        };
     };
 }
 
@@ -125,18 +133,36 @@ export function SharePage() {
     return (
         <div className="min-h-screen bg-brand-light font-sans selection:bg-brand-accent-blue/20">
             {/* Header */}
-            <header className="border-b border-brand-gray-light bg-white/80 backdrop-blur-md sticky top-0 z-10 transition-all duration-300">
+            <header
+                className="border-b border-brand-gray-light bg-white/80 backdrop-blur-md sticky top-0 z-10 transition-all duration-300"
+                style={
+                    {
+                        "--brand-primary":
+                            proof.workspace?.workflowSettings?.branding?.brandColor || "#3b82f6",
+                    } as React.CSSProperties
+                }
+            >
                 <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-xl bg-brand-dark flex items-center justify-center shadow-lg shadow-brand-dark/20">
-                            <IconShieldCheck className="h-5 w-5 text-brand-light" />
-                        </div>
+                        {proof.workspace?.workflowSettings?.branding?.brandLogo ? (
+                            <img
+                                src={proof.workspace.workflowSettings.branding.brandLogo}
+                                alt={proof.workspace.name}
+                                className="h-10 w-10 rounded-xl object-contain bg-white shadow-sm border border-brand-gray-light/20"
+                            />
+                        ) : (
+                            <div className="h-10 w-10 rounded-xl bg-[var(--brand-primary)] flex items-center justify-center shadow-lg shadow-brand-dark/20 text-white">
+                                <IconShieldCheck className="h-5 w-5" />
+                            </div>
+                        )}
                         <div>
                             <h1 className="text-lg font-black font-heading text-brand-dark tracking-tight">
-                                Proof Packet
+                                {proof.workspace?.workflowSettings?.audience === "clients"
+                                    ? "Client Portal"
+                                    : "Proof Packet"}
                             </h1>
                             <p className="text-xs text-brand-gray-mid font-medium flex items-center gap-1">
-                                Verified by{" "}
+                                Genereted by{" "}
                                 <span className="text-brand-dark font-bold">
                                     {proof.workspace?.name || "ShipDocket"}
                                 </span>
@@ -300,7 +326,7 @@ export function SharePage() {
                             href="https://shipdocket.dev"
                             className="inline-flex items-center gap-1 text-brand-dark font-bold hover:text-brand-accent-blue transition-colors group"
                         >
-                            Learn more about ShipDocket
+                            Powered by ShipDocket.dev
                             <IconArrowLeft className="h-3 w-3 rotate-180 group-hover:translate-x-1 transition-transform" />
                         </a>
                     </p>

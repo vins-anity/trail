@@ -22,13 +22,27 @@ export function OnboardingWidget({ workspaceId }: { workspaceId?: string | null 
             </div>
         );
 
+    // Determined configured stack or default to all
+    const stack = (status.workflowSettings as any)?.stack || ["jira", "github", "slack"];
+
     // Calculate progress
     let completedSteps = 1; // Account created
-    if (status.hasJira) completedSteps++;
-    if (status.hasGithub) completedSteps++;
-    if (status.hasSlack) completedSteps++;
+    let totalSteps = 1; // Account created
 
-    const totalSteps = 4;
+    // Check each configured tool
+    if (stack.includes("jira")) {
+        totalSteps++;
+        if (status.hasJira) completedSteps++;
+    }
+    if (stack.includes("github")) {
+        totalSteps++;
+        if (status.hasGithub) completedSteps++;
+    }
+    if (stack.includes("slack")) {
+        totalSteps++;
+        if (status.hasSlack) completedSteps++;
+    }
+
     const progress = (completedSteps / totalSteps) * 100;
     const isComplete = progress === 100;
 
@@ -136,38 +150,44 @@ export function OnboardingWidget({ workspaceId }: { workspaceId?: string | null 
                 <CardContent className="px-10 py-10">
                     {!isComplete ? (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <OnboardingCard
-                                step="01"
-                                title="Track Work"
-                                description="Connect Jira to passively detect when work starts."
-                                icon={<IconCheckbox className="h-6 w-6 text-brand-light" />}
-                                iconBg="bg-brand-accent-blue"
-                                isConnected={status.hasJira}
-                                onConnect={() => handleConnect("jira")}
-                                label="Jira"
-                            />
+                            {stack.includes("jira") && (
+                                <OnboardingCard
+                                    step="01"
+                                    title="Track Work"
+                                    description="Connect Jira to passively detect when work starts."
+                                    icon={<IconCheckbox className="h-6 w-6 text-brand-light" />}
+                                    iconBg="bg-brand-accent-blue"
+                                    isConnected={status.hasJira}
+                                    onConnect={() => handleConnect("jira")}
+                                    label="Jira"
+                                />
+                            )}
 
-                            <OnboardingCard
-                                step="02"
-                                title="Verify Delivery"
-                                description="Connect GitHub to collect evidence automatically."
-                                icon={<IconBrandGithub className="h-6 w-6 text-brand-dark" />}
-                                iconBg="bg-white border border-brand-gray-light text-brand-dark"
-                                isConnected={status.hasGithub}
-                                onConnect={() => handleConnect("github")}
-                                label="GitHub"
-                            />
+                            {stack.includes("github") && (
+                                <OnboardingCard
+                                    step="02"
+                                    title="Verify Delivery"
+                                    description="Connect GitHub to collect evidence automatically."
+                                    icon={<IconBrandGithub className="h-6 w-6 text-brand-dark" />}
+                                    iconBg="bg-white border border-brand-gray-light text-brand-dark"
+                                    isConnected={status.hasGithub}
+                                    onConnect={() => handleConnect("github")}
+                                    label="GitHub"
+                                />
+                            )}
 
-                            <OnboardingCard
-                                step="03"
-                                title="Stay Notified"
-                                description="Connect Slack for real-time alerts and vetoes."
-                                icon={<IconBrandSlack className="h-6 w-6 text-brand-light" />}
-                                iconBg="bg-brand-accent-orange"
-                                isConnected={status.hasSlack}
-                                onConnect={() => handleConnect("slack")}
-                                label="Slack"
-                            />
+                            {stack.includes("slack") && (
+                                <OnboardingCard
+                                    step="03"
+                                    title="Stay Notified"
+                                    description="Connect Slack for real-time alerts and vetoes."
+                                    icon={<IconBrandSlack className="h-6 w-6 text-brand-light" />}
+                                    iconBg="bg-brand-accent-orange"
+                                    isConnected={status.hasSlack}
+                                    onConnect={() => handleConnect("slack")}
+                                    label="Slack"
+                                />
+                            )}
                         </div>
                     ) : (
                         <div className="flex flex-col items-center justify-center py-12 text-center space-y-8">

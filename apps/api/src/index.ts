@@ -201,6 +201,7 @@ const app = new Hono()
             })),
             workspace: {
                 name: workspace?.name || "ShipDocket",
+                workflowSettings: workspace?.workflowSettings,
             },
         });
     })

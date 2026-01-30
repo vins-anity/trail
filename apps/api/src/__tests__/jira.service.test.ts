@@ -41,7 +41,7 @@ describe("Jira Service", () => {
         service = new JiraService();
 
         // Default: No OAuth token
-        vi.mocked(authService.getOAuthToken).mockResolvedValue(null);
+        vi.mocked(authService.refreshIfNeeded).mockResolvedValue(null);
         vi.mocked(workspacesService.getWorkspaceById).mockResolvedValue(null);
     });
 
@@ -88,7 +88,7 @@ describe("Jira Service", () => {
 
         it("should sync status using OAuth if token exists", async () => {
             // Mock OAuth token & Workspace
-            vi.mocked(authService.getOAuthToken).mockResolvedValue("access-token-123");
+            vi.mocked(authService.refreshIfNeeded).mockResolvedValue("access-token-123");
             vi.mocked(workspacesService.getWorkspaceById).mockResolvedValue({
                 id: "workspace-123",
                 jiraSite: "cloud-id-123",
@@ -121,6 +121,7 @@ describe("Jira Service", () => {
                     method: "GET",
                     headers: expect.objectContaining({
                         Authorization: "Bearer access-token-123",
+                        Accept: "application/json",
                     }),
                 }),
             );

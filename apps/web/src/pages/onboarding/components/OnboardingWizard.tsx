@@ -1,15 +1,34 @@
 import { IconLoader2 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useGitHubAnalysis, useJiraAnalysis } from "@/hooks/use-onboarding-analysis";
 import { useWorkspaceStatus } from "@/hooks/use-workspace-status";
 import { api } from "@/lib/api";
-import { ConnectIntegrationsStep } from "./ConnectIntegrationsStep";
-import { CreateWorkspaceStep } from "./CreateWorkspaceStep";
-import { ReviewConfigStep, type WorkflowConfig } from "./ReviewConfigStep";
-import { TemplateSelector, type WorkflowTemplate } from "./TemplateSelector";
+import { SelectAudienceStep } from "./SelectAudienceStep";
+import { SelectCultureStep } from "./SelectCultureStep";
+import { SelectStackStep } from "./SelectStackStep";
 
-type Step = "create" | "integrations" | "template" | "review" | "saving";
+type Step =
+    | "create"
+    | "select_stack"
+    | "select_culture"
+    | "select_audience"
+    | "saving";
+
+// Helper for "Scrum" vs "Kanban" defaults
+const WORKFLOW_DEFAULTS = {
+    scrum: {
+        startTracking: ["In Progress"],
+        reviewStatus: ["In Review"],
+        doneStatus: ["Done"],
+        policyTier: "standard",
+    },
+    kanban: {
+        startTracking: ["Selected for Development", "In Progress"],
+        reviewStatus: ["In Review"],
+        doneStatus: ["Done"],
+        policyTier: "agile",
+    },
+};
 
 export function OnboardingWizard() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -17,23 +36,14 @@ export function OnboardingWizard() {
     const [workspaceId, setWorkspaceId] = useState<string | null>(null);
     const [step, setStep] = useState<Step>("create");
 
-    // Config State
-    const [workflowConfig, setWorkflowConfig] = useState<WorkflowConfig | null>(null);
-    const [configSource, setConfigSource] = useState<"jira" | "template" | "manual">("manual");
-    const [detectedType, setDetectedType] = useState<string>("");
+    // Wizard State
+    const [teamType, setTeamType] = useState<string>("agency");
+    const [stack, setStack] = useState<string[]>([]);
+    const [culture, setCulture] = useState<"scrum" | "kanban">("scrum");
+    const [audience, setAudience] = useState<"internal" | "clients">("internal");
 
     // Queries
-    const { data: workspaceStatus, refetch: refetchStatus } = useWorkspaceStatus(workspaceId);
-    const { data: jiraAnalysis, isLoading: analyzingJira } = useJiraAnalysis(
-        workspaceId || "",
-        step === "review" && configSource === "jira",
-    );
-    // We can use GitHub analysis to refine CI rules, but for now we focus on Jira for workflow
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { data: githubAnalysis } = useGitHubAnalysis(
-        workspaceId || "",
-        step === "review", // Fetch whenever we are in review to check for CI
-    );
+    const { refetch: refetchStatus } = useWorkspaceStatus(workspaceId);
 
     const urlWorkspaceId = searchParams.get("workspace_id");
     const stepParam = searchParams.get("step");
@@ -44,7 +54,7 @@ export function OnboardingWizard() {
             setWorkspaceId(urlWorkspaceId);
             // If we have an ID but no step, default to integrations
             if (!stepParam && step === "create") {
-                setStep("integrations");
+                setStep("select_stack");
             } else if (stepParam && stepParam !== step) {
                 setStep(stepParam as Step);
             }
@@ -59,150 +69,106 @@ export function OnboardingWizard() {
         }
     };
 
-    const handleWorkspaceCreated = (ws: { id: string }) => {
+    const handleWorkspaceCreated = (ws: { id: string; workflowSettings?: any }) => {
         setWorkspaceId(ws.id);
-        updateStep("integrations");
+        if (ws.workflowSettings?.teamType) {
+            setTeamType(ws.workflowSettings.teamType);
+        }
+        updateStep("select_stack");
         refetchStatus();
     };
 
-    const handleIntegrationsContinue = async () => {
-        // Refetch status to ensure we have latest connections
-        const status = await refetchStatus();
-        const hasJira = status.data?.hasJira;
-
-        if (hasJira) {
-            // If Jira connected, go straight to Review (fetch analysis)
-            setConfigSource("jira");
-            updateStep("review");
-        } else {
-            // Else, go to Template Selector
-            updateStep("template");
-        }
+    const handleStackSelected = (selectedStack: string[]) => {
+        setStack(selectedStack);
+        updateStep("select_culture");
     };
 
-    const handleTemplateSelect = (template: WorkflowTemplate) => {
-        setWorkflowConfig({
-            ...template.config,
-            excludedTaskTypes: [], // Default
-        });
-        setConfigSource("template");
-        setDetectedType(template.name);
-        updateStep("review");
+    const handleCultureSelected = (selectedCulture: "scrum" | "kanban") => {
+        setCulture(selectedCulture);
+        updateStep("select_audience");
     };
 
-    const handleConfigSave = async (finalConfig: WorkflowConfig) => {
+    const handleAudienceSelected = async (selectedAudience: "internal" | "clients") => {
+        setAudience(selectedAudience);
+        await handleFinalSave(selectedAudience);
+    };
+
+    const handleFinalSave = async (finalAudience: "internal" | "clients") => {
         if (!workspaceId) return;
         updateStep("saving");
 
         try {
+            // Determine defaults based on Culture
+            const defaults = WORKFLOW_DEFAULTS[culture];
+
+            // Build final payload
             await api.workspaces.update(workspaceId, {
                 workflowSettings: {
-                    startTracking: finalConfig.startTracking,
-                    reviewStatus: finalConfig.reviewStatus,
-                    doneStatus: finalConfig.doneStatus,
+                    teamType,
+                    stack,
+                    culture,
+                    audience: finalAudience,
+                    startTracking: defaults.startTracking,
+                    reviewStatus: defaults.reviewStatus,
+                    doneStatus: defaults.doneStatus,
                 },
                 proofPacketRules: {
                     autoCreateOnDone: true,
                     minEventsForProof: 5,
-                    excludedTaskTypes: finalConfig.excludedTaskTypes || [],
+                    excludedTaskTypes: [], // Simple default
+                    enableClientPortal: finalAudience === "clients",
                 },
-                defaultPolicyTier: finalConfig.policyTier || "standard",
+                defaultPolicyTier: defaults.policyTier as any,
                 onboardingCompletedAt: new Date(),
             });
 
-            // Done! specific redirect?
+            // Redirect with success state
             navigate("/dashboard");
         } catch (err) {
             console.error("Failed to save config", err);
-            // Show error state?
-            updateStep("review"); // Go back
+            // In a real app, show error toast
+            // fallback to dashboard anyway?
+            navigate("/dashboard");
         }
     };
 
-    // Effect to populate config from Jira Analysis
-    useEffect(() => {
-        if (configSource === "jira" && jiraAnalysis) {
-            setWorkflowConfig({
-                startTracking: jiraAnalysis.suggestedConfig.startTracking,
-                reviewStatus: jiraAnalysis.suggestedConfig.reviewStatus,
-                doneStatus: jiraAnalysis.suggestedConfig.doneStatus,
-                excludedTaskTypes: jiraAnalysis.suggestedConfig.excludedTaskTypes,
-                policyTier: jiraAnalysis.suggestedConfig.policyTier,
-            });
-            setDetectedType(jiraAnalysis.detectedType);
-        }
-    }, [configSource, jiraAnalysis]);
-
     // Render Steps
-    if (step === "create") {
-        return <CreateWorkspaceStep onComplete={handleWorkspaceCreated} />;
-    }
-
-    if (step === "integrations") {
+    if (step === "select_stack") {
         return (
-            <ConnectIntegrationsStep
-                workspaceId={workspaceId!}
-                onNext={handleIntegrationsContinue}
+            <SelectStackStep
+                teamType={teamType}
+                onNext={handleStackSelected}
+                onBack={() => {
+                    // If workspaceId exists, it means we came from a workspace creation.
+                    // If not, it means we are starting fresh, so no back action.
+                    if (workspaceId) {
+                        // This path is not explicitly defined in the new flow,
+                        // but keeping it for robustness if a "create" step is re-introduced
+                        // or if the initial state needs to be reset.
+                        // For now, it effectively does nothing if workspaceId is null.
+                    }
+                }}
             />
         );
     }
 
-    if (step === "template") {
+    if (step === "select_culture") {
         return (
-            <div className="max-w-4xl mx-auto px-6 animate-fade-in-up">
-                <div className="text-center mb-8 space-y-2">
-                    <h2 className="text-3xl font-black font-heading text-brand-dark">
-                        Choose a Workflow
-                    </h2>
-                    <p className="text-brand-gray-mid">Select a template to get started quickly.</p>
-                </div>
-                <TemplateSelector onSelect={handleTemplateSelect} />
-                <div className="mt-8 text-center">
-                    <button
-                        onClick={() => updateStep("integrations")}
-                        className="text-sm text-brand-gray-mid hover:underline"
-                    >
-                        &larr; Back to Integrations
-                    </button>
-                </div>
-            </div>
+            <SelectCultureStep
+                teamType={teamType}
+                onNext={handleCultureSelected}
+                onBack={() => updateStep("select_stack")}
+            />
         );
     }
 
-    if (step === "review") {
-        // If analyzing Jira, show loader
-        if (configSource === "jira" && analyzingJira) {
-            return (
-                <div className="flex flex-col items-center justify-center min-h-[400px] animate-fade-in">
-                    <IconLoader2 className="w-12 h-12 text-brand-accent-blue animate-spin mb-4" />
-                    <h3 className="text-xl font-bold font-heading text-brand-dark">
-                        Analyzing Jira Projects...
-                    </h3>
-                    <p className="text-brand-gray-mid">
-                        Detecting workflow statuses and configuration.
-                    </p>
-                </div>
-            );
-        }
-
-        if (workflowConfig) {
-            return (
-                <div className="max-w-2xl mx-auto px-6">
-                    <ReviewConfigStep
-                        initialConfig={workflowConfig}
-                        source={configSource}
-                        detectedType={detectedType}
-                        onSave={handleConfigSave}
-                        onBack={() =>
-                            updateStep(configSource === "jira" ? "integrations" : "template")
-                        }
-                    />
-                </div>
-            );
-        }
-
-        // Fallback if no config (shouldn't happen)
-        return <div>Loading configuration...</div>;
+    if (step === "select_audience") {
+        return (
+            <SelectAudienceStep
+                onNext={handleAudienceSelected}
+                onBack={() => updateStep("select_culture")}
+            />
+        );
     }
 
     if (step === "saving") {

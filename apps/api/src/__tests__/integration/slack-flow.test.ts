@@ -134,6 +134,7 @@ describe("Integration: Slack Flow", () => {
             "slack",
             "xoxb-mock-token",
             "mock-refresh",
+            3600,
         );
     });
 

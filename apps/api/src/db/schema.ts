@@ -102,6 +102,14 @@ export const workspaces = pgTable("workspaces", {
             startTracking: string[];
             reviewStatus: string[];
             doneStatus: string[];
+            teamType?: string;
+            stack?: string[];
+            culture?: string;
+            audience?: string;
+            branding?: {
+                brandColor?: string;
+                brandLogo?: string;
+            };
         }>()
         .default({
             startTracking: ["In Progress"],

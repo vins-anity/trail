@@ -86,7 +86,7 @@ app.get("/current", async (c) => {
             hasJira: !!(workspace.jiraSite || workspace.jiraAccessToken),
             defaultPolicyTier: workspace.defaultPolicyTier,
             workflowSettings: workspace.workflowSettings,
-            onboardingCompletedAt: workspace.onboardingCompletedAt?.toISOString(),
+            onboardingCompletedAt: workspace.onboardingCompletedAt?.toISOString() || null,
         });
     } catch (error) {
         console.error("[/workspaces/current] Database error:", error);
@@ -114,13 +114,14 @@ app.patch("/:id", async (c) => {
             body.onboardingCompletedAt = new Date(body.onboardingCompletedAt);
         }
 
-        const updated = await workspacesService.updateWorkspace(workspaceId, {
-            name: body.name,
-            defaultPolicyTier: body.defaultPolicyTier,
-            workflowSettings: body.workflowSettings,
-            proofPacketRules: body.proofPacketRules,
-            onboardingCompletedAt: body.onboardingCompletedAt,
-        });
+        const updatePayload: any = {};
+        if (body.name !== undefined) updatePayload.name = body.name;
+        if (body.defaultPolicyTier !== undefined) updatePayload.defaultPolicyTier = body.defaultPolicyTier;
+        if (body.workflowSettings !== undefined) updatePayload.workflowSettings = body.workflowSettings;
+        if (body.proofPacketRules !== undefined) updatePayload.proofPacketRules = body.proofPacketRules;
+        if (body.onboardingCompletedAt !== undefined) updatePayload.onboardingCompletedAt = body.onboardingCompletedAt;
+
+        const updated = await workspacesService.updateWorkspace(workspaceId, updatePayload);
 
         return c.json(updated);
     } catch (err) {

@@ -40,11 +40,20 @@ export interface UpdateWorkspaceInput {
         startTracking: string[];
         reviewStatus: string[];
         doneStatus: string[];
+        teamType?: string;
+        stack?: string[];
+        culture?: string;
+        audience?: string;
+        branding?: {
+            brandColor?: string;
+            brandLogo?: string;
+        };
     };
     proofPacketRules?: {
         autoCreateOnDone: boolean;
         minEventsForProof: number;
         excludedTaskTypes: string[];
+        enableClientPortal?: boolean;
     };
     onboardingCompletedAt?: Date;
 }

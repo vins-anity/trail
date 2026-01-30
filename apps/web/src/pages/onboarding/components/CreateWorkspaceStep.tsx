@@ -34,7 +34,7 @@ export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
         // Client-side validation
         const validation = workspaceSchema.safeParse({ name });
         if (!validation.success) {
-            setError(validation.error.errors[0].message);
+            setError(validation.error.issues[0]?.message || "Invalid input");
             setLoading(false);
             return;
         }

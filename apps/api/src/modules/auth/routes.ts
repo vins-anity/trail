@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { type Context, Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver } from "hono-openapi/valibot";
 import * as v from "valibot";
@@ -9,6 +9,26 @@ import * as authService from "../../services/auth.service";
  *
  * Handles OAuth authorization and callbacks for Slack, GitHub, and Jira.
  */
+
+/**
+ * Helper to construct the redirect URI.
+ * Forces HTTPS if running in production or on Render.
+ */
+function getRedirectUri(c: Context, getPath: string): string {
+    const url = new URL(c.req.url);
+    const origin = url.origin;
+
+    // Check if we need to force HTTPS (e.g. Render behind proxy)
+    const isProduction = process.env.NODE_ENV === "production" || origin.includes("onrender.com");
+
+    let protocol = url.protocol;
+    if (isProduction && protocol === "http:") {
+        protocol = "https:";
+    }
+
+    // host includes port if present
+    return `${protocol}//${url.host}${getPath}`;
+}
 
 const auth = new Hono()
     // ----------------------------------------
@@ -28,11 +48,12 @@ const auth = new Hono()
         async (c) => {
             const workspaceId = c.req.query("workspace_id");
             const next = c.req.query("next");
-            const redirectUri = `${c.req.url.split("/auth")[0]}/auth/slack/callback`;
 
             if (!workspaceId) {
                 return c.json({ error: "workspace_id required" }, 400);
             }
+
+            const redirectUri = getRedirectUri(c, "/auth/slack/callback");
 
             try {
                 const state = JSON.stringify({ workspaceId, next });
@@ -72,7 +93,9 @@ const auth = new Hono()
 
             try {
                 const { workspaceId, next } = JSON.parse(state);
-                const redirectUri = `${c.req.url.split("?")[0]}`;
+
+                // For callback exchange, we must strictly match the redirect URI sent during authorize
+                const redirectUri = getRedirectUri(c, "/auth/slack/callback");
 
                 const tokens = await authService.exchangeCodeForToken("slack", code, redirectUri);
                 await authService.storeOAuthToken(
@@ -110,11 +133,12 @@ const auth = new Hono()
         async (c) => {
             const workspaceId = c.req.query("workspace_id");
             const next = c.req.query("next");
-            const redirectUri = `${c.req.url.split("/auth")[0]}/auth/github/callback`;
 
             if (!workspaceId) {
                 return c.json({ error: "workspace_id required" }, 400);
             }
+
+            const redirectUri = getRedirectUri(c, "/auth/github/callback");
 
             try {
                 const state = JSON.stringify({ workspaceId, next });
@@ -147,7 +171,8 @@ const auth = new Hono()
 
             try {
                 const { workspaceId, next } = JSON.parse(state);
-                const redirectUri = `${c.req.url.split("?")[0]}`;
+
+                const redirectUri = getRedirectUri(c, "/auth/github/callback");
 
                 const tokens = await authService.exchangeCodeForToken("github", code, redirectUri);
                 await authService.storeOAuthToken(
@@ -185,11 +210,12 @@ const auth = new Hono()
         async (c) => {
             const workspaceId = c.req.query("workspace_id");
             const next = c.req.query("next");
-            const redirectUri = `${c.req.url.split("/auth")[0]}/auth/jira/callback`;
 
             if (!workspaceId) {
                 return c.json({ error: "workspace_id required" }, 400);
             }
+
+            const redirectUri = getRedirectUri(c, "/auth/jira/callback");
 
             try {
                 const state = JSON.stringify({ workspaceId, next });
@@ -222,7 +248,8 @@ const auth = new Hono()
 
             try {
                 const { workspaceId, next } = JSON.parse(state);
-                const redirectUri = `${c.req.url.split("?")[0]}`;
+
+                const redirectUri = getRedirectUri(c, "/auth/jira/callback");
 
                 const tokens = await authService.exchangeCodeForToken("jira", code, redirectUri);
                 await authService.storeOAuthToken(

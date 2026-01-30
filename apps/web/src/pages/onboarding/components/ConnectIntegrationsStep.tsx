@@ -32,61 +32,85 @@ export function ConnectIntegrationsStep({ workspaceId, onNext }: ConnectIntegrat
     const isSlackConnected = !!workspace?.hasSlack;
 
     return (
-        <div className="space-y-8 animate-fade-in-up">
-            <div className="text-center space-y-4">
-                <h2 className="text-3xl font-black font-heading text-brand-dark">
+        <div className="relative z-10 w-full max-w-2xl px-6 animate-fade-in-up mx-auto">
+            {/* Brand Header */}
+            <div className="text-center mb-10 space-y-4">
+                <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-brand-dark shadow-2xl mb-4 group transform transition-transform hover:scale-105 duration-500">
+                    <div className="w-8 h-8 text-brand-light group-hover:rotate-12 transition-transform duration-500">
+                        {/* Stack Icon */}
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M12 2L2 7l10 5l10-5l-10-5z" />
+                            <path d="M2 17l10 5l10-5" />
+                            <path d="M2 12l10 5l10-5" />
+                        </svg>
+                    </div>
+                </div>
+                <h1 className="text-5xl font-black font-heading tracking-tight text-brand-dark leading-[1.1]">
                     Connect Your Stack
-                </h2>
-                <p className="text-brand-gray-mid text-lg max-w-lg mx-auto leading-relaxed">
-                    Link your tools to enable automated tracking and proof generation.
+                </h1>
+                <p className="text-brand-gray-mid text-lg font-serif italic max-w-lg mx-auto">
+                    Link your tools to enable automated tracking.
                 </p>
             </div>
 
-            <div className="grid gap-4">
-                {/* 1. Jira (Recommended First) */}
-                <IntegrationCard
-                    title="Jira Software"
-                    description="Import projects, boards, and sync workflow status."
-                    icon={<IconBrandAsana className="w-8 h-8" />}
-                    connected={isJiraConnected}
-                    loading={isLoading}
-                    recommended
-                    onConnect={() => handleConnect("jira")}
-                    colorClass="bg-[#0052CC] text-white hover:bg-[#0747a6]"
-                />
+            {/* Glass Card */}
+            <Card className="border-brand-gray-light bg-white/80 backdrop-blur-xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] rounded-3xl overflow-hidden">
+                <CardContent className="p-8 space-y-6">
+                    <div className="space-y-4">
+                        {/* 1. Jira (Recommended First) */}
+                        <IntegrationCard
+                            title="Jira Software"
+                            description="Import projects & sync status."
+                            icon={<IconBrandAsana className="w-6 h-6" />}
+                            connected={isJiraConnected}
+                            loading={isLoading}
+                            recommended
+                            onConnect={() => handleConnect("jira")}
+                            colorClass="bg-[#0052CC] text-white hover:bg-[#0747a6]"
+                        />
 
-                {/* 2. GitHub */}
-                <IntegrationCard
-                    title="GitHub"
-                    description="Track commits, PRs, and CI/CD pipelines."
-                    icon={<IconBrandGithub className="w-8 h-8" />}
-                    connected={isGithubConnected}
-                    loading={isLoading}
-                    onConnect={() => handleConnect("github")}
-                    colorClass="bg-[#24292e] text-white hover:bg-[#2f363d]"
-                />
+                        {/* 2. GitHub */}
+                        <IntegrationCard
+                            title="GitHub"
+                            description="Track commits & CI/CD."
+                            icon={<IconBrandGithub className="w-6 h-6" />}
+                            connected={isGithubConnected}
+                            loading={isLoading}
+                            onConnect={() => handleConnect("github")}
+                            colorClass="bg-[#24292e] text-white hover:bg-[#2f363d]"
+                        />
 
-                {/* 3. Slack (Last) */}
-                <IntegrationCard
-                    title="Slack"
-                    description="Receive real-time notifications and closure alerts."
-                    icon={<IconBrandSlack className="w-8 h-8" />}
-                    connected={isSlackConnected}
-                    loading={isLoading}
-                    onConnect={() => handleConnect("slack")}
-                    colorClass="bg-[#4A154B] text-white hover:bg-[#611f69]"
-                />
-            </div>
+                        {/* 3. Slack (Last) */}
+                        <IntegrationCard
+                            title="Slack"
+                            description="Real-time notifications."
+                            icon={<IconBrandSlack className="w-6 h-6" />}
+                            connected={isSlackConnected}
+                            loading={isLoading}
+                            onConnect={() => handleConnect("slack")}
+                            colorClass="bg-[#4A154B] text-white hover:bg-[#611f69]"
+                        />
+                    </div>
 
-            <div className="pt-4 flex justify-end">
-                <Button
-                    onClick={onNext}
-                    className="h-14 px-8 bg-brand-dark text-white rounded-xl font-bold font-heading shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2"
-                >
-                    Continue
-                    <IconArrowRight className="w-5 h-5" />
-                </Button>
-            </div>
+                    <div className="pt-2">
+                        <Button
+                            onClick={onNext}
+                            className="w-full h-14 text-lg font-bold font-heading rounded-xl bg-brand-dark text-brand-light hover:bg-black hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-xl shadow-brand-dark/20 flex items-center justify-center gap-3"
+                        >
+                            Continue to Policy Setup
+                            <IconArrowRight className="w-5 h-5" />
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }
@@ -111,72 +135,60 @@ function IntegrationCard({
     colorClass: string;
 }) {
     return (
-        <Card
+        <div
             className={cn(
-                "border transition-all duration-300 overflow-hidden",
+                "group relative flex items-center p-4 rounded-xl border transition-all duration-300",
                 connected
-                    ? "border-green-500/30 bg-green-50/50"
-                    : "border-brand-gray-light hover:border-brand-accent-blue/30 hover:shadow-md bg-white",
+                    ? "border-green-200 bg-green-50/50"
+                    : "border-brand-gray-light/30 bg-white hover:border-brand-accent-blue/50 hover:shadow-lg hover:shadow-brand-accent-blue/5"
             )}
         >
-            <CardContent className="p-0 flex items-center">
-                {/* Icon Section */}
-                <div className="p-6 flex items-center justify-center">
-                    <div
-                        className={cn(
-                            "w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm",
-                            connected
-                                ? "bg-green-100 text-green-600"
-                                : "bg-brand-light text-brand-dark",
-                        )}
-                    >
-                        {connected ? <IconCheck className="w-8 h-8" /> : icon}
-                    </div>
-                </div>
+            {/* Icon */}
+            <div
+                className={cn(
+                    "flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-colors",
+                    connected ? "bg-green-100 text-green-600" : "bg-brand-light text-brand-dark group-hover:bg-white group-hover:shadow-sm"
+                )}
+            >
+                {connected ? <IconCheck className="w-6 h-6" /> : icon}
+            </div>
 
-                {/* Text Content */}
-                <div className="flex-1 py-6 pr-6">
-                    <div className="flex items-center gap-3 mb-1">
-                        <h3 className="text-lg font-bold font-heading text-brand-dark">{title}</h3>
-                        {recommended && !connected && (
-                            <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold uppercase tracking-wider">
-                                Recommended
-                            </span>
-                        )}
-                        {connected && (
-                            <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
-                                <IconCheck size={10} stroke={3} />
-                                Connected
-                            </span>
-                        )}
-                    </div>
-                    <p className="text-sm text-brand-gray-mid">{description}</p>
-                </div>
-
-                {/* Action Button */}
-                <div className="pr-6">
-                    {!connected ? (
-                        <Button
-                            onClick={onConnect}
-                            disabled={loading}
-                            className={cn(
-                                "h-10 px-5 rounded-lg font-bold text-sm shadow-sm transition-all",
-                                colorClass,
-                            )}
-                        >
-                            Connect
-                        </Button>
-                    ) : (
-                        <Button
-                            variant="ghost"
-                            className="text-brand-gray-mid hover:text-red-500 text-sm h-10 px-4"
-                            disabled
-                        >
-                            Connected
-                        </Button>
+            {/* Content */}
+            <div className="flex-1 min-w-0 ml-4 mr-4">
+                <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold font-heading text-brand-dark truncate">
+                        {title}
+                    </h3>
+                    {recommended && !connected && (
+                        <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-bold uppercase tracking-wider">
+                            Recommended
+                        </span>
                     )}
                 </div>
-            </CardContent>
-        </Card>
+                <p className="text-sm text-brand-gray-mid truncate">{description}</p>
+            </div>
+
+            {/* Action */}
+            <div className="flex-shrink-0">
+                {!connected ? (
+                    <Button
+                        onClick={onConnect}
+                        disabled={loading}
+                        size="sm"
+                        className={cn(
+                            "h-9 px-4 rounded-lg font-bold text-xs shadow-sm transition-all hover:scale-105 active:scale-95",
+                            colorClass,
+                        )}
+                    >
+                        Connect
+                    </Button>
+                ) : (
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 uppercase tracking-wide px-3 py-1.5 rounded-lg bg-green-100/50">
+                        <IconCheck size={12} stroke={3} />
+                        Linked
+                    </div>
+                )}
+            </div>
+        </div>
     );
 }

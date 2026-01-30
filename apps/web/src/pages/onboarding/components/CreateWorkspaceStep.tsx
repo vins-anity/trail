@@ -4,10 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/lib/supabase";
+import { z } from "zod";
 
 interface CreateWorkspaceStepProps {
     onComplete: (workspace: { id: string; name: string }) => void;
 }
+
+const workspaceSchema = z.object({
+    name: z
+        .string()
+        .min(3, "Workspace name must be at least 3 characters")
+        .max(50, "Workspace name must be less than 50 characters")
+        .regex(
+            /^[a-zA-Z0-9\s-_]+$/,
+            "Only letters, numbers, spaces, hyphens, and underscores allowed"
+        ),
+});
 
 export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
     const [name, setName] = useState("");
@@ -18,6 +30,14 @@ export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
         e.preventDefault();
         setLoading(true);
         setError("");
+
+        // Client-side validation
+        const validation = workspaceSchema.safeParse({ name });
+        if (!validation.success) {
+            setError(validation.error.errors[0].message);
+            setLoading(false);
+            return;
+        }
 
         try {
             const {
@@ -117,7 +137,7 @@ export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
 
                         <Button
                             type="submit"
-                            disabled={loading || name.length < 3}
+                            disabled={loading}
                             className="w-full h-16 text-lg font-bold font-heading rounded-xl bg-brand-dark text-brand-light hover:bg-black hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-brand-dark/20 disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-none"
                         >
                             {loading ? (
@@ -147,45 +167,6 @@ export function CreateWorkspaceStep({ onComplete }: CreateWorkspaceStepProps) {
                             )}
                         </Button>
                     </form>
-
-                    <div className="pt-6 border-t border-brand-gray-light/50">
-                        <div className="flex items-center justify-center gap-6 text-xs font-medium text-brand-gray-mid uppercase tracking-wider">
-                            <div className="flex items-center gap-2">
-                                {/* Check Icon */}
-                                <svg
-                                    className="w-4 h-4 text-brand-accent-green"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M5 13l4 4L19 7"
-                                    />
-                                </svg>
-                                Free Forever
-                            </div>
-                            <div className="flex items-center gap-2">
-                                {/* Check Icon */}
-                                <svg
-                                    className="w-4 h-4 text-brand-accent-green"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M5 13l4 4L19 7"
-                                    />
-                                </svg>
-                                No Credit Card
-                            </div>
-                        </div>
-                    </div>
                 </CardContent>
             </Card>
         </div>

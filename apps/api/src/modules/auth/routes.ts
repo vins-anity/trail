@@ -22,6 +22,7 @@ const auth = new Hono()
             description: "Redirects to Slack OAuth authorization page",
             responses: {
                 302: { description: "Redirect to Slack" },
+                400: { description: "Bad Request" },
             },
         }),
         async (c) => {
@@ -33,10 +34,14 @@ const auth = new Hono()
                 return c.json({ error: "workspace_id required" }, 400);
             }
 
-            const state = JSON.stringify({ workspaceId, next });
-            const authUrl = authService.getAuthorizationUrl("slack", state, redirectUri);
-
-            return c.redirect(authUrl);
+            try {
+                const state = JSON.stringify({ workspaceId, next });
+                const authUrl = authService.getAuthorizationUrl("slack", state, redirectUri);
+                return c.redirect(authUrl);
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : "Failed to initiate Slack OAuth";
+                return c.json({ error: message }, 400);
+            }
         },
     )
     .get(
@@ -54,6 +59,7 @@ const auth = new Hono()
                         },
                     },
                 },
+                400: { description: "Bad Request" },
             },
         }),
         async (c) => {
@@ -64,21 +70,26 @@ const auth = new Hono()
                 return c.json({ error: "Invalid OAuth callback" }, 400);
             }
 
-            const { workspaceId, next } = JSON.parse(state);
-            const redirectUri = `${c.req.url.split("?")[0]}`;
+            try {
+                const { workspaceId, next } = JSON.parse(state);
+                const redirectUri = `${c.req.url.split("?")[0]}`;
 
-            const tokens = await authService.exchangeCodeForToken("slack", code, redirectUri);
-            await authService.storeOAuthToken(
-                workspaceId,
-                "slack",
-                tokens.accessToken,
-                tokens.refreshToken,
-            );
+                const tokens = await authService.exchangeCodeForToken("slack", code, redirectUri);
+                await authService.storeOAuthToken(
+                    workspaceId,
+                    "slack",
+                    tokens.accessToken,
+                    tokens.refreshToken,
+                );
 
-            // Redirect back to frontend
-            const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
-            const nextPath = next || "/?connected=slack";
-            return c.redirect(`${frontendUrl}${nextPath}`);
+                // Redirect back to frontend
+                const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
+                const nextPath = next || "/?connected=slack";
+                return c.redirect(`${frontendUrl}${nextPath}`);
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : "Failed to complete Slack OAuth";
+                return c.json({ error: message }, 400);
+            }
         },
     )
 
@@ -93,6 +104,7 @@ const auth = new Hono()
             description: "Redirects to GitHub OAuth authorization page",
             responses: {
                 302: { description: "Redirect to GitHub" },
+                400: { description: "Bad Request" },
             },
         }),
         async (c) => {
@@ -104,10 +116,14 @@ const auth = new Hono()
                 return c.json({ error: "workspace_id required" }, 400);
             }
 
-            const state = JSON.stringify({ workspaceId, next });
-            const authUrl = authService.getAuthorizationUrl("github", state, redirectUri);
-
-            return c.redirect(authUrl);
+            try {
+                const state = JSON.stringify({ workspaceId, next });
+                const authUrl = authService.getAuthorizationUrl("github", state, redirectUri);
+                return c.redirect(authUrl);
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : "Failed to initiate GitHub OAuth";
+                return c.json({ error: message }, 400);
+            }
         },
     )
     .get(
@@ -118,6 +134,7 @@ const auth = new Hono()
             description: "Handles GitHub OAuth callback",
             responses: {
                 200: { description: "OAuth successful" },
+                400: { description: "Bad Request" },
             },
         }),
         async (c) => {
@@ -128,21 +145,26 @@ const auth = new Hono()
                 return c.json({ error: "Invalid OAuth callback" }, 400);
             }
 
-            const { workspaceId, next } = JSON.parse(state);
-            const redirectUri = `${c.req.url.split("?")[0]}`;
+            try {
+                const { workspaceId, next } = JSON.parse(state);
+                const redirectUri = `${c.req.url.split("?")[0]}`;
 
-            const tokens = await authService.exchangeCodeForToken("github", code, redirectUri);
-            await authService.storeOAuthToken(
-                workspaceId,
-                "github",
-                tokens.accessToken,
-                tokens.refreshToken,
-            );
+                const tokens = await authService.exchangeCodeForToken("github", code, redirectUri);
+                await authService.storeOAuthToken(
+                    workspaceId,
+                    "github",
+                    tokens.accessToken,
+                    tokens.refreshToken,
+                );
 
-            // Redirect back to frontend
-            const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
-            const nextPath = next || "/?connected=github";
-            return c.redirect(`${frontendUrl}${nextPath}`);
+                // Redirect back to frontend
+                const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
+                const nextPath = next || "/?connected=github";
+                return c.redirect(`${frontendUrl}${nextPath}`);
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : "Failed to complete GitHub OAuth";
+                return c.json({ error: message }, 400);
+            }
         },
     )
 
@@ -157,6 +179,7 @@ const auth = new Hono()
             description: "Redirects to Jira OAuth authorization page",
             responses: {
                 302: { description: "Redirect to Jira" },
+                400: { description: "Bad Request" },
             },
         }),
         async (c) => {
@@ -168,10 +191,14 @@ const auth = new Hono()
                 return c.json({ error: "workspace_id required" }, 400);
             }
 
-            const state = JSON.stringify({ workspaceId, next });
-            const authUrl = authService.getAuthorizationUrl("jira", state, redirectUri);
-
-            return c.redirect(authUrl);
+            try {
+                const state = JSON.stringify({ workspaceId, next });
+                const authUrl = authService.getAuthorizationUrl("jira", state, redirectUri);
+                return c.redirect(authUrl);
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : "Failed to initiate Jira OAuth";
+                return c.json({ error: message }, 400);
+            }
         },
     )
     .get(
@@ -182,6 +209,7 @@ const auth = new Hono()
             description: "Handles Jira OAuth callback",
             responses: {
                 200: { description: "OAuth successful" },
+                400: { description: "Bad Request" },
             },
         }),
         async (c) => {
@@ -192,22 +220,27 @@ const auth = new Hono()
                 return c.json({ error: "Invalid OAuth callback" }, 400);
             }
 
-            const { workspaceId, next } = JSON.parse(state);
-            const redirectUri = `${c.req.url.split("?")[0]}`;
+            try {
+                const { workspaceId, next } = JSON.parse(state);
+                const redirectUri = `${c.req.url.split("?")[0]}`;
 
-            const tokens = await authService.exchangeCodeForToken("jira", code, redirectUri);
-            await authService.storeOAuthToken(
-                workspaceId,
-                "jira",
-                tokens.accessToken,
-                tokens.refreshToken,
-                tokens.cloudId,
-            );
+                const tokens = await authService.exchangeCodeForToken("jira", code, redirectUri);
+                await authService.storeOAuthToken(
+                    workspaceId,
+                    "jira",
+                    tokens.accessToken,
+                    tokens.refreshToken,
+                    tokens.cloudId,
+                );
 
-            // Redirect back to frontend
-            const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
-            const nextPath = next || "/?connected=jira";
-            return c.redirect(`${frontendUrl}${nextPath}`);
+                // Redirect back to frontend
+                const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
+                const nextPath = next || "/?connected=jira";
+                return c.redirect(`${frontendUrl}${nextPath}`);
+            } catch (e: unknown) {
+                const message = e instanceof Error ? e.message : "Failed to complete Jira OAuth";
+                return c.json({ error: message }, 400);
+            }
         },
     );
 

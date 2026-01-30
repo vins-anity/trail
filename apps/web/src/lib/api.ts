@@ -16,7 +16,9 @@ import type {
 } from "shared";
 import { supabase } from "@/lib/supabase";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// Sanitize API_URL to remove trailing slash if present
+const RAW_API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_URL = RAW_API_URL.replace(/\/$/, "");
 
 /**
  * Enhanced Fetch Wrapper

@@ -18,6 +18,7 @@ export interface WorkspaceStatus {
         minEventsForProof: number;
         excludedTaskTypes: string[];
     };
+    onboardingCompletedAt?: string;
 }
 
 export function useWorkspaceStatus() {

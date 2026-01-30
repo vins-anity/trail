@@ -114,6 +114,7 @@ export const workspaces = pgTable("workspaces", {
             excludedTaskTypes: [],
         }),
 
+    onboardingCompletedAt: timestamp("onboarding_completed_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -18,7 +18,8 @@ const OAUTH_CONFIG = {
         tokenUrl: "https://github.com/login/oauth/access_token",
         // CRITICAL SECURITY FIX: Removed 'repo' and 'write:repo_hook' to ensure Zero-Knowledge
         // for code contents. Webhooks should be configured via GitHub App installation.
-        scopes: ["read:user", "user:email"],
+        // Added 'actions:read' & 'repo:status' for CI/CD detection without reading code.
+        scopes: ["read:user", "user:email", "actions:read", "repo:status"],
     },
     jira: {
         authorizeUrl: "https://auth.atlassian.com/authorize",
@@ -111,7 +112,15 @@ export async function exchangeCodeForToken(
             const resources = await resourcesResponse.json();
             // Use the first accessible resource (cloud site)
             if (resources.length > 0) {
-                cloudId = resources[0].id;
+                // We need the SITE (hostname) to match webhooks, not the cloudId
+                // Example url: "https://shipdocket.atlassian.net"
+                const siteUrl = resources[0].url;
+                try {
+                    cloudId = new URL(siteUrl).hostname;
+                } catch (e) {
+                    console.warn("Failed to parse Jira URL", siteUrl);
+                    cloudId = resources[0].id; // Fallback
+                }
             }
         }
     }

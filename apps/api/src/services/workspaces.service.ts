@@ -37,6 +37,12 @@ export interface UpdateWorkspaceInput {
         reviewStatus: string[];
         doneStatus: string[];
     };
+    proofPacketRules?: {
+        autoCreateOnDone: boolean;
+        minEventsForProof: number;
+        excludedTaskTypes: string[];
+    };
+    onboardingCompletedAt?: Date;
 }
 
 // ... (abbreviated for brevity, assuming existing code is fine)

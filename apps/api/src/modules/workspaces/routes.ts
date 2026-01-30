@@ -86,10 +86,46 @@ app.get("/current", async (c) => {
             hasJira: !!(workspace.jiraSite || workspace.jiraAccessToken),
             defaultPolicyTier: workspace.defaultPolicyTier,
             workflowSettings: workspace.workflowSettings,
+            onboardingCompletedAt: workspace.onboardingCompletedAt?.toISOString(),
         });
     } catch (error) {
         console.error("[/workspaces/current] Database error:", error);
         return c.json({ error: "Failed to fetch workspace" }, 500);
+    }
+});
+
+/**
+ * PATCH /:id
+ * Update workspace settings
+ */
+app.patch("/:id", async (c) => {
+    const workspaceId = c.req.param("id");
+    const userId = c.get("userId") as string;
+
+    // Verify access
+    const hasAccess = await workspacesService.checkAccess(userId, workspaceId);
+    if (!hasAccess) return c.json({ error: "Unauthorized" }, 403);
+
+    const body = await c.req.json();
+
+    try {
+        // Convert date string if present
+        if (body.onboardingCompletedAt) {
+            body.onboardingCompletedAt = new Date(body.onboardingCompletedAt);
+        }
+
+        const updated = await workspacesService.updateWorkspace(workspaceId, {
+            name: body.name,
+            defaultPolicyTier: body.defaultPolicyTier,
+            workflowSettings: body.workflowSettings,
+            proofPacketRules: body.proofPacketRules,
+            onboardingCompletedAt: body.onboardingCompletedAt,
+        });
+
+        return c.json(updated);
+    } catch (err) {
+        console.error("Failed to update workspace:", err);
+        return c.json({ error: "Failed to update workspace" }, 500);
     }
 });
 

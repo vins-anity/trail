@@ -69,6 +69,16 @@ async function fetchWithAuth<T>(endpoint: string, options: RequestInit = {}): Pr
 
 export const api = {
     // ============================================
+    // Generic
+    // ============================================
+    get: <T>(endpoint: string) => fetchWithAuth<T>(endpoint),
+    post: <T>(endpoint: string, body?: unknown) =>
+        fetchWithAuth<T>(endpoint, {
+            method: "POST",
+            body: body ? JSON.stringify(body) : undefined,
+        }),
+
+    // ============================================
     // Events API
     // ============================================
     events: {
@@ -183,6 +193,12 @@ export const api = {
             fetchWithAuth<{ id: string; name: string }>("/workspaces", {
                 method: "POST",
                 body: JSON.stringify({ name }),
+            }),
+
+        update: (id: string, data: Record<string, unknown>) =>
+            fetchWithAuth<{ id: string }>(`/workspaces/${id}`, {
+                method: "PATCH",
+                body: JSON.stringify(data),
             }),
     },
 

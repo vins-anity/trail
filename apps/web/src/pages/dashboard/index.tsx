@@ -97,9 +97,11 @@ export function DashboardPage() {
         );
     }
 
-    // 2. Onboarding Gate (Show ONLY widget if any service is missing)
+    // 2. Onboarding Gate (Show ONLY widget if any service is missing OR not marked complete)
     // Account created is step 1, so we check the 3 integrations.
-    const isFullyOnboarded = status?.hasJira && status?.hasGithub && status?.hasSlack;
+    const isFullyOnboarded =
+        !!status?.onboardingCompletedAt ||
+        (status?.hasJira && status?.hasGithub && status?.hasSlack);
 
     if (!isFullyOnboarded) {
         return (

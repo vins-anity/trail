@@ -151,6 +151,25 @@ export class JiraService {
             "Content-Type": "application/json",
         };
     }
+
+    /**
+     * Make an authenticated request to Jira Cloud API
+     */
+    async callJiraAPI<T>(cloudId: string, accessToken: string, endpoint: string): Promise<T> {
+        const response = await fetch(`https://api.atlassian.com/ex/jira/${cloudId}${endpoint}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                Accept: "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Jira API error [${response.status}]: ${response.statusText}`);
+        }
+
+        return response.json();
+    }
 }
 
 export const jiraService = new JiraService();

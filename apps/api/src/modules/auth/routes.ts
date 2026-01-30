@@ -26,13 +26,14 @@ const auth = new Hono()
         }),
         async (c) => {
             const workspaceId = c.req.query("workspace_id");
+            const next = c.req.query("next");
             const redirectUri = `${c.req.url.split("/auth")[0]}/auth/slack/callback`;
 
             if (!workspaceId) {
                 return c.json({ error: "workspace_id required" }, 400);
             }
 
-            const state = JSON.stringify({ workspaceId });
+            const state = JSON.stringify({ workspaceId, next });
             const authUrl = authService.getAuthorizationUrl("slack", state, redirectUri);
 
             return c.redirect(authUrl);
@@ -63,7 +64,7 @@ const auth = new Hono()
                 return c.json({ error: "Invalid OAuth callback" }, 400);
             }
 
-            const { workspaceId } = JSON.parse(state);
+            const { workspaceId, next } = JSON.parse(state);
             const redirectUri = `${c.req.url.split("?")[0]}`;
 
             const tokens = await authService.exchangeCodeForToken("slack", code, redirectUri);
@@ -74,9 +75,10 @@ const auth = new Hono()
                 tokens.refreshToken,
             );
 
-            // Redirect back to frontend dashboard
+            // Redirect back to frontend
             const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
-            return c.redirect(`${frontendUrl}/?connected=slack`);
+            const nextPath = next || "/?connected=slack";
+            return c.redirect(`${frontendUrl}${nextPath}`);
         },
     )
 
@@ -95,13 +97,14 @@ const auth = new Hono()
         }),
         async (c) => {
             const workspaceId = c.req.query("workspace_id");
+            const next = c.req.query("next");
             const redirectUri = `${c.req.url.split("/auth")[0]}/auth/github/callback`;
 
             if (!workspaceId) {
                 return c.json({ error: "workspace_id required" }, 400);
             }
 
-            const state = JSON.stringify({ workspaceId });
+            const state = JSON.stringify({ workspaceId, next });
             const authUrl = authService.getAuthorizationUrl("github", state, redirectUri);
 
             return c.redirect(authUrl);
@@ -125,7 +128,7 @@ const auth = new Hono()
                 return c.json({ error: "Invalid OAuth callback" }, 400);
             }
 
-            const { workspaceId } = JSON.parse(state);
+            const { workspaceId, next } = JSON.parse(state);
             const redirectUri = `${c.req.url.split("?")[0]}`;
 
             const tokens = await authService.exchangeCodeForToken("github", code, redirectUri);
@@ -136,9 +139,10 @@ const auth = new Hono()
                 tokens.refreshToken,
             );
 
-            // Redirect back to frontend dashboard
+            // Redirect back to frontend
             const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
-            return c.redirect(`${frontendUrl}/?connected=github`);
+            const nextPath = next || "/?connected=github";
+            return c.redirect(`${frontendUrl}${nextPath}`);
         },
     )
 
@@ -157,13 +161,14 @@ const auth = new Hono()
         }),
         async (c) => {
             const workspaceId = c.req.query("workspace_id");
+            const next = c.req.query("next");
             const redirectUri = `${c.req.url.split("/auth")[0]}/auth/jira/callback`;
 
             if (!workspaceId) {
                 return c.json({ error: "workspace_id required" }, 400);
             }
 
-            const state = JSON.stringify({ workspaceId });
+            const state = JSON.stringify({ workspaceId, next });
             const authUrl = authService.getAuthorizationUrl("jira", state, redirectUri);
 
             return c.redirect(authUrl);
@@ -187,7 +192,7 @@ const auth = new Hono()
                 return c.json({ error: "Invalid OAuth callback" }, 400);
             }
 
-            const { workspaceId } = JSON.parse(state);
+            const { workspaceId, next } = JSON.parse(state);
             const redirectUri = `${c.req.url.split("?")[0]}`;
 
             const tokens = await authService.exchangeCodeForToken("jira", code, redirectUri);
@@ -199,9 +204,10 @@ const auth = new Hono()
                 tokens.cloudId,
             );
 
-            // Redirect back to frontend dashboard
+            // Redirect back to frontend
             const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
-            return c.redirect(`${frontendUrl}/?connected=jira`);
+            const nextPath = next || "/?connected=jira";
+            return c.redirect(`${frontendUrl}${nextPath}`);
         },
     );
 

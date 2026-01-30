@@ -9,6 +9,7 @@ import { startJobQueue } from "./lib/job-queue";
 import auth from "./modules/auth/routes";
 import events from "./modules/events/routes";
 import jobs from "./modules/jobs/routes";
+import onboarding from "./modules/onboarding/routes";
 import policies from "./modules/policies/routes";
 import proofs from "./modules/proofs/routes";
 import slackInteractions from "./modules/slack/interactions";
@@ -302,11 +303,10 @@ const app = new Hono()
                     <h3 class="font-bold text-slate-300">Environment</h3>
                     <div class="w-2 h-2 rounded-full ${status.checks.environment.status === "ok" ? "bg-green-500" : "bg-yellow-500"}"></div>
                 </div>
-                ${
-                    status.checks.environment.missingOptionalVars.length > 0
-                        ? `<p class="text-xs text-yellow-400 font-medium">Missing: ${status.checks.environment.missingOptionalVars.join(", ")}</p>`
-                        : `<p class="text-sm text-slate-500">All required and optional variables are set.</p>`
-                }
+                ${status.checks.environment.missingOptionalVars.length > 0
+                ? `<p class="text-xs text-yellow-400 font-medium">Missing: ${status.checks.environment.missingOptionalVars.join(", ")}</p>`
+                : `<p class="text-sm text-slate-500">All required and optional variables are set.</p>`
+            }
             </div>
         </div>
 

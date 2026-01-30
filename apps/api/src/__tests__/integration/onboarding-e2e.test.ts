@@ -17,18 +17,6 @@ import * as slackService from "../../services/slack.service";
 // MOCKS
 // ---------------------------------------------------------------------------
 
-// Mock Supabase Auth
-vi.mock("../../middleware/supabase-auth", () => ({
-    supabaseAuth: async (c: any, next: any) => {
-        c.set("user", { id: "test-user-id", email: "e2e@test.com" });
-        await next();
-    },
-    optionalAuth: async (c: any, next: any) => {
-        c.set("user", { id: "test-user-id", email: "e2e@test.com" });
-        await next();
-    },
-}));
-
 // Mock Database to simulate state persistence across steps
 // We use a simple in-memory object to act as our "DB" for this test run
 const mockDbState = {
@@ -176,6 +164,11 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
         vi.restoreAllMocks();
         mockDbState.workspaces.clear();
         mockDbState.events = [];
+        // Important: Mock Auth Verification to return a valid user
+        vi.spyOn(authService, "verifySupabaseToken").mockResolvedValue({
+            id: "test-user-id",
+            email: "e2e@test.com",
+        } as any);
     });
 
     it("should simulate a full user journey: Create Workspace -> Connect Providers -> Process Event", async () => {
@@ -203,7 +196,7 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
                     accessToken: "jira-access-token",
                     refreshToken: "jira-refresh-token",
                     expiresIn: 3600,
-                    cloudId: "jira-cloud-id",
+                    cloudId: "e2e.atlassian.net",
                 };
             }
             if (provider === "slack") {
@@ -227,7 +220,7 @@ describe("E2E: ShipDocket Workflow (Multi-Provider)", () => {
 
         // Verify Jira data persisted in "DB"
         const wsAfterJira = mockDbState.workspaces.get("ws-e2e-123");
-        expect(wsAfterJira.jiraSite).toBe("jira-cloud-id");
+        expect(wsAfterJira.jiraSite).toBe("e2e.atlassian.net");
         expect(wsAfterJira.jiraAccessToken).toBe("jira-access-token");
 
         // 3. Connect Slack

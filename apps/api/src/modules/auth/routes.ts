@@ -83,6 +83,13 @@ const auth = new Hono()
         async (c) => {
             const code = c.req.query("code");
             const state = c.req.query("state");
+            const error = c.req.query("error") || c.req.query("error_description");
+
+            // Handle user cancellation or provider error
+            if (error) {
+                const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
+                return c.redirect(`${frontendUrl}/onboarding?step=integrations&error=${encodeURIComponent(error)}`);
+            }
 
             if (!code || !state) {
                 return c.json({ error: "Invalid OAuth callback" }, 400);
@@ -161,6 +168,13 @@ const auth = new Hono()
         async (c) => {
             const code = c.req.query("code");
             const state = c.req.query("state");
+            const error = c.req.query("error") || c.req.query("error_description");
+
+            // Handle user cancellation or provider error
+            if (error) {
+                const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
+                return c.redirect(`${frontendUrl}/onboarding?step=integrations&error=${encodeURIComponent(error)}`);
+            }
 
             if (!code || !state) {
                 return c.json({ error: "Invalid OAuth callback" }, 400);
@@ -238,6 +252,13 @@ const auth = new Hono()
         async (c) => {
             const code = c.req.query("code");
             const state = c.req.query("state");
+            const error = c.req.query("error") || c.req.query("error_description");
+
+            // Handle user cancellation or provider error
+            if (error) {
+                const frontendUrl = process.env.FRONTEND_URL || "https://trail-web.pages.dev";
+                return c.redirect(`${frontendUrl}/onboarding?step=integrations&error=${encodeURIComponent(error)}`);
+            }
 
             if (!code || !state) {
                 return c.json({ error: "Invalid OAuth callback" }, 400);
